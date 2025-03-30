@@ -1,0 +1,1 @@
+* ## Manual técnico para la implementación local del proyecto, incluyendo dependencias, entorno y primeros pasos.
