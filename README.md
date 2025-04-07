@@ -31,13 +31,17 @@ El objetivo de este proyecto es desarrollar una aplicación web genérica que pu
 
 ## ⚙️ Tecnologías previstas
 
-- **Framework**: Laravel con Blade
-- **Tecnología basada en componentes**: Livewire (libreria nativa a Laravel)
-- **Base de datos**: MySQL
-- **Servidor Web**: Apache (en XAMPP para desarrollo)
+- **Framework backend**: Laravel (PHP 8+)
+- **Motor de plantillas**: Blade
+- **Frontend interactivo**:  
+  - **Livewire** – Para construir interfaces dinámicas sin escribir JavaScript.  
+  - **Alpine.js** – Para interacciones ligeras del lado del cliente (mostrar/ocultar, pestañas, etc.).
+- **Estilos CSS**: Tailwind CSS *(opcional, recomendado)*
+- **Base de datos**: MySQL (gestionada con phpMyAdmin en XAMPP)
+- **Servidor Web**: Apache (entorno local con XAMPP)
 - **Gestión de dependencias**: Composer
 - **Control de versiones**: Git + GitHub
-- **IDE**: VS Code
+- **IDE**: Visual Studio Code
 - **Contenerización (opcional)**: Docker
 
 ---
