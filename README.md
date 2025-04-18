@@ -1,38 +1,37 @@
 # El Refugio
 
-**Proyecto de Fin de Grado del ciclo DAW – I.E.S. Rafael Alberti, Cádiz**
+**Proyecto desarrollado por Sara Sánchez Camilleri como Trabajo Din de Grado del Ciclo Formativo de Desarrollo de Aplicaciones Web.**
+
+**I.E.S. Rafael Alberti, Cádiz**
 
 Aplicación web desarrollada con Laravel para digitalizar y facilitar la gestión integral de un refugio de animales.  
 Permite centralizar adopciones, acogidas, apadrinamientos y optimizar el trabajo del personal y voluntariado.
 
+---
 
 ## 📂 Documentación por fases
 
 - [Fase 1 – Planificación y análisis](docs/Fase1_Planificacion_Analisis.md)
-
 - [Fase 2 – Diseño técnico y estructura del sistema](docs/Fase2_DisenioTecnico_EstructuraSistema.md)
-
-- [Fase 3 - Desarrollo de funcionalidades](doc/Fase3_DesarrolloFuncionalidades.md)
-
+- [Fase 3 - Desarrollo de funcionalidades](docs/Fase3_DesarrolloFuncionalidades.md)
 - [Fase 4 - Interfaz y diseño visual](docs/Fase4_EstilosInterfaz.md)
-
 - [Fase 5 - Pruebas y documentacion](docs/Fase5_PruebasDocumentacion.md)
-
 - [Manual de instalación](docs/Manual_Instalacion.md)
-
 
 ---
 
 ## 📜 Descripción
 
-El objetivo de este proyecto es desarrollar una aplicación web genérica que pueda ser utilizada por cualquier refugio de animales para gestionar adopciones, acogidas y apadrinamientos de manera eficiente. Muchas de las páginas actuales dedicadas a este propósito son poco intuitivas, están desactualizadas y no ofrecen herramientas para facilitar la comunicación y gestión interna. Con esta plataforma, se busca proporcionar una solución moderna, accesible y escalable que permita a los refugios administrar su base de datos de animales, gestionar publicaciones en redes sociales y optimizar el proceso de adopción y acogida.
+El objetivo de este proyecto es desarrollar una aplicación web moderna y accesible, dirigida a refugios de animales, para gestionar de manera eficiente las adopciones, acogidas y apadrinamientos. La plataforma busca optimizar la gestión interna del refugio y facilitar la interacción de los usuarios (potenciales adoptantes, voluntarios y colaboradores) con el refugio. La web estará orientada a la administración de los animales disponibles, la gestión de solicitudes de adopción, y la promoción de formas de colaboración, como el apadrinamiento y la acogida temporal.
+
+Además, se pretende que la plataforma ofrezca una experiencia más clara y organizada en comparación con las plataformas actuales, con la integración de funcionalidades como la gestión de redes sociales y un sistema optimizado para las solicitudes de adopción.
 
 ---
 
 ## ⚙️ Tecnologías previstas
 
 - **Framework**: Laravel con Blade
-- **Tecnología basada en componentes**: Livewire (libreria nativa a Laravel)
+- **Tecnología basada en componentes**: Livewire (librería nativa de Laravel)
 - **Base de datos**: MySQL
 - **Servidor Web**: Apache (en XAMPP para desarrollo)
 - **Gestión de dependencias**: Composer
@@ -74,12 +73,26 @@ El objetivo de este proyecto es desarrollar una aplicación web genérica que pu
 
 ## 📂 Estructura de la Aplicación
 
-El proyecto está organizado en diferentes módulos que permiten gestionar las funciones del refugio de manera eficiente. El esquema de la base de datos está compuesto por las siguientes entidades principales:
+La aplicación está organizada de manera modular, permitiendo una gestión eficiente de las funciones y procesos del refugio. A continuación, se describen las entidades principales que forman la base de datos de la aplicación:
 
-- **Web_User**: Representa a los usuarios registrados en la plataforma web.
-- **Camp_User**: Representa a los usuarios vinculados al refugio, pero no necesariamente registrados en la web.
+- **User**: Representa a los usuarios que pueden estar registrados para interactuar con la web o vinculados al refugio para adopciones, acogidas, o apadrinamientos.
 - **Animal**: Almacena toda la información sobre los animales del refugio.
 - **Veterinary_History**: Almacena el historial veterinario de cada animal.
 - **Animal_Medication**: Registra los tratamientos médicos continuos de los animales.
 - **Adoptions**: Gestiona el proceso de adopción de los animales.
 - **Foster**: Gestiona las acogidas temporales de los animales.
+
+---
+
+## 🛠️ Observaciones / Implementaciones futuras
+
+- **Sistema de gestión de citas o visitas**: Permitir que los usuarios interesados puedan solicitar una cita para visitar el refugio o conocer a un animal concreto. Los administradores podrán gestionar estas solicitudes desde el panel interno.
+- **Blog o sección de noticias**: Página principal donde se publicarán actualizaciones sobre el refugio, historias de adopción, etc.
+- **Historial público de adopciones realizadas**: Mostrar un listado de animales que han sido adoptados a través de la web.
+- **Seguimiento de apadrinamientos activos**: Gestionar las relaciones de los padrinos con los animales apadrinados.
+- **Galería multimedia integrada**: Fichas enriquecidas con imágenes y videos representativos de los animales.
+- **Sistema de seguimiento post-adopción**: Funcionalidad privada para hacer seguimiento al bienestar de los animales adoptados.
+- **Sistema de donaciones puntuales y recurrentes**: Para financiar el refugio o apadrinar animales.
+
+- **Panel de estadísticas para admins**: Mostrar métricas clave sobre el funcionamiento del refugio (número de animales en adopción, acogida, donaciones recibidas, etc.).
+

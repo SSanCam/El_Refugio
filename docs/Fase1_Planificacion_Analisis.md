@@ -19,9 +19,10 @@ Este enfoque garantiza que el proyecto sea comprensible tanto para desarrollador
 
 En esta sección se identifican los distintos perfiles de usuario que interactuarán con la aplicación, así como sus roles y permisos. Esto permitirá establecer qué funcionalidades estarán disponibles para cada uno.
 
-La entidad `Usuario` representa a cualquier persona que interactúa con la plataforma web "El Refugio", ya sea de forma pública o mediante autenticación con una cuenta registrada. Existen dos tipos de usuario definidos en el sistema, diferenciados por el valor del campo `rol`:
+La entidad `User` representa a cualquier persona que interactúa con la plataforma web "El Refugio". Esta tabla unifica tanto a los usuarios registrados en la web como a los usuarios vinculados al refugio (adoptantes, acogedores, apadrinadores, voluntarios, etc.). La tabla `User` tiene la siguiente estructura:
 
 - **Usuario general**: personas externas al refugio, interesadas en acoger, adoptar o apadrinar animales. También pueden enviar formularios de contacto o solicitar ser voluntarios. Su interacción está limitada a la parte pública de la plataforma o a funcionalidades específicas permitidas por su rol.
+
 - **Administrador**: personal autorizado del refugio. Tiene acceso completo al panel de gestión de la aplicación, pudiendo realizar operaciones CRUD (crear, leer, actualizar y eliminar) sobre los usuarios registrados, animales, solicitudes de adopción, acogida y apadrinamiento. También puede gestionar los contenidos de la plataforma o cualquier funcionalidad que se añada posteriormente.
 
 El sistema se encargará de restringir el acceso a ciertas áreas o acciones en función del rol del usuario autenticado. Esta distinción es fundamental para asegurar tanto la seguridad como el correcto funcionamiento interno de la aplicación.
@@ -60,16 +61,16 @@ En esta sección se detallan las funcionalidades que debe ofrecer la aplicación
 ### 🔐 Funcionalidades privadas (requieren cuenta registrada)
 
 #### Para usuarios generales (rol: usuario)
+- **Registrarse e iniciar sesión**: Sistema de autenticación para acceder a funcionalidades personalizadas. Los usuarios podrán registrarse con su nombre, correo electrónico y una contraseña segura.
 
-- **Registrarse e iniciar sesión:** sistema de autenticación para acceder a funcionalidades personalizadas.
+- **Solicitar adopción de un animal**: Los usuarios podrán completar un formulario para enviar una solicitud de adopción. Este proceso estará vinculado con su cuenta en la plataforma.
 
-- **Solicitar adopción de un animal:** formulario para enviar una solicitud de adopción, asociado al usuario autenticado.
+- **Solicitar acogida temporal**: Los usuarios podrán ofrecerse como casa de acogida para uno o más animales. Este proceso también estará asociado a su cuenta en la plataforma.
 
-- **Solicitar acogida temporal:** los usuarios pueden ofrecerse como casa de acogida para uno o más animales.
+- **Apadrinar un animal**: Los usuarios podrán seleccionar un animal para apadrinar, comprometiéndose a una ayuda económica periódica o puntual.
 
-- **Apadrinar un animal:** funcionalidad para elegir un animal y comprometerse a una ayuda económica periódica o puntual.
+- **Actualizar su perfil**: Los usuarios podrán modificar sus datos personales y preferencias (acoger, apadrinar, ser voluntario, etc.).
 
-- **Actualizar su perfil:** los usuarios podrán modificar sus datos personales o cambiar sus preferencias (acoger, apadrinar, ser voluntario, etc.).
 
 #### Para administradores (rol: admin)
 
@@ -90,7 +91,6 @@ En esta sección se detallan las funcionalidades que debe ofrecer la aplicación
 
 Los wireframes son bocetos que representan la estructura visual y de navegación de la aplicación. Aunque no definen el diseño final, sirven como base para imaginar el flujo de pantallas y la disposición de los elementos principales.
 
-
 Aunque se cuenta con un primer boceto en Figma, se ha decidido posponer la elaboración definitiva de los wireframes hasta contar con una estructura funcional más consolidada del sistema. 
 
 Dado que los wireframes representan la disposición visual de las pantallas y el flujo de navegación, es importante basarlos en un conjunto claro y validado de funcionalidades, entidades y relaciones. Esto evitará revisiones innecesarias y permitirá diseñar una experiencia de usuario más coherente y eficiente.
@@ -103,49 +103,29 @@ Los wireframes definitivos se desarrollarán en una fase posterior, una vez est�
 
 Esta sección presenta las entidades que formarán parte de la base de datos del sistema, así como sus atributos principales y relaciones entre ellas. Es un primer paso hacia el diseño de la estructura lógica de la aplicación.
 
-## **Entidad: Web_User**
+## **Entidad: User**
 
-La entidad `Web_User` representa a cualquier persona registrada en la plataforma web "El Refugio". Estos usuarios tienen la capacidad de gestionar su perfil, acceder a funciones personalizadas y realizar interacciones como apadrinar un animal, ofrecerse para ser voluntarios o acogedores. Los campos como `foster`, `volunteer`, y `sponsor` no se incluyen en esta entidad, ya que serán gestionados a través de la entidad `Camp_User` si el usuario decide interactuar con el refugio en esas áreas.
+La entidad `User` representa a cualquier persona que interactúa con la plataforma "El Refugio". Esta tabla unifica tanto a los usuarios registrados en la web como a los usuarios vinculados al refugio (adoptantes, acogedores, apadrinadores, voluntarios, etc.). El sistema permitirá que el refugio complete los datos necesarios cuando se registre un usuario para procesos más formales como adopciones, acogidas, etc.
 
-Esta entidad se utiliza únicamente para la autenticación y el acceso a las funcionalidades que le correspondan según su rol en la plataforma.
-
-| Campo          | Tipo de dato | Descripción |
-|----------------|--------------|-------------|
-| `id_user`      | int          | Clave primaria autogenerada por Laravel |
-| `first_name`   | string       | Nombre de pila del usuario |
-| `last_name`    | string       | Apellidos del usuario |
-| `email`        | string       | Correo electrónico (único) |
-| `password`     | string       | Contraseña cifrada (bcrypt) |
-| `role`         | string       | Tipo de usuario: `admin`, `volunteer`, `user`, etc. Por defecto será `user` |
-| `created_at`   | timestamp    | Fecha de creación del registro (autogenerado) |
-| `updated_at`   | timestamp    | Fecha de última modificación (autogenerado) |
-
----
-
-## **Entidad: Camp_User**
-
-La entidad `Camp_User` representa a cualquier persona relacionada con el refugio que no necesariamente esté registrada en la plataforma web. Esta entidad incluye personas que pueden estar relacionadas con el refugio para funciones como adopciones, acogidas temporales o voluntariado, y cuya información no requiere una cuenta en la web de la aplicación. Los datos de contacto de estas personas se registran para fines administrativos internos del refugio.
-
-La principal diferencia con la entidad `Web_User` es que los `Camp_User` no interactúan directamente con la web, pero sus datos se registran para poder asociarlos a una adopción, acogida, o apadrinamiento, por ejemplo. Estos usuarios no tienen necesidad de autenticarse a través de la plataforma web, pero el refugio necesita almacenarlos para gestión interna.
+**Campos principales:**
 
 | Campo            | Tipo de dato   | Descripción |
 |------------------|----------------|-------------|
 | `id_user`        | int            | Clave primaria autogenerada por Laravel |
-| `first_name`     | string         | Nombre del usuario |
-| `last_name`      | string         | Apellidos del usuario |
-| `dni`            | string         | Documento nacional de identidad (único) |
-| `phone`          | string         | Número de teléfono de contacto |
-| `address`        | string         | Dirección de residencia del usuario |
-| `role`           | string         | Tipo de usuario: `adopter`, `foster`, `volunteer`, etc. |
-| `adopted_animal` | string/null    | ID del animal adoptado (si aplica) |
-| `foster`         | boolean/null   | Indica si el usuario está interesado en acoger animales |
-| `volunteer`      | boolean/null   | Indica si el usuario desea ser voluntario/a |
-| `sponsor`        | boolean/null   | Indica si el usuario desea apadrinar animales |
+| `first_name`     | string         | Nombre del usuario (opcional para registros web) |
+| `last_name`      | string         | Apellidos del usuario (opcional para registros web) |
+| `email`          | string         | Correo electrónico (único y obligatorio para todos los registros) |
+| `alias`          | string/null    | Alias opcional del usuario (único si se introduce) |
+| `password`       | string         | Contraseña cifrada (bcrypt) |
+| `role`           | string         | Tipo de usuario: `admin`, `user` |
+| `dni`            | string/null    | Documento Nacional de Identidad  |
+| `phone`          | string/null    | Número de teléfono  |
+| `address`        | string/null    | Dirección del usuario  |
+| `status`         | string         | Roles adicionales como `adoptante`, `voluntario`, `acogedor`, etc. |
 | `created_at`     | timestamp      | Fecha de creación del registro (autogenerado por Laravel) |
 | `updated_at`     | timestamp      | Fecha de última modificación (autogenerado) |
 
 ---
-
 
 ##  **Entidad: Animal**
 
