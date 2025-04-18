@@ -34,9 +34,16 @@ Además, se pretende que la plataforma ofrezca una experiencia más clara y orga
 - **Tecnología basada en componentes**: Livewire (librería nativa de Laravel)
 - **Base de datos**: MySQL
 - **Servidor Web**: Apache (en XAMPP para desarrollo)
+- **Framework backend**: Laravel (PHP 8+)
+- **Motor de plantillas**: Blade
+- **Frontend interactivo**:  
+  - **Livewire** - Libreria nativa de Laravel
+  - **Alpine.js** 
+- **Base de datos**: MySQL (gestionada con phpMyAdmin en XAMPP)
+- **Servidor Web**: Apache (entorno local con XAMPP)
 - **Gestión de dependencias**: Composer
 - **Control de versiones**: Git + GitHub
-- **IDE**: VS Code
+- **IDE**: Visual Studio Code
 - **Contenerización (opcional)**: Docker
 
 ---
