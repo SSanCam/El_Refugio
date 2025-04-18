@@ -100,6 +100,5 @@ La aplicación está organizada de manera modular, permitiendo una gestión efic
 - **Galería multimedia integrada**: Fichas enriquecidas con imágenes y videos representativos de los animales.
 - **Sistema de seguimiento post-adopción**: Funcionalidad privada para hacer seguimiento al bienestar de los animales adoptados.
 - **Sistema de donaciones puntuales y recurrentes**: Para financiar el refugio o apadrinar animales.
-
 - **Panel de estadísticas para admins**: Mostrar métricas clave sobre el funcionamiento del refugio (número de animales en adopción, acogida, donaciones recibidas, etc.).
 
