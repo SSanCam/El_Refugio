@@ -50,24 +50,26 @@ Además, se pretende que la plataforma ofrezca una experiencia más clara y orga
 
 ## 🔑 Funcionalidades
 
-### 🔓 Funcionalidades públicas (sin necesidad de registro)
+### 🔓 Funcionalidades públicas (sin necesidad de registro en la web)
 
-- **Consultar animales disponibles**: Cualquier persona puede visualizar el listado de animales que se encuentran en adopción o acogida, filtrando por especie, edad, raza o estado.
-- **Ver detalles de un animal**: Acceso a la ficha individual de cada animal con información más específica como comportamiento, salud, fotos o historia.
-- **Formulario de contacto**: Permite a los usuarios enviar mensajes o consultas generales al refugio sin necesidad de registrarse.
-- **Realizar donaciones económicas**: Se ofrecerá un apartado para colaborar económicamente con el refugio sin requerir una cuenta de usuario.
-- **Información general del refugio**: Acceso a secciones estáticas como misión, historia, ubicación, redes sociales o formas de colaborar.
+- **Consultar animales disponibles**: Listado filtrable de animales en adopción o acogida, accesible para cualquier visitante.
+- **Ver ficha básica de un animal**: Información general visible sin registro (nombre, especie, estado, características principales).
+- **Formulario de contacto**: Envío de mensajes y consultas al refugio.
+- **Donaciones puntuales**: Aportaciones económicas sin necesidad de tener cuenta.
+- **Información general del refugio**: Secciones estáticas accesibles sobre historia, misión, redes sociales, formas de colaborar.
+- **Solicitar adopción o acogida**: Cualquier usuario puede enviar una solicitud. Si esta es aceptada, se registrará a la persona internamente en el sistema.
+- **Apadrinar un animal**: Se puede iniciar el proceso sin registro. No obstante, se recomienda crear una cuenta para acceder al seguimiento del animal apadrinado.
 
 ---
 
 ### 🔐 Funcionalidades privadas (requieren cuenta registrada)
 
-#### Para usuarios generales (rol: usuario)
-- **Registrarse e iniciar sesión**: Sistema de autenticación para acceder a funcionalidades personalizadas.
-- **Solicitar adopción de un animal**: Formulario para enviar una solicitud de adopción, asociado al usuario autenticado.
-- **Solicitar acogida temporal**: Los usuarios pueden ofrecerse como casa de acogida para uno o más animales.
-- **Apadrinar un animal**: Funcionalidad para elegir un animal y comprometerse a una ayuda económica periódica o puntual.
-- **Actualizar su perfil**: Los usuarios podrán modificar sus datos personales o cambiar sus preferencias (acoger, apadrinar, ser voluntario, etc.).
+Los usuarios registrados en la plataforma, además de acceder a todas las funcionalidades públicas, podrán:
+
+- **Consultar el estado de sus solicitudes**: Visualizar el historial y estado actual de adopciones, acogidas y apadrinamientos asociados a su cuenta.
+- **Recibir actualizaciones de animales apadrinados**: Notificaciones, seguimiento y contenido adicional vinculado al animal.
+- **Gestionar su perfil personal**: Actualizar datos, preferencias y tipo de colaboración.
+- **Acceder a funcionalidades personalizadas**: Visualización de contenido adaptado al usuario.
 
 #### Para administradores (rol: admin)
 - **Gestión de animales (CRUD)**: Crear, editar, eliminar o actualizar fichas de animales en la base de datos.

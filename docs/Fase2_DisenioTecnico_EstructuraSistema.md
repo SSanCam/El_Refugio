@@ -22,11 +22,111 @@ Los principales módulos del sistema serán los siguientes:
 Cada módulo contará con su propio conjunto de modelos, controladores, vistas y componentes Livewire si aplica. Esta organización sigue el patrón MVC proporcionado por Laravel, adaptado al enfoque modular del proyecto.
 
 
+---
+
+
 ### Carpetas y convenciones
-Establecer la jerarquía de carpetas para controladores, modelos, vistas y Livewire, así como las convenciones de nombres en inglés aplicadas en todo el proyecto.
+
+El proyecto seguirá la estructura de carpetas estándar de Laravel, organizando el código por tipo de elemento (modelo, controlador, vista, componente...) para facilitar el mantenimiento y la escalabilidad. Las convenciones son las siguientes:
+
+- **`app/Models`**: Contendrá las clases modelo (entidades del sistema). Cada modelo representará una tabla de la base de datos y llevará el nombre en singular con mayúscula inicial (por ejemplo, `User`, `Animal`, `Adoption`).
+- **`app/Http/Controllers`**: Almacenará los controladores encargados de manejar la lógica de las rutas. Se usará un controlador por módulo (`UserController`, `AnimalController`, etc.).
+- **`resources/views`**: Carpeta principal para las vistas Blade. Se organizará por carpetas según el módulo (`users/`, `animals/`, `admin/`, etc.).
+- **`app/Http/Livewire`**: Almacenará los componentes interactivos de Livewire. Seguirán el patrón de nombres PascalCase (`AdoptionForm`, `AnimalList`, etc.).
+- **`resources/views/components`**: Contendrá los componentes Blade reutilizables como `header.blade.php`, `footer.blade.php`, `alert.blade.php`, etc.
+
+---
+
+
+### Convenciones de nombres
+
+- Todos los nombres técnicos del código (clases, métodos, variables, archivos...) estarán escritos en **inglés**, siguiendo las buenas prácticas del desarrollo internacional.
+- Los **métodos** y **variables** seguirán la convención **camelCase** (`userEmail`, `adoptionStatus`).
+- Los **nombres de clases** y componentes seguirán la convención **PascalCase** (`UserProfile`, `AdoptionRequest`).
+- Las **vistas y rutas** se nombrarán en **kebab-case** o **snake_case**, según lo recomendado por Laravel.
+- El **contenido textual de la interfaz de usuario (etiquetas, formularios, mensajes)** estará en **español**, ya que el proyecto está destinado a un público hispanohablante.
+- Los **comentarios y documentación** también estarán en español, para mantener la coherencia del entorno académico y facilitar su comprensión.
+
+Este enfoque mixto garantiza que el proyecto sea técnicamente robusto y legible tanto por desarrolladores como por usuarios, manteniendo una estructura profesional y adecuada al contexto del TFG.
+
+--- 
 
 ### Distribución de componentes Blade y Livewire
-Determinar qué elementos se reutilizarán como componentes (cabecera, pie, tarjetas de animales, formularios, etc.) y dónde se ubicarán en la estructura.
+
+La aplicación contará con múltiples elementos reutilizables para facilitar la escalabilidad, la coherencia visual y la eficiencia del desarrollo. Estos componentes se dividirán en dos grandes grupos: **estáticos (Blade)** e **interactivos (Livewire)**, cada uno con su ubicación específica dentro de la estructura del proyecto.
+
+#### Componentes Blade (estáticos)
+
+Se utilizarán para elementos de interfaz sin lógica compleja, y se almacenarán en `resources/views/components/`.
+
+**Estructura general**
+- `header.blade.php`: cabecera común con el menú de navegación.
+- `footer.blade.php`: pie de página con información de contacto y enlaces.
+- `sidebar.blade.php`: barra lateral para panel de usuario o administración.
+- `breadcrumb.blade.php`: navegación contextual (migas de pan).
+
+**Contenido y presentación**
+- `animal-card.blade.php`: tarjeta de presentación del animal (foto, nombre, estado).
+- `user-card.blade.php`: tarjeta resumen de usuario (para vista admin o perfil).
+- `badge.blade.php`: etiqueta para estados como `Adoptado`, `Acogido`, etc.
+- `stat-box.blade.php`: caja visual con métricas (para dashboard admin).
+
+**UI reutilizable**
+- `alert.blade.php`: mensajes de éxito, error o advertencia.
+- `button.blade.php`: botón reutilizable con estilos unificados.
+- `input.blade.php`: campo de entrada reutilizable.
+- `label.blade.php`: etiqueta asociada a campos de formulario.
+- `modal.blade.php`: componente modal para acciones o confirmaciones.
+
+---
+
+#### Componentes Livewire (interactivos)
+
+Estos componentes se ubicarán en `app/Http/Livewire` y sus vistas asociadas en `resources/views/livewire/`. Se utilizarán para añadir interactividad sin necesidad de recargar la página.
+
+**Animales**
+- `AnimalList`: listado dinámico con filtros.
+- `AnimalGallery`: galería de imágenes del animal.
+- `AnimalProfile`: ficha extendida con pestañas (descripción, historial...).
+- `AnimalStatusToggle`: interruptor de cambio de estado del animal.
+
+**Formularios**
+- `AdoptionForm`: formulario interactivo para solicitar adopción.
+- `FosterForm`: formulario para acogida temporal.
+- `SponsorshipForm`: formulario de apadrinamiento.
+- `ContactForm`: formulario general de contacto.
+- `VisitRequestForm`: formulario para solicitar una cita o visita al refugio.
+
+**Usuarios**
+- `UserProfile`: vista editable del perfil del usuario.
+- `UserRequestHistory`: listado de solicitudes del usuario actual.
+- `UserRoleBadge`: identificador visual del rol (`user`, `admin`).
+
+**Administración**
+- `AdminDashboard`: panel principal con resumen de estadísticas y accesos rápidos.
+- `AnimalTable`: tabla editable con filtros para gestión de animales.
+- `UserManagement`: componente para gestión de usuarios.
+- `RequestApprovalPanel`: revisión y control de solicitudes pendientes.
+- `ContentEditor`: edición de textos estáticos de la web desde el panel.
+
+---
+
+#### Componentes adicionales (ampliaciones futuras)
+
+**Colaboración**
+- `DonationWidget`: widget para integrar donaciones en cualquier vista.
+- `SponsorshipStatusBox`: muestra visual del estado del animal apadrinado.
+
+**Seguimiento**
+- `AdoptionTimeline`: línea de tiempo del proceso de adopción.
+- `PostAdoptionFollowUp`: espacio privado para el seguimiento post-adopción.
+
+**Multimedia**
+- `MultimediaViewer`: visor integrado de imágenes y vídeos dentro de las fichas.
+
+---
+
+Esta previsión de componentes ayudará a estructurar mejor el desarrollo en la Fase 3 y permitirá mantener una interfaz coherente, reutilizable y escalable en todas las secciones del sistema. La lista podrá ajustarse o ampliarse en función de las necesidades que surjan durante la implementación.
 
 ---
 
