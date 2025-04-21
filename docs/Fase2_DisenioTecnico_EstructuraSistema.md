@@ -18,6 +18,7 @@ Los principales módulos del sistema serán los siguientes:
 - **Acogidas (`Foster`)**: Registro de solicitudes de acogida temporal, también asociadas a usuarios.
 - **Historial veterinario (`VeterinaryHistory`)** y **medicación (`AnimalMedication`)**: Información médica, tratamientos y seguimientos de salud de cada animal.
 - **Panel de administración**: Funcionalidad privada destinada a los administradores del refugio, desde donde podrán gestionar usuarios, animales y solicitudes.
+- **Solicitudes públicas (`PublicFormRequest`)**: Entidad que centraliza todas las solicitudes enviadas desde formularios accesibles sin necesidad de estar registrado (adopción, acogida, voluntariado, contacto). Se gestiona desde el panel de administración y permite convertirlas en entidades formales (`Adoption`, `Foster`, etc.).
 
 Cada módulo contará con su propio conjunto de modelos, controladores, vistas y componentes Livewire si aplica. Esta organización sigue el patrón MVC proporcionado por Laravel, adaptado al enfoque modular del proyecto.
 
@@ -109,6 +110,7 @@ Estos componentes se ubicarán en `app/Http/Livewire` y sus vistas asociadas en 
 - `RequestApprovalPanel`: revisión y control de solicitudes pendientes.
 - `ContentEditor`: edición de textos estáticos de la web desde el panel.
 
+
 ---
 
 #### Componentes adicionales (ampliaciones futuras)
@@ -137,6 +139,14 @@ Planificar la creación de migraciones para cada entidad definida en la Fase 1, 
 
 ### Relaciones entre tablas
 Especificar qué tipo de relaciones existirán entre las entidades (1:N, N:N), cómo se aplicarán y qué claves foráneas serán necesarias.
+
+El sistema estará compuesto por entidades como `User`, `Animal`, `Adoptions`, `Foster`, `Veterinary_History`, `Animal_Medication`, y `Public_Form_Request`, entre otras. Cada una cumplirá una función específica en la gestión del refugio y se relacionará entre sí mediante claves foráneas para mantener la coherencia de los datos.
+
+- `User`: representa a todos los usuarios del sistema, tanto visitantes registrados como personal del refugio.
+- `Animal`: almacena información detallada de cada animal alojado en el refugio.
+- `Adoptions` y `Foster`: registran las solicitudes y procesos de adopción y acogida, respectivamente.
+- `Veterinary_History` y `Animal_Medication`: gestionan la información clínica y de tratamientos continuos de los animales.
+- `Public_Form_Request`: recoge todas las solicitudes enviadas desde formularios públicos (adopción, acogida, voluntariado y contacto), sin necesidad de registro previo.
 
 ### Diagrama Entidad-Relación
 Preparar un esquema gráfico que represente todas las entidades y sus relaciones, como apoyo visual al modelo físico de base de datos.
