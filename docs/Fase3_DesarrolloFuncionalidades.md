@@ -362,95 +362,302 @@ Los administradores podrán acceder a un panel centralizado desde el cual visual
 
 El sistema permite que cualquier persona, sin necesidad de estar registrada, pueda enviar solicitudes al refugio a través de formularios públicos disponibles en la web. Estas solicitudes pueden corresponder a distintos tipos: adopción, acogida, voluntariado o contacto general.
 
-Con el fin de centralizar y simplificar la gestión de todas estas peticiones, se ha diseñado una estructura unificada que almacena los datos en una única tabla de base de datos, permitiendo su posterior tratamiento por parte del personal del refugio.
+Con el fin de gestionar de manera eficiente y lógica cada tipo de solicitud, se ha diseñado una estructura organizada de almacenamiento que agrupa o separa formularios según su finalidad:
+
+### Agrupación y entidades
+
+* Solicitudes de adopción y acogida se almacenan en una única tabla denominada `Animal_Request`. Dentro de esta tabla, un campo `type` distinguirá si la solicitud es de tipo `adoption` o `foster`.
+
+* Solicitudes de voluntariado se almacenan en su propia tabla `Volunteer_Request`, dado que su finalidad es diferente y requiere campos específicos (como disponibilidad y motivación).
+
+* Mensajes generales de contacto se almacenan en su propia tabla `Contact_Message`, enfocada exclusivamente en consultas o comunicaciones generales, sin relación directa con animales ni adopciones.
+
+Este enfoque proporciona un equilibrio entre la centralización donde es lógico y la separación donde es necesario, optimizando así el mantenimiento del sistema, su rendimiento y su escalabilidad futura.
 
 ### Envío y confirmación visual
 
 Los formularios estarán accesibles desde la interfaz pública de la web. Una vez completados y enviados, se mostrará un mensaje visual de confirmación (por ejemplo, un popup o un aviso en pantalla) para informar al usuario de que su solicitud ha sido registrada correctamente. No es necesario estar autenticado para enviar una solicitud.
 
-### Almacenamiento unificado
+### Estructura de las tablas
 
-Todas las solicitudes recibidas se almacenan en una tabla común bajo la entidad `Public_Form_Request`. Esta entidad incluye campos genéricos como nombre, correo electrónico y mensaje, así como campos específicos como el tipo de solicitud (`type`) o el identificador del animal si procede.
-
-### Campos definidos
-
-La estructura prevista de esta entidad es la siguiente:
+#### Animal_Request (para adopciones y acogidas)
 
 - `id_request`: Clave primaria autogenerada.
-- `type`: Tipo de formulario enviado (`adoption`, `foster`, `volunteer`, `contact`).
-- `full_name`: Nombre completo del solicitante.
+- `type`: Tipo de solicitud (`adoption` o `foster`).
+- `first_name`: Nombre del solicitante.
+- `last_name`: Apellidos del solicitante.
 - `email`: Correo electrónico de contacto.
 - `phone`: Número de teléfono (opcional).
-- `message`: Cuerpo del mensaje o motivo de la solicitud.
-- `animal_id`: ID del animal, si la solicitud está asociada a uno (por ejemplo, en adopciones).
+- `address`: Dirección del solicitante.
+- `animal_id`: ID del animal relacionado (opcional).
+- `message`: Mensaje o motivo de la solicitud.
 - `status`: Estado de la solicitud (`pending`, `reviewed`, `accepted`, `rejected`).
-- `admin_notes`: Campo interno para observaciones del equipo del refugio.
-- `created_at` / `updated_at`: Fechas de creación y modificación, generadas automáticamente por Laravel.
+- `admin_notes`: Observaciones internas para el equipo.
+- `created_at`: Fecha de creación (autogenerado por Laravel).
+- `updated_at`: Fecha de actualización (autogenerado).
+
+#### Volunteer_Request (para voluntariado)
+
+- `id_request`: Clave primaria autogenerada.
+- `first_name`: Nombre del solicitante.
+- `last_name`: Apellidos del solicitante.
+- `email`: Correo electrónico de contacto.
+- `phone`: Número de teléfono (opcional).
+- `availability`: Disponibilidad para colaborar (días, horarios).
+- `motivation`: Motivación para ser voluntario.
+- `status`: Estado de la solicitud (`pending`, `reviewed`, `accepted`, `rejected`).
+- `admin_notes`: Observaciones internas para el equipo.
+- `created_at`: Fecha de creación (autogenerado).
+- `updated_at`: Fecha de actualización (autogenerado).
+
+#### Contact_Message (para contacto general)
+
+- `id_message`: Clave primaria autogenerada.
+- `user_id`: ID del usuario registrado (opcional, si está logueado).
+- `email`: Correo electrónico de contacto (obligatorio si no está logueado).
+- `phone`: Número de teléfono (opcional).
+- `subject`: Asunto del mensaje.
+- `message`: Contenido del mensaje o consulta.
+- `status`: Estado de la solicitud (`pending`, `reviewed`, `archived`).
+- `admin_notes`: Observaciones internas para el equipo del refugio.
+- `created_at`: Fecha de creación (autogenerado).
+- `updated_at`: Fecha de actualización (autogenerado).
 
 ### Gestión desde el panel de administración
 
-Los administradores podrán acceder a un panel centralizado desde el cual visualizar todas las solicitudes recibidas. Esta interfaz permitirá:
+Los administradores podrán acceder a un panel centralizado desde el cual visualizar todas las solicitudes recibidas, organizadas según el tipo de formulario enviado. La interfaz permitirá:
 
-- Filtrar por tipo (`adopción`, `acogida`, etc.), estado o fecha.
-- Consultar el detalle completo de cada solicitud.
-- Cambiar su estado y añadir observaciones internas.
-- Formalizar la solicitud, en caso de aceptación, creando registros en otras entidades (`Adoptions`, `Foster`, `User`, etc.).
+- Visualizar las solicitudes de **adopción** y **acogida** almacenadas en la tabla `Animal_Request`.
+- Visualizar las solicitudes de **voluntariado** almacenadas en la tabla `Volunteer_Request`.
+- Visualizar los **mensajes de contacto general** almacenados en la tabla `Contact_Message`.
+- Filtrar las solicitudes por tipo de solicitud, estado (`pending`, `reviewed`, `accepted`, `rejected`, `archived`) o fecha.
+- Consultar el detalle completo de cada solicitud individualmente.
+- Cambiar el estado de cada solicitud y añadir observaciones internas.
+- Formalizar una solicitud aceptada:
+  - Las solicitudes de **adopción** o **acogida** pueden generar un nuevo registro en las tablas `Adoptions` o `Foster`.
+  - Las solicitudes de **voluntariado** pueden actualizar el perfil del usuario relacionado, si corresponde.
+
+Cada tipo de solicitud se gestionará en su propia sección específica del panel administrativo, facilitando así una organización clara y eficiente.
+
+---
 
 ### Ventajas del enfoque
 
-- **Centralización**: evita la necesidad de crear múltiples tablas para formularios similares.
-- **Flexibilidad**: permite añadir fácilmente nuevos tipos de formularios en el futuro.
-- **Trazabilidad**: todas las solicitudes quedan registradas y pueden consultarse en cualquier momento.
-- **Integración**: las solicitudes aceptadas pueden transformarse en registros formales dentro del sistema (por ejemplo, generando automáticamente una entrada en la tabla `Foster` o `Adoptions`).
+- **Centralización lógica**: Se agrupan las solicitudes similares (adopción y acogida) en una misma tabla y se separan aquellas de naturaleza diferente (voluntariado y contacto), optimizando la gestión interna.
+- **Flexibilidad**: Permite añadir nuevos tipos de formularios en el futuro de forma sencilla, sin romper la estructura actual.
+- **Organización de datos**: Cada tipo de solicitud queda adecuadamente categorizado, mejorando la trazabilidad y la eficiencia de revisión.
+- **Facilidad de administración**: El personal del refugio puede gestionar fácilmente cada tipo de solicitud en su apartado correspondiente, sin necesidad de filtrar en una única tabla masiva.
+- **Escalabilidad**: A medida que el refugio crezca, el sistema podrá adaptarse a un mayor volumen de solicitudes de manera ordenada.
 
 ---
 
-## 🛠 8. Panel de administración
-- Acceso exclusivo por rol `admin`
-- Vistas centralizadas para gestionar animales, usuarios y solicitudes
-- Panel de estadísticas básicas (si aplica)
+## 7. Panel de administración
+
+El Panel de Administración será el espacio central de gestión reservado exclusivamente para los usuarios con rol `admin`. A través de este panel, el personal autorizado del refugio podrá gestionar los diferentes módulos del sistema de manera eficiente y segura.
+
+### Acceso y seguridad
+
+- El acceso al panel estará restringido mediante middleware de autenticación y verificación (`auth`, `verified`, `admin`).
+- Solo los usuarios autenticados con el rol `admin` podrán acceder y operar dentro del panel de administración.
+- Los intentos de acceso no autorizado serán bloqueados y redireccionados a páginas de error o login.
 
 ---
 
-## 🔁 9. Reutilización de componentes y mejoras visuales
-- Componentes Livewire reutilizables (tarjetas de animal, formularios, alertas...)
-- Integración con Alpine.js para interacciones rápidas
-- Aplicación progresiva de estilos (opcional: Tailwind CSS)
+### Funcionalidades principales disponibles en la primera versión
+
+**1. Gestión de animales (`Animal`)**
+- Crear nuevos registros de animales disponibles para adopción o acogida.
+- Editar la información de los animales.
+- Eliminar registros de animales si fuera necesario.
+- Subir y gestionar imágenes y galerías multimedia de cada animal.
+- Actualizar el estado de los animales (en adopción, acogido, adoptado).
+- Visualizar el historial veterinario y los tratamientos médicos de cada animal.
+
+**2. Gestión de usuarios (`User`)**
+- Visualizar el listado de usuarios registrados en la plataforma.
+- Editar los datos personales de los usuarios.
+- Modificar el rol de un usuario (`user` o `admin`).
+- Eliminar usuarios cuando corresponda.
+
+**3. Gestión de formularios públicos**
+- Visualizar y gestionar solicitudes de adopción y acogida (`Animal_Request`).
+- Visualizar y gestionar solicitudes de voluntariado (`Volunteer_Request`).
+- Visualizar y gestionar mensajes de contacto general (`Contact_Message`).
+- Aceptar o rechazar solicitudes públicas.
+- Formalizar solicitudes aceptadas convirtiéndolas en registros definitivos (`Adoptions`, `Foster`, `User`).
+
+**4. Panel de estadísticas básicas**
+- Visualizar métricas relevantes para el funcionamiento del refugio, tales como:
+  - Número de animales activos.
+  - Número de adopciones completadas.
+  - Número de acogidas en curso.
+  - Número de solicitudes de voluntariado recibidas.
+- Presentación simple en forma de contadores o tablas informativas.
 
 ---
 
-## 📌 10. Gestión de errores y validaciones
-- Validaciones backend con Laravel
-- Validaciones frontend con Livewire/Alpine
-- Gestión de errores personalizados y redirecciones
+### Funcionalidades previstas para futuras versiones
 
+**5. Gestión de citas o visitas** (previsto para futuras versiones)
+- Visualizar solicitudes de citas para visitas al refugio.
+- Aprobar o rechazar las solicitudes de cita.
+- Gestionar la planificación de visitas de potenciales adoptantes o voluntarios.
+
+**6. Gestión de publicaciones (blog o noticias)** (previsto para futuras versiones)
+- Crear, editar y eliminar entradas del blog o noticias del refugio.
+- Publicar actualizaciones, eventos, campañas, historias de adopción.
+
+**7. Gestión de tienda solidaria (merchandising)** (previsto para futuras versiones)
+- Añadir, editar o eliminar productos disponibles en la tienda online.
+- Gestionar stock y categorías de productos solidarios.
 
 ---
 
-## Mejoras implementadas respecto al diseño previsto
+### Organización interna del panel
 
-Durante el desarrollo del sistema, y aprovechando el tiempo disponible antes de la entrega, se han llevado a cabo algunas funcionalidades adicionales que no estaban contempladas dentro del desarrollo mínimo indispensable. Estas mejoras complementan y enriquecen la experiencia general de la aplicación sin alterar la estructura definida en la Fase 2.
+- El panel de administración se estructurará en módulos o secciones independientes.
+- Cada módulo contará con un menú propio y un listado principal (index) para visualizar los registros existentes.
+- Desde cada listado se podrá acceder a formularios de creación, edición y gestión de registros relacionados.
+- El diseño priorizará la claridad, la accesibilidad rápida a cada área funcional y la escalabilidad futura.
 
-A continuación se listan las funcionalidades extra implementadas:
+---
 
-- **Sistema de gestión de citas o visitas**: Permite a los usuarios solicitar una cita para conocer un animal o visitar el refugio. El panel de administración incluye una sección para gestionar dichas solicitudes.
+## 8. Reutilización de componentes y mejoras visuales
 
-- **Blog o sección de noticias**: Página principal donde se publican novedades del refugio, historias de adopción o eventos.
+### Reutilización de componentes
 
-- **Historial público de adopciones realizadas**: Sección accesible desde el inicio con animales que ya han sido adoptados, incluyendo fecha y una breve historia si se desea.
+Siguiendo las mejores prácticas de desarrollo en Laravel y Livewire, la plataforma "El Refugio" se ha diseñado utilizando componentes reutilizables. Esto permite:
 
-- **Seguimiento de apadrinamientos activos**: Los usuarios padrinos pueden seguir el estado del animal apadrinado desde su perfil. Si el animal es adoptado, se les notifica para decidir si desean continuar colaborando.
+- **Modularidad**: Cada parte de la interfaz puede modificarse o ampliarse sin afectar a todo el sistema.
+- **Mantenibilidad**: El código es más fácil de entender, actualizar y depurar.
+- **Reutilización**: Los componentes pueden utilizarse en diferentes secciones de la web sin necesidad de reescribirlos.
+- **Escalabilidad**: A medida que el sistema crece, nuevos componentes pueden crearse o adaptar los existentes de forma sencilla.
+- **Reducir duplicación de código**.
+- **Facilitar el mantenimiento** y futuras modificaciones.
+- **Mejorar la escalabilidad** del sistema.
 
-- **Galería multimedia integrada**: Las fichas de los animales incluyen imágenes y vídeos adicionales para mejorar su presentación.
+Los componentes se utilizan tanto en la gestión interna como en la vista pública, proporcionando una interfaz coherente y modular.
 
-- **Sistema de seguimiento post-adopción**: Funcionalidad privada que permite al refugio contactar con los adoptantes y registrar información sobre la adaptación del animal.
+#### Componentes Livewire reutilizables implementados
 
-- **Tienda solidaria (merchandising)**: Funcionalidad para ofrecer productos solidarios desde la web. La gestión de productos se realiza desde el panel de administración.
+- **Tarjeta de animal (`AnimalCard`)**: Componente que muestra de forma estandarizada los datos principales de un animal (imagen, nombre, estado).
+- **Formulario de adopción/acogida (`AdoptionForm`, `FosterForm`)**: Componentes interactivos que permiten enviar solicitudes públicas sin necesidad de recargar la página.
+- **Formulario de voluntariado (`VolunteerForm`)**: Formulario dinámico para envío de solicitudes de voluntariado.
+- **Formulario de contacto (`ContactForm`)**: Para enviar mensajes al refugio de forma rápida y sencilla.
+- **Alertas y mensajes de estado (`Alert`)**: Componentes que informan visualmente al usuario del resultado de acciones (éxito, error, advertencia).
+- **Tablas dinámicas (`RequestTable`, `AnimalTable`)**: Listados editables de registros en el panel de administración.
 
-- **Panel de estadísticas para administración**: Sección visual con métricas relevantes como número de animales activos, adopciones realizadas, padrinos registrados, etc.
+Estos componentes se encuentran organizados dentro de `resources/views/livewire/` para las vistas y `app/Http/Livewire/` para la lógica del componente.
 
-- **Integración con redes sociales (prevista)**: Se ha estructurado la plataforma para permitir, en futuras versiones, la vinculación con redes sociales (como Instagram o Facebook) para facilitar la difusión del contenido.
+---
 
-- **Sistema de donaciones puntuales y recurrentes**: Módulo para permitir donaciones económicas al refugio, tanto únicas como periódicas. Vinculado opcionalmente al sistema de apadrinamiento.
+### Integración de Alpine.js para interacciones rápidas
 
-Estas funcionalidades, aunque no esenciales para el funcionamiento básico de la aplicación, aportan un gran valor añadido al sistema y enriquecen la experiencia de los usuarios y del personal del refugio.
+Alpine.js se utiliza como librería complementaria para añadir interactividad ligera en el frontend, permitiendo:
+
+- Mostrar y ocultar elementos de forma dinámica.
+- Manejar estados locales de componentes (por ejemplo, abrir o cerrar un modal).
+- Añadir transiciones suaves y efectos visuales sencillos sin recargar la página.
+
+Su uso es mínimo pero estratégico para mantener una experiencia de usuario ágil y fluida.
+
+---
+
+### Aplicación progresiva de estilos (opcional: Tailwind CSS)
+
+Para la parte visual, se plantea utilizar Tailwind CSS como framework de diseño en una fase de mejora futura. Esto permitiría:
+
+- Estilizar de forma rápida y consistente todos los componentes.
+- Reducir el tiempo de maquetación.
+- Facilitar el diseño responsive adaptable a dispositivos móviles.
+
+Actualmente, se mantienen estilos básicos personalizados. La integración completa de Tailwind CSS se considera como una mejora opcional para siguientes fases de refinamiento visual.
+
+---
+## 9. Gestión de errores y validaciones
+
+Una correcta gestión de errores y validaciones es fundamental para garantizar la fiabilidad, seguridad y buena experiencia de usuario dentro de la plataforma "El Refugio".
+
+### Validaciones en backend (Laravel)
+
+Las validaciones de datos en el servidor se realizan utilizando el sistema de validaciones nativo de Laravel. Esto garantiza que:
+
+- Los datos recibidos en los controladores o componentes cumplen los requisitos de formato, tipo y obligatoriedad.
+- Se aplican reglas como `required`, `email`, `numeric`, `min`, `max`, `string`, entre otras, dependiendo del tipo de campo.
+- Se protegen las operaciones críticas del sistema contra datos maliciosos o inconsistentes.
+
+Estas validaciones se aplican antes de procesar cualquier operación en base de datos o lógica de negocio, asegurando la integridad del sistema.
+
+---
+
+### Validaciones en frontend (Livewire y Alpine.js)
+
+En el lado del cliente, se utilizan Livewire y Alpine.js para:
+
+- Validar de forma inmediata la entrada de datos en los formularios (por ejemplo, comprobar si un campo obligatorio está vacío).
+- Mostrar mensajes de error dinámicos sin necesidad de recargar la página.
+- Mejorar la experiencia de usuario ofreciendo retroalimentación rápida sobre errores de validación.
+
+La combinación de Livewire y Alpine.js permite construir formularios reactivos, donde los errores se actualizan en tiempo real conforme el usuario completa los campos.
+
+---
+
+### Gestión de errores personalizados
+
+La aplicación contará con un sistema de manejo de errores personalizados para:
+
+- Capturar y mostrar errores específicos en las operaciones del panel de administración o en los formularios públicos.
+- Redireccionar adecuadamente al usuario en caso de error grave (por ejemplo, error 404 o acceso no autorizado).
+- Utilizar páginas de error personalizadas para una mejor experiencia de usuario.
+
+Cuando se produzca un error en una operación (por ejemplo, intento de acceder a una entidad inexistente), el sistema mostrará mensajes claros como:
+
+- "El animal solicitado no existe o ha sido eliminado."
+- "No tienes permisos suficientes para acceder a esta sección."
+- "Se ha producido un error al enviar tu solicitud. Inténtalo de nuevo más tarde."
+
+---
+
+### Redirecciones en caso de error
+
+En situaciones donde no se pueda completar una acción, se realizarán redirecciones amigables:
+
+- Volver al listado correspondiente (por ejemplo, lista de animales, lista de solicitudes).
+- Mostrar un mensaje de alerta o error en la vista de destino.
+- Mantener los datos del formulario en caso de fallo, permitiendo corregir errores sin tener que reescribir toda la información.
+
+---
+
+### Objetivos de la estrategia de validación y gestión de errores
+
+- **Seguridad**: impedir la entrada de datos no válidos o maliciosos.
+- **Fiabilidad**: garantizar que las operaciones del sistema se realizan solo con datos válidos.
+- **Accesibilidad**: informar adecuadamente al usuario en caso de error, sin causar frustración.
+- **Mantenibilidad**: centralizar la lógica de validación y errores para facilitar futuras ampliaciones o cambios.
+
+---
+
+## Resumen de la Fase 3: Estado de Funcionalidades
+
+A continuación se presenta un resumen del estado actual de las funcionalidades desarrolladas en esta fase:
+
+### Funcionalidades implementadas
+
+- **Gestión de animales:** CRUD completo, gestión de imágenes, búsqueda y filtros.
+- **Gestión de usuarios:** Registro, login, roles, verificación de correo, gestión de perfil.
+- **Gestión de acogidas:** Solicitud pública, gestión de estados, cierre automático por adopción.
+- **Gestión de adopciones:** Flujo de acogida previa, formalización de adopciones.
+- **Historial veterinario:** Registro de eventos médicos y tratamientos prolongados.
+- **Gestión de formularios públicos:** Adopciones, acogidas, voluntariado y contacto organizados en entidades separadas.
+- **Panel de administración:** Módulos funcionales para animales, usuarios, solicitudes públicas y estadísticas básicas.
+- **Reutilización de componentes:** Implementación de componentes Livewire y Alpine.js.
+- **Gestión de errores y validaciones:** Validaciones backend y frontend, errores personalizados y redirecciones amigables.
+
+### Funcionalidades previstas para futuras versiones
+
+- Gestión de citas o visitas al refugio.
+- Gestión de publicaciones (blog o noticias).
+- Gestión de tienda solidaria (merchandising).
+- Ampliación del panel de estadísticas con métricas avanzadas.
+- Integración de Tailwind CSS para mejora visual progresiva.
+- Sistema de donaciones económicas online.
