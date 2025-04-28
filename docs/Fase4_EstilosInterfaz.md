@@ -1,6 +1,6 @@
 # Fase 4 – Interfaz y diseño visual
 
-## 🧩 1. Aplicación de guía de estilos
+## 1. Aplicación de guía de estilos
 
 - Tipografías, paleta de colores y tamaños definidos en la guía del proyecto.
 - Implementación de un sistema de clases reutilizables (por ejemplo, con Tailwind o CSS modular).
@@ -8,7 +8,7 @@
 
 ---
 
-## 📐 2. Maquetación responsiva
+## 2. Maquetación responsiva
 
 - Adaptación del diseño a dispositivos móviles, tablets y escritorio.
 - Uso de media queries o clases responsive si se usa Tailwind.
@@ -16,7 +16,7 @@
 
 ---
 
-## 🧠 3. Experiencia de usuario (UX)
+## 3. Experiencia de usuario (UX)
 
 - Ubicación lógica y accesible de elementos importantes (botones, formularios, enlaces...).
 - Visibilidad del estado del sistema (mensajes de éxito, error, carga...).
@@ -24,7 +24,7 @@
 
 ---
 
-## 🧰 4. Componentes visuales reutilizables
+## 4. Componentes visuales reutilizables
 
 - Creación de partials para menús, headers, footers y formularios comunes.
 - Diseño de componentes UI como tarjetas de animal, formularios, botones y alerts.
@@ -32,7 +32,7 @@
 
 ---
 
-## 🌙 5. Modo oscuro (opcional)
+## 5. Modo oscuro (opcional)
 
 - Diseño de una versión dark mode con colores alternativos.
 - Activación por botón o preferencia del sistema operativo.
@@ -40,7 +40,7 @@
 
 ---
 
-## 🖼 6. Imágenes y contenido multimedia
+## 6. Imágenes y contenido multimedia
 
 - Integración de imágenes en fichas de animales.
 - Optimización del tamaño de imágenes para mejorar la carga.
@@ -48,7 +48,7 @@
 
 ---
 
-## 💬 7. Accesibilidad y legibilidad
+## 7. Accesibilidad y legibilidad
 
 - Contrastes correctos para texto sobre fondo.
 - Uso de etiquetas semánticas (`<label>`, `<nav>`, `<section>`, etc.).
@@ -56,7 +56,7 @@
 
 ---
 
-## 🧪 8. Pruebas visuales
+## 8. Pruebas visuales
 
 - Revisión manual de todas las vistas en diferentes dispositivos y navegadores.
 - Validación de que la interfaz sea coherente en cada sección del sistema.
