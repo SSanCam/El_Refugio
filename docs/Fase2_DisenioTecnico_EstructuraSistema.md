@@ -151,6 +151,21 @@ El sistema estará compuesto por entidades como `User`, `Animal`, `Adoptions`, `
 ### Diagrama Entidad-Relación
 Preparar un esquema gráfico que represente todas las entidades y sus relaciones, como apoyo visual al modelo físico de base de datos.
 
+### Estrategia de archivado histórico
+
+Para garantizar el rendimiento, la escalabilidad y la conservación segura de los datos, se ha definido una estrategia de mantenimiento periódico que separa los datos operativos actuales de aquellos registros que ya están cerrados.
+
+Dado que entidades como `Foster`, `Adoptions` o `Sponsorship` representan procesos que pueden finalizar (por ejemplo, cuando un animal es adoptado, finaliza una acogida o se cierra un apadrinamiento), no es necesario que estos registros permanezcan indefinidamente en la base de datos principal una vez han concluido.
+
+Por ello, se ha creado una **base de datos secundaria** llamada `refugio_archivo`, destinada exclusivamente a almacenar registros históricos. Esta base de datos permite liberar la carga de la base activa sin perder información relevante para seguimiento, auditoría o análisis posteriores.
+
+- Un **comando programado (cron job o tarea Laravel)** se ejecutará **mensualmente**, detectando los registros marcados como finalizados mediante campos como `status` (`finished`, `cancelled`) o fechas como `end_date` o `adoption_date`.
+- Estos registros serán **copiados a la base de datos de archivo**, y posteriormente **eliminados de la base principal** para mantenerla optimizada.
+- Esta operación estará **limitada a usuarios con rol de administrador**, garantizando seguridad y trazabilidad.
+- La base de datos de archivo quedará accesible exclusivamente desde el sistema interno, con permisos restringidos, para consultas administrativas, legales o estadísticas.
+
+Esta estrategia permite **preservar todo el historial del refugio** de forma segura, a la vez que mantiene el sistema principal **ágil, ordenado y eficiente**.
+
 ---
 
 ## 3. Arquitectura del Sistema
