@@ -11,24 +11,31 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Tabla principal de usuarios registrados en el sistema.
+        // Incluye campos básicos como nombre, email, contraseña, teléfono y dirección.
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone')->nullable(); // Añadir phone
-            $table->string('address')->nullable(); // Añadir address
+            $table->string('phone')->nullable(); 
+            $table->string('address')->nullable(); 
             $table->rememberToken();
             $table->timestamps();
         });
 
+        // Tabla utilizada para almacenar tokens temporales
+        // durante el proceso de recuperación de contraseña.
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // Tabla que almacena la información de las sesiones activas de los usuarios
+        // si se utiliza SESSION_DRIVER=database en el archivo .env.
+        // Incluye datos como la IP, el navegador y el contenido de la sesión serializado.
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

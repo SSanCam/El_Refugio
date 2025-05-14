@@ -30,7 +30,12 @@ return [
     */
 
     'connections' => [
-
+         /*
+        |--------------------------------------------------------------------------
+        | Conexión principal: Base de datos del Refugio
+        |--------------------------------------------------------------------------
+        |
+        */
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
@@ -40,6 +45,37 @@ return [
             'busy_timeout' => null,
             'journal_mode' => null,
             'synchronous' => null,
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Conexión secundaria: Base de datos de archivo
+        |--------------------------------------------------------------------------
+        |
+        | Esta conexión está diseñada para interactuar con una segunda base de datos
+        | llamada "refugio_archivo", que almacena los registros históricos del sistema.
+        | Se utiliza para mover periódicamente los datos cerrados (como adopciones,
+        | acogidas o apadrinamientos finalizados) desde la base de datos activa
+        | a una estructura paralela, aliviando así la carga de la base operativa
+        | sin perder el historial del refugio.
+        |
+        | Esta conexión se utilizará de forma específica en tareas programadas
+        | o desde controladores de administración para acceder a los datos archivados.
+        |
+        */
+
+        'archive' => [
+            'driver' => env('DB_ARCHIVE_CONNECTION', 'mysql'),
+            'host' => env('DB_ARCHIVE_HOST', '127.0.0.1'),
+            'port' => env('DB_ARCHIVE_PORT', '3306'),
+            'database' => env('DB_ARCHIVE_DATABASE', 'refugio_archivo'),
+            'username' => env('DB_ARCHIVE_USERNAME', 'root'),
+            'password' => env('DB_ARCHIVE_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
         ],
 
         'mysql' => [
@@ -147,7 +183,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
             'persistent' => env('REDIS_PERSISTENT', false),
         ],
 
