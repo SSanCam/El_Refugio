@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('animal_medications', function (Blueprint $table) {
-            $table->id(); // ID primario del tratamiento
-            $table->foreignId('animal_id')->constrained('animals')->onDelete('cascade'); // Animal asociado
-            $table->string('medication'); // Nombre del medicamento
-            $table->string('dosage'); // Dosis administrada
-            $table->string('frequency'); // Frecuencia del tratamiento (diaria, semanal, etc.)
-            $table->date('start_date'); // Fecha de inicio
-            $table->date('end_date')->nullable(); // Fecha de finalización (opcional)
-            $table->text('description')->nullable(); // Descripción adicional (opcional)
-            $table->timestamps(); // created_at y updated_at
+            $table->id();
+            $table->foreignId('animal_id')->constrained('animals');
+            $table->string('medication');
+            $table->string('dosage');
+            $table->string('frequency');
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->text('description')->nullable();
+            $table->timestamps();
         });
     }
 

@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('contact_requests', function (Blueprint $table) {
-            $table->id(); // ID primario del mensaje de contacto
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // Usuario registrado (opcional)
-            $table->string('email'); // Correo electrónico de contacto
-            $table->string('phone')->nullable(); // Teléfono (opcional)
-            $table->string('subject'); // Asunto del mensaje
-            $table->text('message'); // Contenido del mensaje
-            $table->string('status'); // Estado del mensaje (pending, reviewed, archived)
-            $table->text('admin_notes')->nullable(); // Notas internas (opcional)
-            $table->timestamps(); // created_at y updated_at
+            $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('email');
+            $table->string('phone')->nullable();
+            $table->string('subject');
+            $table->text('message');
+            $table->string('status');
+            $table->text('admin_notes')->nullable();
+            $table->timestamps();
         });
     }
 
