@@ -30,21 +30,24 @@ Además, se pretende que la plataforma ofrezca una experiencia más clara y orga
 
 ## ⚙️ Tecnologías previstas
 
-- **Framework**: Laravel con Blade
+- **Framework backend**: Laravel (PHP 8+) con motor de plantillas **Blade**
 - **Tecnología basada en componentes**: Livewire (librería nativa de Laravel)
-- **Base de datos**: MySQL
-- **Servidor Web**: Apache (en XAMPP para desarrollo)
-- **Framework backend**: Laravel (PHP 8+)
-- **Motor de plantillas**: Blade
 - **Frontend interactivo**:  
-  - **Livewire** - Libreria nativa de Laravel
-  - **Alpine.js** 
-- **Base de datos**: MySQL (gestionada con phpMyAdmin en XAMPP)
-- **Servidor Web**: Apache (entorno local con XAMPP)
-- **Gestión de dependencias**: Composer
-- **Control de versiones**: Git + GitHub
-- **IDE**: Visual Studio Code
-- **Contenerización (opcional)**: Docker
+  - **Livewire**  
+  - **Alpine.js**
+
+- **Base de datos**: MySQL  
+  - En desarrollo: gestionada localmente con **phpMyAdmin** en **XAMPP**  
+  - En producción/despliegue: alojada en la nube mediante **[Railway](https://railway.app)**
+
+- **Servidor Web**:  
+  - Local: **Apache** mediante **XAMPP**  
+  - Producción: compatible con servicios como **Render**
+
+- **Gestión de dependencias**: Composer  
+- **Contenerización (opcional)**: Docker  
+- **Control de versiones**: Git + GitHub  
+- **IDE principal**: Visual Studio Code
 
 ---
 
