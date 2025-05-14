@@ -24,6 +24,7 @@ class User extends Authenticatable
 
     /**
      * Atributos que deben ocultarse cuando el modelo se convierte a array o JSON.
+     * Atributos que deben ser ocultados cuando el modelo se convierte en array o JSON.
      */
     protected $hidden = [
         'password',
@@ -36,4 +37,35 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    /**
+     * Relación con el modelo Adopción.
+     */
+    public function adoptions()
+    {
+        return $this->hasMany(Adoption::class);
+    }
+
+    /**
+     * Relación con el modelo Acogida.
+     */
+    public function fosters()
+    {
+        return $this->hasMany(Foster::class);
+    }
+
+    /**
+     * Relación con el modelo Apadrinamiento.
+     */
+    public function sponsorships()
+    {
+        return $this->hasMany(Sponsorship::class);
+    }
 }
