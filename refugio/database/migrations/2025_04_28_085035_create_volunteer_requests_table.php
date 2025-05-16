@@ -8,6 +8,7 @@ return new class extends Migration
 {
     /**
      * Ejecuta la migración para crear la tabla 'volunteer_requests'.
+     * Ejecuta la migración para crear la tabla de solicitudes de voluntariado.
      */
     public function up(): void
     {
