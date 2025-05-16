@@ -13,18 +13,14 @@ return new class extends Migration
     {
         Schema::create('animal_requests', function (Blueprint $table) {
             $table->id();
-            $table->string('type'); // Tipo de solicitud: 'adoption' o 'foster'
             $table->enum('type', ['adoption', 'foster']);
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email');
             $table->string('phone')->nullable();
             $table->string('address');
-            $table->foreignId('animal_id')->nullable()->constrained('animals');
             $table->text('message');
-            $table->string('status');
             $table->foreignId('animal_id')->nullable()->constrained('animals')->nullOnDelete();
-            $table->text('message');
             $table->enum('status', ['pending', 'reviewed', 'accepted', 'rejected']);
             $table->text('admin_notes')->nullable();
             $table->timestamps();
