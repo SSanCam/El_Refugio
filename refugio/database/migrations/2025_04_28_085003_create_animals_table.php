@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear la tabla 'animals'.
      */
     public function up(): void
     {
@@ -21,6 +21,10 @@ return new class extends Migration
             $table->string('size');
             $table->float('weight')->nullable();
             $table->string('status');
+            $table->enum('sex', ['male', 'female', 'unknown']);
+            $table->string('size');
+            $table->float('weight')->nullable();
+            $table->enum('status', ['available', 'adopted', 'fostered', 'sponsored']);
             $table->string('microchip')->nullable();
             $table->text('description')->nullable();
             $table->string('image')->nullable();
@@ -29,7 +33,7 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración eliminando la tabla 'animals'.
      */
     public function down(): void
     {

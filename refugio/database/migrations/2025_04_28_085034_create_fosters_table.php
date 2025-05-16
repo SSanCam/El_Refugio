@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear la tabla 'fosters'.
      */
     public function up(): void
     {
@@ -18,13 +18,14 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->string('status');
+            $table->enum('status', ['pending', 'fostering', 'finished']);
             $table->text('comments')->nullable();
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración eliminando la tabla 'fosters'.
      */
     public function down(): void
     {
