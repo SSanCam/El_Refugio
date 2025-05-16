@@ -7,26 +7,26 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear la tabla 'volunteer_requests'.
      */
     public function up(): void
     {
         Schema::create('volunteer_requests', function (Blueprint $table) {
-            $table->id(); // ID primario de la solicitud de voluntariado
-            $table->string('first_name'); // Nombre del solicitante
-            $table->string('last_name'); // Apellidos del solicitante
-            $table->string('email'); // Correo electrónico
-            $table->string('phone')->nullable(); // Teléfono (opcional)
-            $table->string('availability'); // Disponibilidad horaria
-            $table->text('motivation'); // Motivación para ser voluntario
-            $table->string('status'); // Estado de la solicitud (pending, reviewed, accepted, rejected)
-            $table->text('admin_notes')->nullable(); // Notas internas (opcional)
-            $table->timestamps(); // created_at y updated_at
+            $table->id();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('email');
+            $table->string('phone')->nullable();
+            $table->string('availability');
+            $table->text('motivation');
+            $table->enum('status', ['pending', 'reviewed', 'accepted', 'rejected']);
+            $table->text('admin_notes')->nullable();
+            $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración eliminando la tabla 'volunteer_requests'.
      */
     public function down(): void
     {
