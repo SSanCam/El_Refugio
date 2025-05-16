@@ -7,28 +7,28 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear la tabla de solicitudes de animales.
      */
     public function up(): void
     {
         Schema::create('animal_requests', function (Blueprint $table) {
-            $table->id(); // ID primario de la solicitud
-            $table->string('type'); // Tipo de solicitud (adoption o foster)
-            $table->string('first_name'); // Nombre del solicitante
-            $table->string('last_name'); // Apellidos del solicitante
-            $table->string('email'); // Correo electrónico
-            $table->string('phone')->nullable(); // Teléfono (opcional)
-            $table->string('address'); // Dirección del solicitante
-            $table->foreignId('animal_id')->nullable()->constrained('animals')->onDelete('set null'); // Animal relacionado (opcional)
-            $table->text('message'); // Mensaje del solicitante
-            $table->string('status'); // Estado de la solicitud (pending, reviewed, accepted, rejected)
-            $table->text('admin_notes')->nullable(); // Observaciones internas (opcional)
-            $table->timestamps(); // created_at y updated_at
+            $table->id();
+            $table->string('type');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('email');
+            $table->string('phone')->nullable();
+            $table->string('address');
+            $table->foreignId('animal_id')->nullable()->constrained('animals');
+            $table->text('message');
+            $table->string('status');
+            $table->text('admin_notes')->nullable();
+            $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración eliminando la tabla de solicitudes de animales.
      */
     public function down(): void
     {
