@@ -17,12 +17,8 @@ return new class extends Migration
             $table->string('species');
             $table->string('breed')->nullable();
             $table->integer('age');
-            $table->string('sex');
-            $table->string('size');
-            $table->float('weight')->nullable();
-            $table->string('status');
+            $table->enum('size', ['small', 'medium', 'large']);
             $table->enum('sex', ['male', 'female', 'unknown']);
-            $table->string('size');
             $table->float('weight')->nullable();
             $table->enum('status', ['available', 'adopted', 'fostered', 'sponsored']);
             $table->string('microchip')->nullable();
