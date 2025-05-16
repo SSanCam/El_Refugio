@@ -7,25 +7,25 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear la tabla 'contact_requests'.
      */
     public function up(): void
     {
         Schema::create('contact_requests', function (Blueprint $table) {
-            $table->id(); // ID primario del mensaje de contacto
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // Usuario registrado (opcional)
-            $table->string('email'); // Correo electrónico de contacto
-            $table->string('phone')->nullable(); // Teléfono (opcional)
-            $table->string('subject'); // Asunto del mensaje
-            $table->text('message'); // Contenido del mensaje
-            $table->string('status'); // Estado del mensaje (pending, reviewed, archived)
-            $table->text('admin_notes')->nullable(); // Notas internas (opcional)
-            $table->timestamps(); // created_at y updated_at
+            $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('email');
+            $table->string('phone')->nullable();
+            $table->string('subject');
+            $table->text('message');
+            $table->enum('status', ['pending', 'reviewed', 'archived']);
+            $table->text('admin_notes')->nullable();
+            $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración eliminando la tabla 'contact_requests'.
      */
     public function down(): void
     {

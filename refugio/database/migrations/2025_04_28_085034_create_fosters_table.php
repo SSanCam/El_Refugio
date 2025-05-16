@@ -7,24 +7,24 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear la tabla 'fosters'.
      */
     public function up(): void
     {
         Schema::create('fosters', function (Blueprint $table) {
-            $table->id(); // ID primario de la acogida
-            $table->foreignId('animal_id')->constrained('animals')->onDelete('cascade'); // Animal acogido
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Usuario acogedor
-            $table->date('start_date'); // Fecha de inicio de acogida
-            $table->date('end_date')->nullable(); // Fecha de finalización (opcional)
-            $table->string('status'); // Estado de la acogida (pending, fostering, finished)
-            $table->text('comments')->nullable(); // Comentarios internos (opcional)
-            $table->timestamps(); // created_at y updated_at
+            $table->id();
+            $table->foreignId('animal_id')->constrained('animals');
+            $table->foreignId('user_id')->constrained('users');
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->enum('status', ['pending', 'fostering', 'finished']);
+            $table->text('comments')->nullable();
+            $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración eliminando la tabla 'fosters'.
      */
     public function down(): void
     {
