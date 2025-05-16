@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('subject');
             $table->text('message');
-            $table->string('status');
+            $table->enum('status', ['pending', 'reviewed', 'archived']);
             $table->text('admin_notes')->nullable();
             $table->timestamps();
         });

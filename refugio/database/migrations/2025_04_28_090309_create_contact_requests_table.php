@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('contact_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('email');
             $table->string('phone')->nullable();
             $table->string('subject');
             $table->text('message');
-            $table->string('status');
             $table->enum('status', ['pending', 'reviewed', 'archived']);
             $table->text('admin_notes')->nullable();
             $table->timestamps();
