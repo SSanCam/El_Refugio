@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Ejecuta la migración para crear la tabla 'volunteer_requests'.
      * Ejecuta la migración para crear la tabla de solicitudes de voluntariado.
      */
     public function up(): void
@@ -20,7 +19,6 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('availability');
             $table->text('motivation');
-            $table->string('status');
             $table->enum('status', ['pending', 'reviewed', 'accepted', 'rejected']);
             $table->text('admin_notes')->nullable();
             $table->timestamps();

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->date('start_date');
             $table->date('end_date')->nullable();
-            $table->string('status');
             $table->enum('status', ['pending', 'fostering', 'finished']);
             $table->text('comments')->nullable();
             $table->timestamps();
