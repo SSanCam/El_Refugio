@@ -7,18 +7,17 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Ejecuta la migración para crear la tabla de solicitudes de voluntariado.
+     * Ejecuta la migración para crear la tabla de mensajes de contacto.
      */
     public function up(): void
     {
-        Schema::create('volunteer_requests', function (Blueprint $table) {
+        Schema::create('contact_messages', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->foreignId('user_id')->nullable()->constrained('users');
             $table->string('email');
             $table->string('phone')->nullable();
-            $table->string('availability');
-            $table->text('motivation');
+            $table->string('subject');
+            $table->text('message');
             $table->string('status');
             $table->text('admin_notes')->nullable();
             $table->timestamps();
@@ -26,10 +25,10 @@ return new class extends Migration
     }
 
     /**
-     * Revierte la migración eliminando la tabla de solicitudes de voluntariado.
+     * Revierte la migración eliminando la tabla de mensajes de contacto.
      */
     public function down(): void
     {
-        Schema::dropIfExists('volunteer_requests');
+        Schema::dropIfExists('contact_messages');
     }
 };

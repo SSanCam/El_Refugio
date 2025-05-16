@@ -7,23 +7,23 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear la tabla de historial veterinario.
      */
     public function up(): void
     {
         Schema::create('veterinary_histories', function (Blueprint $table) {
-            $table->id(); // ID primario del evento médico
-            $table->foreignId('animal_id')->constrained('animals')->onDelete('cascade'); // Animal asociado
-            $table->string('treatment_type'); // Tipo de tratamiento (vacunación, cirugía, etc.)
-            $table->date('treatment_date'); // Fecha del tratamiento
-            $table->text('description'); // Descripción detallada del tratamiento
-            $table->text('observations')->nullable(); // Observaciones adicionales (opcional)
-            $table->timestamps(); // created_at y updated_at
+            $table->id();
+            $table->foreignId('animal_id')->constrained('animals');
+            $table->string('treatment_type');
+            $table->date('treatment_date');
+            $table->text('description');
+            $table->text('observations')->nullable();
+            $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración eliminando la tabla de historial veterinario.
      */
     public function down(): void
     {
