@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Ejecuta la migración para crear las tablas relacionadas con usuarios.
      */
     public function up(): void
     {
@@ -47,7 +47,7 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Revierte la migración eliminando las tablas relacionadas con usuarios.
      */
     public function down(): void
     {
