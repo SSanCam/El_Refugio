@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('address');
             $table->text('message');
             $table->foreignId('animal_id')->nullable()->constrained('animals')->nullOnDelete();
-            $table->enum('status', ['pending', 'reviewed', 'accepted', 'rejected']);
+            $table->enum('status', ['pending', 'approved', 'rejected', 'canceled']);
             $table->text('admin_notes')->nullable();
             $table->timestamps();
         });
