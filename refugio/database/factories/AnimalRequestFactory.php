@@ -18,7 +18,7 @@ class AnimalRequestFactory extends Factory
     public function definition(): array
     {
         $type = fake()->randomElement(['adoption', 'foster']);
-        $status = fake()->randomElement(['pending', 'reviewed', 'accepted', 'rejected']);
+        $status = fake()->randomElement(['pending', 'approved', 'rejected', 'canceled']);
 
         return [
             'type' => $type,

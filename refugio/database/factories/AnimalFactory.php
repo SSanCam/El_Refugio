@@ -18,7 +18,7 @@ class AnimalFactory extends Factory
     public function definition(): array
     {
         // Estados posibles del animal
-        $statuses = ['intake', 'sheltered', 'available', 'adopted', 'fostered', 'sponsored'];
+        $statuses = ['intake', 'sheltered', 'available', 'adopted', 'fostered', 'sponsored', 'deceased'];
         $status = fake()->randomElement($statuses);
 
         return [
