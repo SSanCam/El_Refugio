@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FosterRequest extends Model
+class AnimalRequest extends Model
 {
     use HasFactory;
 
-    protected $table = 'animal_requests';
-
+    /**
+     * Atributos que pueden asignarse de forma masiva.
+     */
     protected $fillable = [
         'type',
         'first_name',
@@ -18,19 +19,17 @@ class FosterRequest extends Model
         'email',
         'phone',
         'address',
-        'animal_id',
         'message',
+        'animal_id',
         'status',
         'admin_notes',
     ];
 
+    /**
+     * Relación con el modelo Animal (opcional).
+     */
     public function animal()
     {
         return $this->belongsTo(Animal::class);
     }
-
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
 }
