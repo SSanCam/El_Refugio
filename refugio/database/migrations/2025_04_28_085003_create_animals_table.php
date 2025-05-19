@@ -20,10 +20,11 @@ return new class extends Migration
             $table->enum('size', ['small', 'medium', 'large']);
             $table->enum('sex', ['male', 'female', 'unknown']);
             $table->float('weight')->nullable();
-            $table->enum('status', ['available', 'adopted', 'fostered', 'sponsored']);
+            $table->enum('status', ['available', 'adopted', 'fostered', 'sponsored', 'sheltered', 'intake']);
             $table->string('microchip')->nullable();
             $table->text('description')->nullable();
             $table->string('image')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
     }
