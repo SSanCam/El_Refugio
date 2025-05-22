@@ -24,8 +24,14 @@ return new class extends Migration
             $table->string('microchip')->nullable();
             $table->text('description')->nullable();
             $table->string('image')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
+        });
+
+        // Definimos la clave foránea después, para evitar posibles conflictos
+        Schema::table('animals', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('id')->on('animals')->onDelete('set null');
         });
     }
 
