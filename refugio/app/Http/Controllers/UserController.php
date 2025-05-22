@@ -4,18 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ * Controlador para gestionar los usuarios del sistema.
+ * Incluye operaciones básicas CRUD, gestión administrativa,
+ * funcionalidades del perfil de usuario y seguridad.
+ */
 class UserController extends Controller
 {
+    // CRUD básico para la gestión de usuarios
+
     /**
-     * Display a listing of the resource.
+     * Muestra un listado de todos los usuarios registrados.
+     * @return void
      */
     public function index()
     {
-        //
+        $users = \App\Models\User::paginate(10);
+        return view('users.index', compact('users'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Muestra el formulario para crear un nuevo usuario.
+     * @return void
      */
     public function create()
     {
@@ -23,7 +33,9 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo usuario en la base de datos.
+     * @param Request $request
+     * @return void
      */
     public function store(Request $request)
     {
@@ -31,7 +43,9 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Muestra los detalles de un usuario específico.
+     * @param string $id
+     * @return void
      */
     public function show(string $id)
     {
@@ -39,7 +53,9 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Muestra el formulario para editar un usuario.
+     * @param string $id
+     * @return void
      */
     public function edit(string $id)
     {
@@ -47,7 +63,10 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza los datos de un usuario existente.
+     * @param Request $request
+     * @param string $id
+     * @return void
      */
     public function update(Request $request, string $id)
     {
@@ -55,9 +74,163 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un usuario del sistema.
+     * @param string $id
+     * @return void
      */
     public function destroy(string $id)
+    {
+        //
+    }
+
+    // Funcionalidades de gestión administrativa de usuarios
+
+    /**
+     * Asigna o modifica el rol de un usuario.
+     * @param Request $request
+     * @param string $id
+     * @return void
+     */
+    public function assignRole(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Activa una cuenta de usuario.
+     * @param string $id
+     * @return void
+     */
+    public function activateUser(string $id)
+    {
+        //
+    }
+
+    /**
+     * Desactiva una cuenta de usuario.
+     * @param string $id
+     * @return void
+     */
+    public function deactivateUser(string $id)
+    {
+        //
+    }
+
+    // Funciones del perfil del usuario autenticado
+
+    /**
+     * Muestra el perfil del usuario autenticado.
+     * @return void
+     */
+    public function showProfile()
+    {
+        //
+    }
+
+    /**
+     * Actualiza el perfil del usuario autenticado.
+     * @param Request $request
+     * @return void
+     */
+    public function updateProfile(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Muestra las adopciones del usuario autenticado.
+     * @return void
+     */
+    public function myAdoptions()
+    {
+        //
+    }
+
+    /**
+     * Muestra las acogidas del usuario autenticado.
+     * @return void
+     */
+    public function myFosters()
+    {
+        //
+    }
+
+    /**
+     * Muestra los apadrinamientos del usuario autenticado.
+     * @return void
+     */
+    public function mySponsorships()
+    {
+        //
+    }
+
+    /**
+     * Solicita la eliminación de la cuenta del usuario autenticado.
+     * @return void
+     */
+    public function requestAccountDeletion()
+    {
+        //
+    }
+
+    // Funcionalidades de seguridad
+
+    /**
+     * Cambia la contraseña del usuario autenticado.
+     * @param Request $request
+     * @return void
+     */
+    public function changePassword(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Restablece la contraseña de un usuario.
+     * @param Request $request
+     * @return void
+     */
+    public function resetPassword(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Envía un enlace de restablecimiento de contraseña.
+     * @param Request $request
+     * @return void
+     */
+    public function sendPasswordResetLink(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Verifica el correo electrónico del usuario.
+     * @param Request $request
+     * @return void
+     */
+    public function verifyEmail(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Reenvía el correo de verificación al usuario.
+     * @param Request $request
+     * @return void
+     */
+    public function resendVerificationEmail(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Verifica la contraseña actual antes de cambios sensibles.
+     * @param Request $request
+     * @return void
+     */
+    public function confirmCurrentPassword(Request $request)
     {
         //
     }
