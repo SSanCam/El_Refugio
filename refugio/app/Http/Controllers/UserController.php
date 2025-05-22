@@ -14,32 +14,51 @@ class UserController extends Controller
     // CRUD básico para la gestión de usuarios
 
     /**
-     * Muestra un listado paginado de usuarios, con filtro por nombre y email.
+     * Muestra un listado paginado de usuarios, con filtro por nombre, email
+     * y relaciones (adopciones, acogidas, apadrinamientos).
+     * 
      * @param Request $request
      * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
-        // Validación de filtros
+        // Validación de campos de búsqueda
         $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
+            'has_adoptions' => 'nullable|boolean',
+            'has_fosters' => 'nullable|boolean',
+            'has_sponsorships' => 'nullable|boolean',
         ]);
 
-        // Construcción de la consulta con filtros
+        // Inicio de la consulta base
         $query = \App\Models\User::query();
 
+        // Filtro por nombre
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->input('name') . '%');
         }
-
+        // Filtro por email
         if ($request->filled('email')) {
             $query->where('email', 'like', '%' . $request->input('email') . '%');
         }
+        // Filtros por relaciones
+        if ($request->boolean('has_adoptions')) {
+            $query->whereHas('adoptions');
+        }
 
-        // Paginación con mantenimiento de filtros
+        if ($request->boolean('has_fosters')) {
+            $query->whereHas('fosters');
+        }
+
+        if ($request->boolean('has_sponsorships')) {
+            $query->whereHas('sponsorships');
+        }
+
+        // Paginación manteniendo los filtros activos en la URL
         $users = $query->paginate(10)->withQueryString();
 
+        // Retorno de la vista con los datos filtrados
         return view('user.index', compact('users'));
     }
 
