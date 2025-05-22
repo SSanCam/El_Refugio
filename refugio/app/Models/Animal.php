@@ -65,4 +65,18 @@ class Animal extends Model
     {
         return $this->hasMany(Sponsorship::class);
     }
+
+    // Animal del que proviene (ej. madre/padre)
+    public function parent()
+    {
+        return $this->belongsTo(Animal::class, 'parent_id');
+    }
+
+    // Animales que tienen a este como referente (cachorros)
+    public function offspring()
+    {
+        return $this->hasMany(Animal::class, 'parent_id');
+    }
+
+
 }
