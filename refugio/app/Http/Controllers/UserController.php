@@ -14,13 +14,33 @@ class UserController extends Controller
     // CRUD básico para la gestión de usuarios
 
     /**
-     * Muestra un listado de todos los usuarios registrados.
-     * @return void
+     * Muestra un listado paginado de usuarios, con filtro por nombre y email.
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = \App\Models\User::paginate(10);
-        return view('users.index', compact('users'));
+        // Validación de filtros
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+        ]);
+
+        // Construcción de la consulta con filtros
+        $query = \App\Models\User::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        }
+
+        // Paginación con mantenimiento de filtros
+        $users = $query->paginate(10)->withQueryString();
+
+        return view('user.index', compact('users'));
     }
 
     /**
