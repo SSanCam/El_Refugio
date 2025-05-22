@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 /**
  * Controlador para gestionar los usuarios del sistema.
  * Incluye operaciones básicas CRUD, gestión administrativa,
@@ -68,7 +68,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.user.create');
     }
 
     /**
@@ -78,7 +78,30 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validación de los datos del formulario
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'nullable|in:user,admin',
+            'phone' => 'nullable|string|max:20',
+            'dni' => 'nullable|string|max:20',
+            'active' => 'nullable|boolean',
+        ]);
+
+        // Creación del nuevo usuario
+        $user = \App\Models\User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+            'role' => $request->input('role'),
+            'phone' => $request->input('phone'),
+            'dni' => $request->input('dni'),
+            'active' => $request->boolean('active')
+        ]);
+
+        // Redirección con mensaje de éxito
+        return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
     }
 
     /**
