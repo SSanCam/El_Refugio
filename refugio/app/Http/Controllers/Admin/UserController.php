@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Controlador para gestionar los usuarios del sistema.
@@ -18,8 +19,8 @@ class UserController extends Controller
      * Muestra un listado paginado de usuarios, con filtro por nombre, email
      * y relaciones (adopciones, acogidas, apadrinamientos).
      * 
-     * @param Request $request
-     * @return \Illuminate\View\View
+     * @param Request $request Solicitud HTTP con los parámetros de búsqueda.
+     * @return \Illuminate\View\View Vista del listado de usuarios.
      */
     public function index(Request $request)
     {
@@ -27,9 +28,11 @@ class UserController extends Controller
         $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
+            'role' => 'nullable|in:user,admin',
             'has_adoptions' => 'nullable|boolean',
             'has_fosters' => 'nullable|boolean',
             'has_sponsorships' => 'nullable|boolean',
+            
         ]);
 
         // Inicio de la consulta base
@@ -56,6 +59,10 @@ class UserController extends Controller
             $query->whereHas('sponsorships');
         }
 
+        if($request->filled('role')) {
+            $query->where('role', $request->input('role'));
+        }
+
         // Paginación manteniendo los filtros activos en la URL
         $users = $query->paginate(10)->withQueryString();
 
@@ -65,21 +72,20 @@ class UserController extends Controller
 
     /**
      * Muestra el formulario para crear un nuevo usuario.
-     * @return void
+     * @return \Illuminate\View\View Vista del formulario de creación de usuario.
      */
     public function create()
     {
         return view('admin.user.create');
     }
 
-    /**
-     * Almacena un nuevo usuario en la base de datos.
-     * @param Request $request
-     * @return void
-     */
-    public function store(Request $request)
+      /**
+       * Almacena un nuevo usuario en la base de datos.
+       * @param \Illuminate\Http\Request $request La solicitud HTTP con los datos del formulario.
+       * @return \Illuminate\Http\RedirectResponse Redirige al listado con un mensaje de éxito.
+       */
+      public function store(Request $request)
     {
-        // Validación de los datos del formulario
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -90,211 +96,121 @@ class UserController extends Controller
             'active' => 'nullable|boolean',
         ]);
 
-        // Creación del nuevo usuario
-        $user = \App\Models\User::create([
+        \App\Models\User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
             'role' => $request->input('role'),
             'phone' => $request->input('phone'),
             'dni' => $request->input('dni'),
-            'active' => $request->boolean('active')
+            'active' => $request->boolean('active'),
         ]);
 
-        // Redirección con mensaje de éxito
         return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
     }
 
     /**
      * Muestra los detalles de un usuario específico.
-     * @param string $id
-     * @return void
+     * @param string $id ID del usuario a mostrar.
+     * @return \Illuminate\View\View
      */
     public function show(string $id)
     {
-        //
+        $user = \App\Models\User::findOrFail($id);
+        return view('admin.user.show', compact('user'));
     }
 
     /**
      * Muestra el formulario para editar un usuario.
-     * @param string $id
-     * @return void
+     * @param string $id ID del usuario a editar.
+     * @return \Illuminate\View\View Vista del formulario de edición de usuario.
      */
     public function edit(string $id)
     {
-        //
+        $user = \App\Models\User::findOrFail($id);
+        return view('admin.user.edit', compact('user'));
     }
 
     /**
-     * Actualiza los datos de un usuario existente.
-     * @param Request $request
-     * @param string $id
-     * @return void
+     * Actualiza un usuario existente en la base de datos.
+     *
+     * Valida y procesa los datos recibidos desde el formulario de edición,
+     * actualiza únicamente los campos modificados, y encripta la contraseña si se ha cambiado.
+     *
+     * @param Request $request La solicitud HTTP con los datos del formulario.
+     * @param string $id ID del usuario a actualizar.
+     * @return \Illuminate\Http\RedirectResponse Redirige al listado con un mensaje de éxito.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = \App\Models\User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'role' => 'nullable|in:user,admin',
+            'phone' => 'nullable|string|max:20',
+            'dni' => 'nullable|string|max:20',
+            'active' => 'nullable|boolean',
+        ]);
+
+        // Si la contraseña se cambia, se encripta, sino evita sobreescribirla.
+        if (!empty($validated['password'])) {
+            $validated['password'] = bcrypt($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        $user->update(array_filter($validated, fn($value) => !is_null($value)));
+
+        return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
     }
 
     /**
      * Elimina un usuario del sistema.
-     * @param string $id
-     * @return void
+     * @param string $id ID del usuario a eliminar.
+     * @return \Illuminate\Http\RedirectResponse Redirige al listado de usuarios.
      */
     public function destroy(string $id)
     {
-        //
+        $user = \App\Models\User::findOrFail($id);
+
+        // Evitar autodesactivado
+        if ($user->id === Auth::user()->id) {
+            return redirect()->route('users.index')->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+
+        // Evitar eliminación si tiene relaciones activas
+        if ($user->adoptions()->exists() || $user->fosters()->exists() || $user->sponsorships()->exists()) {
+            return redirect()->route('users.index')
+                ->with('error', 'Este usuario tiene procesos activos y no puede ser eliminado.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente.');
     }
 
     // Funcionalidades de gestión administrativa de usuarios
 
     /**
      * Asigna o modifica el rol de un usuario.
-     * @param Request $request
-     * @param string $id
-     * @return void
+     * @param Request $request La solicitud con el nuevo rol.
+     * @param string $id ID del usuario a modificar.
+     * @return \Illuminate\Http\RedirectResponse Redirige al listado de usuarios.
      */
     public function assignRole(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'role' => 'required|in:user,admin',
+        ]);
+
+        $user = \App\Models\User::findOrFail($id);
+        $user->role = $request->input('role');
+        $user->save();
+
+        return redirect()->route('users.show', $user->id)->with('success', 'Rol asignado exitosamente.');
     }
 
-    /**
-     * Activa una cuenta de usuario.
-     * @param string $id
-     * @return void
-     */
-    public function activateUser(string $id)
-    {
-        //
-    }
-
-    /**
-     * Desactiva una cuenta de usuario.
-     * @param string $id
-     * @return void
-     */
-    public function deactivateUser(string $id)
-    {
-        //
-    }
-
-    // Funciones del perfil del usuario autenticado
-
-    /**
-     * Muestra el perfil del usuario autenticado.
-     * @return void
-     */
-    public function showProfile()
-    {
-        //
-    }
-
-    /**
-     * Actualiza el perfil del usuario autenticado.
-     * @param Request $request
-     * @return void
-     */
-    public function updateProfile(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Muestra las adopciones del usuario autenticado.
-     * @return void
-     */
-    public function myAdoptions()
-    {
-        //
-    }
-
-    /**
-     * Muestra las acogidas del usuario autenticado.
-     * @return void
-     */
-    public function myFosters()
-    {
-        //
-    }
-
-    /**
-     * Muestra los apadrinamientos del usuario autenticado.
-     * @return void
-     */
-    public function mySponsorships()
-    {
-        //
-    }
-
-    /**
-     * Solicita la eliminación de la cuenta del usuario autenticado.
-     * @return void
-     */
-    public function requestAccountDeletion()
-    {
-        //
-    }
-
-    // Funcionalidades de seguridad
-
-    /**
-     * Cambia la contraseña del usuario autenticado.
-     * @param Request $request
-     * @return void
-     */
-    public function changePassword(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Restablece la contraseña de un usuario.
-     * @param Request $request
-     * @return void
-     */
-    public function resetPassword(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Envía un enlace de restablecimiento de contraseña.
-     * @param Request $request
-     * @return void
-     */
-    public function sendPasswordResetLink(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Verifica el correo electrónico del usuario.
-     * @param Request $request
-     * @return void
-     */
-    public function verifyEmail(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Reenvía el correo de verificación al usuario.
-     * @param Request $request
-     * @return void
-     */
-    public function resendVerificationEmail(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Verifica la contraseña actual antes de cambios sensibles.
-     * @param Request $request
-     * @return void
-     */
-    public function confirmCurrentPassword(Request $request)
-    {
-        //
-    }
 }
