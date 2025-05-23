@@ -16,15 +16,13 @@ class UserController extends Controller
     // CRUD básico para la gestión de usuarios
 
     /**
-     * Muestra un listado paginado de usuarios, con filtro por nombre, email
-     * y relaciones (adopciones, acogidas, apadrinamientos).
+     * Muestra un listado paginado de usuarios, paginados 10 usuarios por página.
      * 
      * @param Request $request Solicitud HTTP con los parámetros de búsqueda.
      * @return \Illuminate\View\View Vista del listado de usuarios.
      */
     public function index(Request $request)
     {
-        // Validación de campos de búsqueda
         $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -32,41 +30,10 @@ class UserController extends Controller
             'has_adoptions' => 'nullable|boolean',
             'has_fosters' => 'nullable|boolean',
             'has_sponsorships' => 'nullable|boolean',
-            
         ]);
 
-        // Inicio de la consulta base
-        $query = \App\Models\User::query();
+        $users = $this->applyFilters($request)->paginate(10)->withQueryString();
 
-        // Filtro por nombre
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
-        }
-        // Filtro por email
-        if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->input('email') . '%');
-        }
-        // Filtros por relaciones
-        if ($request->boolean('has_adoptions')) {
-            $query->whereHas('adoptions');
-        }
-
-        if ($request->boolean('has_fosters')) {
-            $query->whereHas('fosters');
-        }
-
-        if ($request->boolean('has_sponsorships')) {
-            $query->whereHas('sponsorships');
-        }
-
-        if($request->filled('role')) {
-            $query->where('role', $request->input('role'));
-        }
-
-        // Paginación manteniendo los filtros activos en la URL
-        $users = $query->paginate(10)->withQueryString();
-
-        // Retorno de la vista con los datos filtrados
         return view('user.index', compact('users'));
     }
 
@@ -211,6 +178,48 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('users.show', $user->id)->with('success', 'Rol asignado exitosamente.');
+    }
+
+
+    /**
+     * Aplica filtros al listado de usuarios según los parámetros de la solicitud.
+     *
+     * Filtra por nombre, email, rol, y relaciones activas (adopciones, acogidas, apadrinamientos).
+     * Devuelve un objeto Builder con la consulta preparada para ser paginada o ejecutada.
+     *
+     * @param \Illuminate\Http\Request $request Solicitud con los parámetros de filtrado.
+     * @return \Illuminate\Database\Eloquent\Builder Consulta con filtros aplicados.
+     */
+
+    private function applyFilters(Request $request)
+    {
+        $query = \App\Models\User::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        }
+
+        if ($request->boolean('has_adoptions')) {
+            $query->whereHas('adoptions');
+        }
+
+        if ($request->boolean('has_fosters')) {
+            $query->whereHas('fosters');
+        }
+
+        if ($request->boolean('has_sponsorships')) {
+            $query->whereHas('sponsorships');
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->input('role'));
+        }
+
+        return $query;
     }
 
 }
