@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Controlador para gestionar los usuarios del sistema.
@@ -18,22 +19,10 @@ class UserController extends Controller
     /**
      * Muestra un listado paginado de usuarios, paginados 10 usuarios por página.
      * 
-     * @param Request $request Solicitud HTTP con los parámetros de búsqueda.
      * @return \Illuminate\View\View Vista del listado de usuarios.
      */
     public function index(Request $request)
     {
-        $request->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'role' => 'nullable|in:user,admin',
-            'has_adoptions' => 'nullable|boolean',
-            'has_fosters' => 'nullable|boolean',
-            'has_sponsorships' => 'nullable|boolean',
-        ]);
-
-        $users = $this->applyFilters($request)->paginate(10)->withQueryString();
-
         return view('user.index', compact('users'));
     }
 
@@ -46,22 +35,42 @@ class UserController extends Controller
         return view('admin.user.create');
     }
 
-      /**
-       * Almacena un nuevo usuario en la base de datos.
-       * @param \Illuminate\Http\Request $request La solicitud HTTP con los datos del formulario.
-       * @return \Illuminate\Http\RedirectResponse Redirige al listado con un mensaje de éxito.
-       */
-      public function store(Request $request)
+    /**
+     * Almacena un nuevo usuario en la base de datos.
+     * @param \Illuminate\Http\Request $request La solicitud HTTP con los datos del formulario.
+     * @return \Illuminate\Http\RedirectResponse Redirige al listado con un mensaje de éxito.
+     */
+    public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'email' => [
+                'required',
+                'email:rfc,dns',
+                'unique:users,email',
+                'regex:/^[a-zA-Z]+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/' // Validación regex para el emmail: empezar por letra, contener "@" y un dominio válido
+            ],
+            'password' => [
+                'required',
+                'min:8',
+                'confirmed',
+                'regex:/[A-Z]/',    // al menos una mayúscula
+                'regex:/[0-9]/',    // al menos un número
+                'regex:/[@$!%*?&]/' // al menos un símbolo especial
+            ],
             'role' => 'nullable|in:user,admin',
             'phone' => 'nullable|string|max:20',
             'dni' => 'nullable|string|max:20',
             'active' => 'nullable|boolean',
+        ], [
+            'email.regex' => 'El correo electrónico debe empezar con una letra, contener "@" y un dominio válido.',
+            'password.regex' => 'La contraseña debe contener al menos una mayúscula, un número y un carácter especial.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         \App\Models\User::create([
             'name' => $request->input('name'),
@@ -79,7 +88,7 @@ class UserController extends Controller
     /**
      * Muestra los detalles de un usuario específico.
      * @param string $id ID del usuario a mostrar.
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View Vista de los detalles del usuario.
      */
     public function show(string $id)
     {
@@ -114,12 +123,28 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
+            'email' => [
+                'required',
+                'email:rfc,dns',
+                'unique:users,email,' . $user->id,
+                'regex:/^[a-zA-Z]+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
+            ],
+            'password' => [
+                'nullable',
+                'min:8',
+                'confirmed',
+                'regex:/[A-Z]/',    // al menos una mayúscula
+                'regex:/[0-9]/',    // al menos un número
+                'regex:/[@$!%*?&]/' // al menos un símbolo especial
+            ],
             'role' => 'nullable|in:user,admin',
             'phone' => 'nullable|string|max:20',
             'dni' => 'nullable|string|max:20',
             'active' => 'nullable|boolean',
+        ], [
+            'email.regex' => 'El correo electrónico debe empezar con una letra, contener "@" y un dominio válido.',
+            'password.regex' => 'La contraseña debe contener al menos una mayúscula, un número y un carácter especial.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
         // Si la contraseña se cambia, se encripta, sino evita sobreescribirla.
@@ -174,52 +199,44 @@ class UserController extends Controller
         ]);
 
         $user = \App\Models\User::findOrFail($id);
-        $user->role = $request->input('role');
-        $user->save();
+        $user->update(['role' => $request->input('role')]);
 
         return redirect()->route('users.show', $user->id)->with('success', 'Rol asignado exitosamente.');
     }
 
 
     /**
-     * Aplica filtros al listado de usuarios según los parámetros de la solicitud.
-     *
-     * Filtra por nombre, email, rol, y relaciones activas (adopciones, acogidas, apadrinamientos).
-     * Devuelve un objeto Builder con la consulta preparada para ser paginada o ejecutada.
-     *
-     * @param \Illuminate\Http\Request $request Solicitud con los parámetros de filtrado.
-     * @return \Illuminate\Database\Eloquent\Builder Consulta con filtros aplicados.
+     * Activa un usuario en el sistema.
+     * @param string $id ID del usuario a activar.
+     * @return \Illuminate\Http\RedirectResponse Redirige al listado de usuarios.
      */
-
-    private function applyFilters(Request $request)
+    public function activateUser(string $id)
     {
-        $query = \App\Models\User::query();
+        $user = \App\Models\User::findOrFail($id);
+        $user->active = true;
+        $user->save();
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        return redirect()->route('users.show', $user->id)->with('success', 'Usuario activado exitosamente.');
+    }
+
+
+    /**
+     * Desactiva un usuario en el sistema.
+     * @param string $id ID del usuario a desactivar.
+     * @return \Illuminate\Http\RedirectResponse Redirige al listado de usuarios.
+     */
+    public function deactivateUser(string $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+
+        // Evitar desactivarse a sí mismo
+        if ($user->id === Auth::id()) {
+            return redirect()->route('users.index')->with('error', 'No puedes desactivar tu propia cuenta.');
         }
 
-        if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->input('email') . '%');
-        }
+        $user->update(['active' => false]);
 
-        if ($request->boolean('has_adoptions')) {
-            $query->whereHas('adoptions');
-        }
-
-        if ($request->boolean('has_fosters')) {
-            $query->whereHas('fosters');
-        }
-
-        if ($request->boolean('has_sponsorships')) {
-            $query->whereHas('sponsorships');
-        }
-
-        if ($request->filled('role')) {
-            $query->where('role', $request->input('role'));
-        }
-
-        return $query;
+        return redirect()->route('users.show', $user->id)->with('success', 'Usuario desactivado exitosamente.');
     }
 
 }
