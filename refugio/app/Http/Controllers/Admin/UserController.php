@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Exceptions\NoDataFound;;
 
 /**
  * Controlador para gestionar los usuarios del sistema.
@@ -23,7 +24,21 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return view('user.index', compact('users'));
+        try{
+
+            $users = \App\Models\User::paginate(10);
+
+            if ($users->isEmpty()) {
+            session()->flash('info', 'No hay usuarios registrados aún.');
+            }
+            
+            return view('user.index', data: compact('users'));
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Ocurrió un error al obtener los usuarios.');
+            return view('user.index', ['users' => collect()]);
+        }
+
     }
 
     /**
@@ -32,7 +47,12 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('admin.user.create');
+        try {
+            return view('admin.user.create');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Ocurrió un error al mostrar el formulario de creación.');
+            return redirect()->route('users.index');
+        }
     }
 
     /**
