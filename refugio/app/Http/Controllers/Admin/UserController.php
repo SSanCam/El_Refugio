@@ -11,17 +11,18 @@ use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
- * Controlador para gestionar los usuarios del sistema.
- * Incluye operaciones básicas CRUD, gestión administrativa,
- * funcionalidades del perfil de usuario y seguridad.
+ * Controlador para gestionar las adopciones del sistema.
+ * Incluye operaciones CRUD básicas, asignación de animales a usuarios,
+ * y control del estado de adopción de los animales.
  */
+
 class UserController extends Controller
 {
-/**
+    /**
      * ==========================================================
      * Funcionalidades básicas de los usuarios administrativos 
      * ==========================================================
-     */
+    */
 
     /**
      * Muestra un listado paginado de usuarios, paginados 10 usuarios por página.

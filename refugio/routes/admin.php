@@ -8,9 +8,9 @@ Route::middleware(['auth', 'is_admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        /**
-         * Rutas para la gestión de usuarios
-         */
+        
+        // Rutas para la gestión de usuarios
+
         // GET
         Route::get('users', [UserController::class, 'index'])->name('users.index');
         Route::get('users/create', [UserController::class, 'create'])->name('users.create');
