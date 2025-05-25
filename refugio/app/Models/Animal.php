@@ -27,14 +27,6 @@ class Animal extends Model
     ];
 
     /**
-     * Relación con el historial veterinario.
-     */
-    public function veterinaryHistories()
-    {
-        return $this->hasMany(VeterinaryHistory::class);
-    }
-
-    /**
      * Relación con la medicación de los animales.
      */
     public function animalMedications()

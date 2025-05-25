@@ -41,7 +41,7 @@ class AdoptionController extends Controller
 
             return view('admin.adoption.index', compact('adoptions'));
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al cargar el listado de adopciones: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al cargar el listado de adopciones.']);
         }
@@ -76,8 +76,21 @@ class AdoptionController extends Controller
     {
         
         try {
-            $animal = Animal::findOrFail($validated['animal_id']);
-            $user = User::findOrFail($validated['user_id']);
+
+            $validated = $request->validate([
+                'animal_id' => 'required|exists:animals,id',
+                'user_id' => 'required|exists:users,id',
+                'adoption_date' => 'required|date',
+                'notes' => 'nullable|string|max:255',
+            ],
+        [
+            'animal_id.required' => 'El campo "Animal" es obligatorio.',
+            'user_id.required' => 'El campo "Usuario" es obligatorio.',
+            'adoption_date.required' => 'La fecha de adopción es obligatoria.',
+            'adoption_date.date' => 'La fecha de adopción debe ser una fecha válida.',
+            'notes.max' => 'Las notas no pueden exceder los 255 caracteres.',
+            ]);
+
             $validated = $request->validate([
                 'animal_id' => 'required|exists:animals,id',
                 'user_id' => 'required|exists:users,id',
@@ -85,15 +98,18 @@ class AdoptionController extends Controller
                 'notes' => 'nullable|string|max:255',
             ]);
 
-        DB::transaction(function () use ($validated, $animal) {
-            Adoption::create($validated);
-            $animal->update(['status' => 'adopted']);
-        });
+            $newAdoption = new Adoption();
+            $newAdoption->animal_id = $validated['animal_id'];
+            $newAdoption->user_id = $validated['user_id'];
+            $newAdoption->adoption_date = $validated['adoption_date'];
+            $newAdoption->notes = $validated['notes'] ?? null;
+            $newAdoption->save();
 
-            session()->flash('success', 'Adopción registrada correctamente.');
-            return redirect()->route('admin.adoptions.index');
+            Animal::find($validated['animal_id'])->update(['status' => 'adopted']);
+            return redirect()->route('admin.adoptions.index')->with('success', 'Adopción registrada correctamente.');
 
-        } catch (\Exception $e) {
+        
+        } catch (Exception $e) {
             Log::error('Error al registrar la adopción: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al registrar la adopción.']);
         }

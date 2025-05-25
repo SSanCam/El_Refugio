@@ -34,8 +34,51 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try{
+        
+            // Filtros de busqueda para los usuarios.
+            $query = User::query();
 
-            $users = User::paginate(10);
+            // Filtros simples por campos exactos
+            $exactFilters = [
+                'active' => 'active',
+                'role' => 'role',
+            ];
+
+            foreach ($exactFilters as $input => $column) {
+                if ($request->filled($input)) {
+                    $query->where($column, $request->input($input));
+                }
+            }
+
+            // Filtro por búsqueda parcial
+            if ($request->filled('email')) {
+                $query->where('email', 'like', '%' . $request->input('email') . '%');
+            }
+
+            // Filtros por relaciones
+            $relations = [
+                'has_adoptions' => 'adoptions',
+                'has_fosters' => 'fosters',
+                'has_sponsorships' => 'sponsorships',
+            ];
+
+            foreach ($relations as $input => $relation) {
+                if ($request->boolean($input)) {
+                    $query->whereHas($relation);
+                }
+            }
+
+            // Ordenación
+            $allowedSorts = ['name', 'email', 'created_at'];
+            $sortBy = $request->input('sort_by');
+            $sortDir = $request->input('sort_dir', 'asc');
+
+            if (in_array($sortBy, $allowedSorts)) {
+                $query->orderBy($sortBy, $sortDir);
+            }
+
+            // Paginación
+            $users = $query->paginate(10);
 
             if ($users->isEmpty()) {
             session()->flash('info', 'No hay usuarios registrados aún.');
@@ -154,7 +197,13 @@ class UserController extends Controller
     public function show(string $id)
     {
         try {
-            $user = User::findOrFail($id);
+            
+            $user = User::with([
+            'adoptions.animal',
+            'fosters.animal',
+            'sponsorships.animal'
+        ])->findOrFail($id);
+
             return view('admin.user.show', compact('user'));
 
         } catch (ModelNotFoundException $e) {

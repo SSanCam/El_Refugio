@@ -154,7 +154,12 @@ class AnimalController extends Controller
     public function show($id)
     {
         try {
-            $animal = Animal::findOrFail($id);
+            $animal = Animal::with([
+            'adoption.user',
+            'fosters.user',
+            'sponsorships.user'
+        ])->findOrFail($id);
+
             return view('admin.animal.show', compact('animal'));
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
@@ -326,5 +331,8 @@ class AnimalController extends Controller
             $animal->save();
             return redirect()->route('admin.animals.index')->with('success', 'Animal desactivado.');
         }
+
+
+    public function 
 
 }
