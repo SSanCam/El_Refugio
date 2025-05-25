@@ -17,15 +17,10 @@ class AnimalController extends Controller
 {
     /** ==========================================================
      * Funcionalidades básicas para la gestión de animales 
-     * ==========================================================
-     */
-    
-     /**
-     * Muestra un listado paginado de animales, con filtro por nombre, especie,
-     * raza, sexo y estado de adopción.
-     * 
-     * @param Request $request Solicitud HTTP con los parámetros de búsqueda.
-     * @return \Illuminate\View\View | \Illuminate\Http\RedirectResponse Vista con la lista de animales.
+     * ========================================================== */
+
+    /**
+     * Muestra un listado paginado de animales.
      */
     public function index()
     {
@@ -37,18 +32,14 @@ class AnimalController extends Controller
             }
 
             return view('admin.animal.index', compact('animals'));
-
         } catch (Exception $e) {
             Log::error('Error inesperado al obtener los animales: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al obtener los animales.']);
         }
     }
 
-
     /**
      * Muestra el formulario para crear un nuevo animal.
-     * 
-     * @return \Illuminate\View\View | \Illuminate\Http\RedirectResponse Vista del formulario de creación de animal.
      */
     public function create()
     {
@@ -62,9 +53,6 @@ class AnimalController extends Controller
 
     /**
      * Almacena un nuevo animal en la base de datos.
-     * 
-     * @param Request $request Solicitud HTTP con los datos del nuevo animal.
-     * @return \Illuminate\Http\RedirectResponse Redirección a la lista de animales.
      */
     public function store(Request $request)
     {
@@ -80,37 +68,6 @@ class AnimalController extends Controller
             'microchip' => 'nullable|string|max:255|unique:animals,microchip',
             'description' => 'required|string|max:1000',
             'image' => 'nullable|url|max:255',
-            ],
-            [
-            'name.required' => 'El nombre del animal es obligatorio.',
-            'name.max' => 'El nombre no puede exceder los 255 caracteres.',
-
-            'species.required' => 'La especie del animal es obligatoria.',
-            'species.max' => 'La especie no puede exceder los 255 caracteres.',
-
-            'breed.max' => 'La raza no puede exceder los 255 caracteres.',
-
-            'age.required' => 'La edad del animal es obligatoria.',
-            'age.integer' => 'La edad debe ser un número entero.',
-            'age.min' => 'La edad no puede ser negativa.',
-
-            'size.required' => 'El tamaño del animal es obligatorio.',
-            'size.in' => 'El tamaño debe ser: small, medium o large.',
-
-            'sex.required' => 'El sexo del animal es obligatorio.',
-            'sex.in' => 'El sexo debe ser: male, female o unknown.',
-
-            'status.required' => 'El estado del animal es obligatorio.',
-            'status.in' => 'El estado debe ser uno de los valores permitidos.',
-
-            'microchip.max' => 'El microchip no puede exceder los 255 caracteres.',
-            'microchip.unique' => 'Este microchip ya está registrado para otro animal.',
-
-            'description.required' => 'La descripción del animal es obligatoria.',
-            'description.max' => 'La descripción no puede exceder los 1000 caracteres.',
-
-            'image.url' => 'La imagen debe ser una URL válida.',
-            'image.max' => 'La URL de la imagen no puede exceder los 255 caracteres.',
         ]);
 
         if ($validator->fails()) {
@@ -118,23 +75,8 @@ class AnimalController extends Controller
         }
 
         try {
-            
-            Animal::create([
-            'name' => $request->input('name'),
-            'species' => $request->input('species'),
-            'breed' => $request->input('breed'),
-            'age' => $request->input('age'),
-            'size' => $request->input('size'),
-            'sex' => $request->input('sex'),
-            'weight' => $request->input('weight'),
-            'status' => $request->input('status'),
-            'microchip' => $request->input('microchip'),
-            'description' => $request->input('description'),
-            'image' => $request->input('image'),
-        ]);
-
+            Animal::create($request->all());
             return redirect()->route('admin.animals.index')->with('success', 'Animal creado exitosamente.');
-
         } catch (QueryException $e) {
             Log::error('Error al guardar el animal: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error al guardar el animal.']);
@@ -144,29 +86,22 @@ class AnimalController extends Controller
         }
     }
 
-
     /**
      * Muestra los detalles de un animal específico.
-     * 
-     * @param int $id ID del animal a mostrar.
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse Vista con los detalles del animal.
      */
     public function show($id)
     {
         try {
             $animal = Animal::with([
-            'adoption.user',
-            'fosters.user',
-            'sponsorships.user'
-        ])->findOrFail($id);
+                'adoption.user',
+                'fosters.user',
+                'sponsorships.user'
+            ])->findOrFail($id);
 
             return view('admin.animal.show', compact('animal'));
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Animal no encontrado.']);
-        } catch (QueryException $e) {
-            Log::error('Error de consulta al obtener el animal: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error de consulta al obtener el animal.']);
         } catch (Exception $e) {
             Log::error('Error inesperado al obtener el animal: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al obtener el animal.']);
@@ -174,10 +109,7 @@ class AnimalController extends Controller
     }
 
     /**
-     * Muestra el formulario para editar un animal existente.
-     * 
-     * @param int $id ID del animal a editar.
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse Vista del formulario de edición de animal.
+     * Muestra el formulario para editar un animal.
      */
     public function edit($id)
     {
@@ -187,9 +119,6 @@ class AnimalController extends Controller
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Animal no encontrado.']);
-        } catch (QueryException $e) {
-            Log::error('Error de consulta al obtener el animal: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error de consulta al obtener el animal.']);
         } catch (Exception $e) {
             Log::error('Error inesperado al obtener el animal: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al obtener el animal.']);
@@ -198,10 +127,6 @@ class AnimalController extends Controller
 
     /**
      * Actualiza un animal existente en la base de datos.
-     * 
-     * @param Request $request Solicitud HTTP con los datos actualizados del animal.
-     * @param int $id ID del animal a actualizar.
-     * @return \Illuminate\Http\RedirectResponse Redirección a la lista de animales.
      */
     public function update(Request $request, $id)
     {
@@ -218,41 +143,19 @@ class AnimalController extends Controller
                 'status' => 'required|in:available,adopted,fostered,sponsored,sheltered,intake,deceased',
                 'description' => 'required|string|max:1000',
                 'image' => 'nullable|url|max:255',
-            ], [
-                'name.required' => 'El nombre del animal es obligatorio.',
-                'name.max' => 'El nombre no puede exceder los 255 caracteres.',
-                'species.required' => 'La especie del animal es obligatoria.',
-                'species.max' => 'La especie no puede exceder los 255 caracteres.',
-                'breed.max' => 'La raza no puede exceder los 255 caracteres.',
-                'age.required' => 'La edad del animal es obligatoria.',
-                'age.integer' => 'La edad debe ser un número entero.',
-                'age.min' => 'La edad no puede ser negativa.',
-                'size.required' => 'El tamaño del animal es obligatorio.',
-                'size.in' => 'El tamaño debe ser: small, medium o large.',
-                'sex.required' => 'El sexo del animal es obligatorio.',
-                'sex.in' => 'El sexo debe ser: male, female o unknown.',
-                'status.required' => 'El estado del animal es obligatorio.',
-                'status.in' => 'El estado debe ser uno de los valores permitidos.',
-                'description.required' => 'La descripción del animal es obligatoria.',
-                'description.max' => 'La descripción no puede exceder los 1000 caracteres.',
-                'image.url' => 'La imagen debe ser una URL válida.',
-                'image.max' => 'La URL de la imagen no puede exceder los 255 caracteres.',
             ]);
 
-            if (!empty ($validated['microchip'])) {
-                $existingAnimal = Animal::where('microchip', $validated['microchip'])
-                    ->where('id', '!=', $animal->id)
-                    ->first();
-                if ($existingAnimal) {
-                    return redirect()->back()->withErrors(['microchip' => 'Este microchip ya está registrado para otro animal.'])->withInput();
+            if (!empty($validated['microchip'])) {
+                $existing = Animal::where('microchip', $validated['microchip'])->where('id', '!=', $id)->first();
+                if ($existing) {
+                    return redirect()->back()->withErrors(['microchip' => 'Este microchip ya está registrado.'])->withInput();
                 }
             } else {
-                $validated['microchip'] = null; // Si no se proporciona microchip, se establece como nulo
+                $validated['microchip'] = null;
             }
 
             $animal->update($validated);
             return redirect()->route('admin.animals.index')->with('success', 'Animal actualizado exitosamente.');
-
         } catch (QueryException $e) {
             Log::error('Error de consulta al actualizar el animal: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error de consulta al actualizar el animal.']);
@@ -263,29 +166,22 @@ class AnimalController extends Controller
     }
 
     /**
-     * Elimina un animal de la base de datos.
-     * 
-     * @param int $id ID del animal a eliminar.
-     * @return \Illuminate\Http\RedirectResponse Redirección a la lista de animales.
+     * Elimina un animal.
      */
     public function destroy($id)
     {
         try {
             $animal = Animal::findOrFail($id);
 
-            if ($animal->status === 'adopted' || $animal->status === 'fostered') {
+            if (in_array($animal->status, ['adopted', 'fostered'])) {
                 return redirect()->back()->withErrors(['error' => 'No se puede eliminar un animal con procesos abiertos.']);
-            } else {
-                $animal->delete();
             }
 
+            $animal->delete();
             return redirect()->route('admin.animals.index')->with('success', 'Animal eliminado exitosamente.');
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Animal no encontrado.']);
-        } catch (QueryException $e) {
-            Log::error('Error de consulta al eliminar el animal: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error de consulta al eliminar el animal.']);
         } catch (Exception $e) {
             Log::error('Error inesperado al eliminar el animal: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al eliminar el animal.']);
@@ -293,46 +189,31 @@ class AnimalController extends Controller
     }
 
     /**
-     * ==========================================================
-     * Funcionalidades de gestión de animales
-     * ==========================================================
-     */
-
-    /**
      * Cambia el estado de un animal.
-     * @param \Illuminate\Http\Request $request Solicitud HTTP con el nuevo estado del animal.
-     * @param mixed $id ID del animal a actualizar.
-     * @return \Illuminate\Http\RedirectResponse Redirección a la vista del animal actualizado o error.
      */
     public function changeStatus(Request $request, $id)
-        {
-            try {
-                $animal = Animal::findOrFail($id);
-                $request->validate([
-                    'status' => 'required|in:available,adopted,fostered,sponsored,sheltered,intake,deceased',
-                ]);
-                $animal->update(['status' => $request->input('status')]);
-                return redirect()->route('admin.animals.show', $animal->id)->with('success', 'Estado actualizado correctamente.');
-            } catch (Exception $e) {
-                Log::error('Error al actualizar el estado del animal: ' . $e->getMessage());
-                return redirect()->back()->withErrors(['error' => 'Error al actualizar el estado.']);
-            }
+    {
+        try {
+            $animal = Animal::findOrFail($id);
+            $request->validate([
+                'status' => 'required|in:available,adopted,fostered,sponsored,sheltered,intake,deceased',
+            ]);
+            $animal->update(['status' => $request->input('status')]);
+            return redirect()->route('admin.animals.show', $animal->id)->with('success', 'Estado actualizado correctamente.');
+        } catch (Exception $e) {
+            Log::error('Error al actualizar el estado del animal: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error al actualizar el estado.']);
         }
+    }
 
     /**
-     * Desactiva un animal, cambiando su estado a "sheltered" o cualquier otro estado neutro.
-     * @param int $id ID del animal a desactivar.
-     * @return \Illuminate\Http\RedirectResponse Redirección a la lista de animales con mensaje de éxito.
+     * Desactiva un animal (estado neutral).
      */
     public function deactivate($id)
-        {
-            $animal = Animal::findOrFail($id);
-            $animal->status = 'sheltered'; // o cualquier otro estado neutro
-            $animal->save();
-            return redirect()->route('admin.animals.index')->with('success', 'Animal desactivado.');
-        }
-
-
-    public function 
-
+    {
+        $animal = Animal::findOrFail($id);
+        $animal->status = 'sheltered';
+        $animal->save();
+        return redirect()->route('admin.animals.index')->with('success', 'Animal desactivado.');
+    }
 }

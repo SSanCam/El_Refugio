@@ -106,12 +106,132 @@ class AdoptionController extends Controller
             $newAdoption->save();
 
             Animal::find($validated['animal_id'])->update(['status' => 'adopted']);
+
+
+
             return redirect()->route('admin.adoptions.index')->with('success', 'Adopción registrada correctamente.');
 
         
         } catch (Exception $e) {
             Log::error('Error al registrar la adopción: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al registrar la adopción.']);
+        }
+    }
+
+    /**
+     * Muestra los detalles de una adopción específica.
+     *
+     * @param int $id ID de la adopción
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function show($id)
+    {
+        try {
+
+            $adoption = Adoption::with(['animal', 'user'])->findOrFail($id);
+
+            return view('admin.adoption.show', compact('adoption'));
+
+        } catch (ModelNotFoundException $e) {
+            Log::error('Adopción no encontrada: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Adopción no encontrada.']);
+        } catch (Exception $e) {
+            Log::error('Error al mostrar la adopción: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error inesperado al mostrar la adopción.']);
+        }
+    }
+
+    /**
+     * Muestra el formulario para editar una adopción específica.
+     *
+     * @param int $id ID de la adopción
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function edit($id)
+    {
+        try {
+
+            $adoption = Adoption::with(['animal', 'user'])->findOrFail($id);
+            $animals = Animal::where('status', 'available')->orWhere('id', $adoption->animal_id)->get();
+            $users = User::where('active', true)->get();
+
+            return view('admin.adoptions.edit', compact('adoption', 'animals', 'users'));
+
+        } catch (ModelNotFoundException $e) {
+            Log::error('Adopción no encontrada: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Adopción no encontrada.']);
+        } catch (Exception $e) {
+            Log::error('Error al cargar el formulario de edición de adopciones: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error inesperado al cargar el formulario de edición de adopciones.']);
+        }
+    }
+
+    /**
+     * Actualiza una adopción existente.
+     *
+     * @param Request $request
+     * @param int $id ID de la adopción
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, $id)
+    {
+        try {
+
+            $validated = $request->validate([
+                'animal_id' => 'required|exists:animals,id',
+                'user_id' => 'required|exists:users,id',
+                'adoption_date' => 'required|date|before_or_equal:today',
+                'notes' => 'nullable|string|max:255',
+            ]);
+
+            $animal = Animal::findOrFail($validated['animal_id']);
+
+            if ($validated['adoption_date'] < $animal->intake_date) {
+                return redirect()->back()->withErrors(['adoption_date' => 'La fecha de adopción no puede ser anterior a la fecha de ingreso del animal.']);
+            }
+
+            $adoption = Adoption::findOrFail($id);
+            $adoption->animal_id = $validated['animal_id'];
+            $adoption->user_id = $validated['user_id'];
+            $adoption->adoption_date = $validated['adoption_date'];
+            $adoption->notes = $validated['notes'] ?? null;
+            $adoption->save();
+
+            return redirect()->route('admin.adoptions.index')->with('success', 'Adopción actualizada correctamente.');
+
+        } catch (ModelNotFoundException $e) {
+            Log::error('Adopción no encontrada: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Adopción no encontrada.']);
+        } catch (Exception $e) {
+            Log::error('Error al actualizar la adopción: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error inesperado al actualizar la adopción.']);
+        }
+    }
+
+    /**
+     * Elimina una adopción existente.
+     *
+     * @param int $id ID de la adopción
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy($id)
+    {
+        try {
+
+            $adoption = Adoption::findOrFail($id);
+            $animal = Animal::findOrFail($adoption->animal_id);
+
+            $adoption->delete();
+            $animal->update(['status' => 'available']);
+
+            return redirect()->route('admin.adoptions.index')->with('success', 'Adopción eliminada correctamente.');
+
+        } catch (ModelNotFoundException $e) {
+            Log::error('Adopción no encontrada: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Adopción no encontrada.']);
+        } catch (Exception $e) {
+            Log::error('Error al eliminar la adopción: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error inesperado al eliminar la adopción.']);
         }
     }
 }

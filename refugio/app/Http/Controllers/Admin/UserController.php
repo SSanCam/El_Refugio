@@ -13,9 +13,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
 
 /**
- * Controlador para gestionar las adopciones del sistema.
- * Incluye operaciones CRUD básicas, asignación de animales a usuarios,
- * y control del estado de adopción de los animales.
+ * Controlador para gestionar los usuarios del sistema.
+ * Incluye funcionalidades CRUD, filtrado, asignación de roles y control de estado.
  */
 
 class UserController extends Controller
@@ -32,66 +31,20 @@ class UserController extends Controller
      * @return \Illuminate\View\View Vista del listado de usuarios.
      */
     public function index(Request $request)
-    {
-        try{
-        
-            // Filtros de busqueda para los usuarios.
-            $query = User::query();
+        {
+            try {
+                $users = User::paginate(10);
 
-            // Filtros simples por campos exactos
-            $exactFilters = [
-                'active' => 'active',
-                'role' => 'role',
-            ];
-
-            foreach ($exactFilters as $input => $column) {
-                if ($request->filled($input)) {
-                    $query->where($column, $request->input($input));
+                if ($users->isEmpty()) {
+                    session()->flash('info', 'No hay usuarios registrados aún.');
                 }
+
+                return view('admin.user.index', compact('users'));
+            } catch (Exception $e) {
+                session()->flash('error', 'Ocurrió un error al obtener los usuarios.');
+                return view('admin.user.index', ['users' => collect()]);
             }
-
-            // Filtro por búsqueda parcial
-            if ($request->filled('email')) {
-                $query->where('email', 'like', '%' . $request->input('email') . '%');
-            }
-
-            // Filtros por relaciones
-            $relations = [
-                'has_adoptions' => 'adoptions',
-                'has_fosters' => 'fosters',
-                'has_sponsorships' => 'sponsorships',
-            ];
-
-            foreach ($relations as $input => $relation) {
-                if ($request->boolean($input)) {
-                    $query->whereHas($relation);
-                }
-            }
-
-            // Ordenación
-            $allowedSorts = ['name', 'email', 'created_at'];
-            $sortBy = $request->input('sort_by');
-            $sortDir = $request->input('sort_dir', 'asc');
-
-            if (in_array($sortBy, $allowedSorts)) {
-                $query->orderBy($sortBy, $sortDir);
-            }
-
-            // Paginación
-            $users = $query->paginate(10);
-
-            if ($users->isEmpty()) {
-            session()->flash('info', 'No hay usuarios registrados aún.');
-            }
-            
-            return view('admin.user.index', data: compact('users'));
-
-        } catch (Exception $e) {
-            session()->flash('error', 'Ocurrió un error al obtener los usuarios.');
-            return view('admin.user.index', ['users' => collect()]);
         }
-
-    }
 
     /**
      * Muestra el formulario para crear un nuevo usuario.
