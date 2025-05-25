@@ -2,8 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
-use Illuminate\Support\Facades\Auth;
+use App\Models\Animal;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
@@ -28,10 +27,10 @@ class AnimalController extends Controller
      * @param Request $request Solicitud HTTP con los parámetros de búsqueda.
      * @return \Illuminate\View\View | \Illuminate\Http\RedirectResponse Vista con la lista de animales.
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
-            $animals = \App\Models\Animal::paginate(10);
+            $animals = Animal::paginate(10);
 
             if ($animals->isEmpty()) {
                 session()->flash('info', 'No hay animales registrados aún.');
@@ -39,10 +38,6 @@ class AnimalController extends Controller
 
             return view('admin.animal.index', compact('animals'));
 
-        } catch (QueryException $e) {
-            Log::error('Error de consulta al obtener los animales: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error de consulta al obtener los animales.']);
-            
         } catch (Exception $e) {
             Log::error('Error inesperado al obtener los animales: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al obtener los animales.']);
@@ -124,7 +119,7 @@ class AnimalController extends Controller
 
         try {
             
-            \App\Models\Animal::create([
+            Animal::create([
             'name' => $request->input('name'),
             'species' => $request->input('species'),
             'breed' => $request->input('breed'),
@@ -159,7 +154,7 @@ class AnimalController extends Controller
     public function show($id)
     {
         try {
-            $animal = \App\Models\Animal::findOrFail($id);
+            $animal = Animal::findOrFail($id);
             return view('admin.animal.show', compact('animal'));
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
@@ -182,7 +177,7 @@ class AnimalController extends Controller
     public function edit($id)
     {
         try {
-            $animal = \App\Models\Animal::findOrFail($id);
+            $animal = Animal::findOrFail($id);
             return view('admin.animal.edit', compact('animal'));
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
@@ -206,7 +201,7 @@ class AnimalController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $animal = \App\Models\Animal::findOrFail($id);
+            $animal = Animal::findOrFail($id);
 
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
@@ -240,7 +235,7 @@ class AnimalController extends Controller
             ]);
 
             if (!empty ($validated['microchip'])) {
-                $existingAnimal = \App\Models\Animal::where('microchip', $validated['microchip'])
+                $existingAnimal = Animal::where('microchip', $validated['microchip'])
                     ->where('id', '!=', $animal->id)
                     ->first();
                 if ($existingAnimal) {
@@ -271,7 +266,7 @@ class AnimalController extends Controller
     public function destroy($id)
     {
         try {
-            $animal = \App\Models\Animal::findOrFail($id);
+            $animal = Animal::findOrFail($id);
 
             if ($animal->status === 'adopted' || $animal->status === 'fostered') {
                 return redirect()->back()->withErrors(['error' => 'No se puede eliminar un animal con procesos abiertos.']);
@@ -307,7 +302,7 @@ class AnimalController extends Controller
     public function changeStatus(Request $request, $id)
         {
             try {
-                $animal = \App\Models\Animal::findOrFail($id);
+                $animal = Animal::findOrFail($id);
                 $request->validate([
                     'status' => 'required|in:available,adopted,fostered,sponsored,sheltered,intake,deceased',
                 ]);
@@ -326,7 +321,7 @@ class AnimalController extends Controller
      */
     public function deactivate($id)
         {
-            $animal = \App\Models\Animal::findOrFail($id);
+            $animal = Animal::findOrFail($id);
             $animal->status = 'sheltered'; // o cualquier otro estado neutro
             $animal->save();
             return redirect()->route('admin.animals.index')->with('success', 'Animal desactivado.');
