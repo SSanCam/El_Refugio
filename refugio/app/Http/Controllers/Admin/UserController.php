@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
 
 /**
  * Controlador para gestionar las adopciones del sistema.
@@ -33,7 +35,7 @@ class UserController extends Controller
     {
         try{
 
-            $users = \App\Models\User::paginate(10);
+            $users = User::paginate(10);
 
             if ($users->isEmpty()) {
             session()->flash('info', 'No hay usuarios registrados aún.');
@@ -41,7 +43,7 @@ class UserController extends Controller
             
             return view('admin.user.index', data: compact('users'));
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             session()->flash('error', 'Ocurrió un error al obtener los usuarios.');
             return view('admin.user.index', ['users' => collect()]);
         }
@@ -56,7 +58,7 @@ class UserController extends Controller
     {
         try {
             return view('admin.user.create');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             session()->flash('error', 'Ocurrió un error al mostrar el formulario de creación.');
             return redirect()->route('users.index');
         }
@@ -121,7 +123,7 @@ class UserController extends Controller
                 }
 
         try {
-                \App\Models\User::create([
+                User::create([
                     'name' => $request->input('name'),
                     'email' => $request->input('email'),
                     'password' => bcrypt($request->input('password')),
@@ -137,7 +139,7 @@ class UserController extends Controller
         Log::error('Error en base de datos al crear usuario: ' . $e->getMessage());
         return redirect()->back()->with('error', 'Error al guardar en la base de datos.')->withInput();
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error('Error general al crear usuario: ' . $e->getMessage());
                 return redirect()->back()->with('error', 'Ocurrió un error inesperado.')->withInput();
             }
@@ -152,14 +154,14 @@ class UserController extends Controller
     public function show(string $id)
     {
         try {
-            $user = \App\Models\User::findOrFail($id);
+            $user = User::findOrFail($id);
             return view('admin.user.show', compact('user'));
 
         } catch (ModelNotFoundException $e) {
             Log::warning("Usuario no encontrado con ID: $id");
             return redirect()->route('users.index')->with('error', 'El usuario no fue encontrado.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al mostrar detalles del usuario: ' . $e->getMessage());
             return redirect()->route('users.index')->with('error', 'Ocurrió un error al cargar los datos del usuario.');
         }
@@ -173,12 +175,12 @@ class UserController extends Controller
     public function edit(string $id)
     {
         try {
-            $user = \App\Models\User::findOrFail($id);
+            $user = User::findOrFail($id);
             return view('admin.user.edit', compact('user'));
         } catch (ModelNotFoundException $e) {
             Log::warning("Usuario no encontrado para edición con ID: $id");
             return redirect()->route('users.index')->with('error', 'El usuario no fue encontrado.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error al mostrar el formulario de edición: ' . $e->getMessage());
             return redirect()->route('users.index')->with('error', 'Ocurrió un error al cargar el formulario de edición.');
         }
@@ -199,7 +201,7 @@ class UserController extends Controller
     {
         try {
 
-            $user = \App\Models\User::findOrFail($id);
+            $user = User::findOrFail($id);
 
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
@@ -244,7 +246,7 @@ class UserController extends Controller
         } catch (ModelNotFoundException $e) {
             Log::warning("Usuario no encontrado para actualización con ID: $id");
             return redirect()->route('users.index')->with('error', 'El usuario no fue encontrado.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error general al actualizar usuario: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Ocurrió un error inesperado.')->withInput();
         }
@@ -259,7 +261,7 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         try {
-            $user = \App\Models\User::findOrFail($id);
+            $user = User::findOrFail($id);
 
             // Evitar autodesactivado de un admionistrador
             if ($user->id === Auth::user()->id) {
@@ -287,7 +289,7 @@ class UserController extends Controller
             Log::error('Error en base de datos al eliminar usuario: ' . $e->getMessage());
             return redirect()->route('users.index')->with('error', 'Error al eliminar el usuario.')->withInput();
         
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error general al eliminar usuario: ' . $e->getMessage());
             return redirect()->route('users.index')->with('error', 'Ocurrió un error inesperado al eliminar el usuario.');
         }
@@ -314,7 +316,7 @@ class UserController extends Controller
 
         try {
 
-            $user = \App\Models\User::findOrFail($id);
+            $user = User::findOrFail($id);
             $role = strtolower($request->input('role'));
             $user->update(['role' => $role]);
             return redirect()->route('users.show', $user->id)->with('success', 'Rol asignado exitosamente.');
@@ -327,7 +329,7 @@ class UserController extends Controller
             Log::error('Error en base de datos al asignar rol: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error al guardar en la base de datos.')->withInput();
         
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error general al asignar rol: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Ocurrió un error inesperado.')->withInput();
         }
@@ -343,7 +345,7 @@ class UserController extends Controller
     public function activateUser(string $id)
     {
         try {
-           $user = \App\Models\User::findOrFail($id);
+           $user = User::findOrFail($id);
             $user->active = true;
             $user->save();
 
@@ -354,7 +356,7 @@ class UserController extends Controller
         } catch (QueryException $e) {
             Log::error('Error en base de datos al activar usuario: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error al guardar en la base de datos.')->withInput();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error general al activar usuario: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Ocurrió un error inesperado.')->withInput();
         }
@@ -369,7 +371,7 @@ class UserController extends Controller
     public function deactivateUser(string $id)
     {
         try {
-            $user = \App\Models\User::findOrFail($id);
+            $user = User::findOrFail($id);
 
             // Evitar desactivarse a sí mismo
             if ($user->id === Auth::id()) {
@@ -386,7 +388,7 @@ class UserController extends Controller
         } catch (QueryException $e) {
             Log::error('Error en base de datos al desactivar usuario: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error al guardar en la base de datos.')->withInput();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error general al desactivar usuario: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Ocurrió un error inesperado.')->withInput();
         }
