@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AnimalController; 
+use App\Http\Controllers\Admin\AdoptionController;
+use App\Http\Controllers\Admin\FosterController;
 
 Route::middleware(['auth', 'is_admin'])
     ->prefix('admin')
@@ -40,4 +42,22 @@ Route::middleware(['auth', 'is_admin'])
         Route::post('animals/{id}/status', [AnimalController::class, 'changeStatus'])->name('animals.changeStatus');
         Route::post('animals/{id}/deactivate', [AnimalController::class, 'deactivate'])->name('animals.deactivate');
 
+        // Rutas para la gestión de adopciones
+        Route::get('adoptions', [AdoptionController::class, 'index'])->name('adoptions.index');
+        Route::get('adoptions/create', [AdoptionController::class, 'create'])->name('adoptions.create');
+        Route::post('adoptions', [AdoptionController::class, 'store'])->name('adoptions.store');
+        Route::get('adoptions/{id}', [AdoptionController::class, 'show'])->name('adoptions.show');
+        Route::get('adoptions/{id}/edit', [AdoptionController::class, 'edit'])->name('adoptions.edit');
+        Route::put('adoptions/{id}', [AdoptionController::class, 'update'])->name('adoptions.update');
+        Route::delete('adoptions/{id}', [AdoptionController::class, 'destroy'])->name('adoptions.destroy');
+
+        // Rutas para la gestión de acogidas (fosters)
+        Route::get('fosters', [FosterController::class, 'index'])->name('foster.index');
+        Route::get('fosters/create', [FosterController::class, 'create'])->name('foster.create');
+        Route::post('fosters', [FosterController::class, 'store'])->name('foster.store');
+        Route::get('fosters/{id}', [FosterController::class, 'show'])->name('foster.show');
+        Route::get('fosters/{id}/edit', [FosterController::class, 'edit'])->name('foster.edit');
+        Route::put('fosters/{id}', [FosterController::class, 'update'])->name('foster.update');
+        Route::delete('fosters/{id}', [FosterController::class, 'destroy'])->name('foster.destroy');
+   
     });
