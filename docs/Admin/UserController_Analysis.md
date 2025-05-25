@@ -1,231 +1,124 @@
-# UserController (Panel de Administración)
+# `UserController` (Panel de Administración)
 
 Controlador responsable de gestionar usuarios desde el panel de administración.  
 Incluye funciones CRUD, asignación de roles, activación y desactivación de cuentas, y filtros personalizados.
 
 ## Ruta del archivo
 
-[Admin > UserController.php](../../app/Http/Controllers/Admin/UserController.php)
+```plaintext
+app/Http/Controllers/Admin/UserController.php
+```
 
 ---
 
 ## Métodos principales
 
-### index(Request $request)
+### `index(Request $request)`
 
-Muestra un listado paginado de usuarios con filtros.
+- Muestra un listado paginado de usuarios con posibilidad de filtrar por distintos criterios (`nombre`, `email`, `rol`, actividad relacionada).
+- Paginación establecida en 10 usuarios por página.
+- Envuelto en bloque `try-catch` para manejo de errores.
+- Si no hay usuarios, se muestra un mensaje informativo.
 
-Por orden, éstos filtros son: 
-- Por nombre
-- Por email
-- Si tiene adopciones activas
-- Si tiene acogidas activas
-- Si tiene un apadrinamiento activo
-- Por **rol** de usuario.
+### `create()`
 
-Todo mostrado con un paginado de 10 usuarios.
+- Muestra el formulario para registrar un nuevo usuario.
+- Control de errores con `try-catch`.
 
-```php
-public function index(Request $request)
-{
-    $request->validate([
-        'name' => 'nullable|string|max:255',
-        'email' => 'nullable|email|max:255',
-        'role' => 'nullable|in:user,admin',
-        'has_adoptions' => 'nullable|boolean',
-        'has_fosters' => 'nullable|boolean',
-        'has_sponsorships' => 'nullable|boolean',
-    ]);
+### `store(Request $request)`
 
-    $query = \App\Models\User::query();
+- Valida y guarda un nuevo usuario en la base de datos.
+- Aplicación de reglas de validación avanzadas:
+  - `regex`, `confirmed`, `boolean`, etc.
+- Encriptación segura de contraseñas con `bcrypt()`.
+- Captura de excepciones específicas:
+  - `QueryException`, `\Exception`.
+- Registro de errores usando `Log::error()`.
 
-    if ($request->filled('name')) {
-        $query->where('name', 'like', '%' . $request->input('name') . '%');
-    }
+### `show(string $id)`
 
-    if ($request->filled('email')) {
-        $query->where('email', 'like', '%' . $request->input('email') . '%');
-    }
+- Muestra los detalles de un usuario específico.
+- Manejo de:
+  - `ModelNotFoundException` para IDs inválidos.
+  - Errores generales.
 
-    if ($request->boolean('has_adoptions')) {
-        $query->whereHas('adoptions');
-    }
+### `edit(string $id)`
 
-    if ($request->boolean('has_fosters')) {
-        $query->whereHas('fosters');
-    }
+- Carga el formulario para editar un usuario.
+- Control de errores para:
+  - Modelo no encontrado (`ModelNotFoundException`).
+  - Errores generales en la carga de la vista.
 
-    if ($request->boolean('has_sponsorships')) {
-        $query->whereHas('sponsorships');
-    }
+### `update(Request $request, string $id)`
 
-    if ($request->filled('role')) {
-        $query->where('role', $request->input('role'));
-    }
+- Actualiza los datos de un usuario.
+- Valida los datos recibidos y filtra los campos modificados.
+- Encripta la contraseña si ha sido modificada.
+- Captura de errores con `try-catch`:
+  - `QueryException`, `ModelNotFoundException`, `\Exception`.
 
-    $users = $query->paginate(10)->withQueryString();
+### `destroy(string $id)`
 
-    return view('user.index', compact('users'));
-}
-```
-
----
-
-### create()
-
-Muestra el formulario para crear un nuevo usuario.
-
-```php
-public function create()
-{
-    return view('admin.user.create');
-}
-```
-
----
-
-### store(Request $request)
-
-Valida y guarda un nuevo usuario en la base de datos.  
-Este método es exclusivo del panel de administración. Los campos opcionales como `role`, `phone`, `dni` y `active` pueden omitirse.
-
-```php
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|min:8|confirmed',
-        'role' => 'nullable|in:user,admin',
-        'phone' => 'nullable|string|max:20',
-        'dni' => 'nullable|string|max:20',
-        'active' => 'nullable|boolean',
-    ]);
-
-    \App\Models\User::create([
-        'name' => $request->input('name'),
-        'email' => $request->input('email'),
-        'password' => bcrypt($request->input('password')),
-        'role' => $request->input('role'),
-        'phone' => $request->input('phone'),
-        'dni' => $request->input('dni'),
-        'active' => $request->boolean('active'),
-    ]);
-
-    return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
-}
-```
-
----
-
-### show(string $id)
-
-Muestra los detalles completos de un usuario.
-
-```php
-public function show(string $id)
-{
-    $user = \App\Models\User::findOrFail($id);
-    return view('admin.user.show', compact('user'));
-}
-```
-
----
-
-### edit(string $id)
-
-Carga la vista del formulario de edición de usuario.
-
-```php
-public function edit(string $id)
-{
-    $user = \App\Models\User::findOrFail($id);
-    return view('admin.user.edit', compact('user'));
-}
-```
-
----
-
-### update(Request $request, string $id)
-
-Actualiza los datos de un usuario. Si se modifica la contraseña, se encripta.
-
-```php
-public function update(Request $request, string $id)
-{
-    $user = \App\Models\User::findOrFail($id);
-
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id,
-        'password' => 'nullable|string|min:8|confirmed',
-        'role' => 'nullable|in:user,admin',
-        'phone' => 'nullable|string|max:20',
-        'dni' => 'nullable|string|max:20',
-        'active' => 'nullable|boolean',
-    ]);
-
-    if (!empty($validated['password'])) {
-        $validated['password'] = bcrypt($validated['password']);
-    } else {
-        unset($validated['password']);
-    }
-
-    $user->update(array_filter($validated, fn($value) => !is_null($value)));
-
-    return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
-}
-```
-
----
-
-### destroy(string $id)
-
-Elimina un usuario
-
-* Un usuario **Admin** puede eliminar a cualquier usuario (que no tenga procesos abiertos), excepto a sí mismo.
-
-
-```php
-public function destroy(string $id)
-{
-    $user = \App\Models\User::findOrFail($id);
-
-    if ($user->id === \Auth::id()) {
-        return redirect()->route('users.index')->with('error', 'No puedes eliminar tu propia cuenta.');
-    }
-
-    if ($user->adoptions()->exists() || $user->fosters()->exists() || $user->sponsorships()->exists()) {
-        return redirect()->route('users.index')
-            ->with('error', 'Este usuario tiene procesos activos y no puede ser eliminado.');
-    }
-
-    $user->delete();
-
-    return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente.');
-}
-```
+- Elimina un usuario del sistema.
+- Reglas de seguridad:
+  - No permite que un administrador elimine su propia cuenta.
+  - Si el usuario tiene relaciones activas (`adoptions`, `fosters`, `sponsorships`), **no se elimina**, se desactiva (`active = false`) en su lugar.
+- Se registra el evento con `Log::info()` en casos de desactivación por relaciones activas.
+- Captura de excepciones:
+  - `ModelNotFoundException` → Usuario no existente.
+  - `QueryException` → Error en la base de datos.
+  - `\Exception` → Errores generales no previstos.
 
 ---
 
 ## Funciones administrativas
 
-### assignRole(Request $request, string $id)
+### `assignRole(Request $request, string $id)`
 
-Asigna un nuevo rol (`user` o `admin`) al usuario especificado.
+- Asigna o modifica el rol (`user`, `admin`) de un usuario.
+- Valida el campo `role`.
+- Uso de `strtolower()` para estandarizar el dato.
+- Manejo de errores:
+  - `ModelNotFoundException`, `QueryException`, `\Exception`.
 
-```php
-public function assignRole(Request $request, string $id)
-{
-    $request->validate([
-        'role' => 'required|in:user,admin',
-    ]);
+### `activateUser(string $id)`
 
-    $user = \App\Models\User::findOrFail($id);
-    $user->role = $request->input('role');
-    $user->save();
+- Activa la cuenta de un usuario (`active = true`).
+- Control de errores similar al resto de funciones (`try-catch`).
+- Registro de errores y advertencias.
 
-    return redirect()->route('users.show', $user->id)->with('success', 'Rol asignado exitosamente.');
-}
-```
+### `deactivateUser(string $id)`
+
+- Desactiva un usuario (`active = false`) si no es el usuario autenticado.
+- Previene que un administrador se desactive a sí mismo (`Auth::id()`).
+- Registro de errores (`Log::warning`, `Log::error`) y control completo de excepciones (`ModelNotFoundException`, `QueryException`, `\Exception`).
+
+
+---
+
+## Características técnicas clave
+
+- **Validaciones avanzadas:**
+  - Uso de expresiones regulares para correos y contraseñas.
+  - Validaciones condicionales (`nullable`, `confirmed`, `boolean`).
+
+- **Manejo de excepciones:**
+  - `ModelNotFoundException`: recursos inexistentes.
+  - `QueryException`: errores de base de datos.
+  - `\Exception`: capturas genéricas.
+
+- **Logging:**
+  - `Log::warning()` para advertencias.
+  - `Log::error()` para errores críticos.
+
+- **Seguridad:**
+  - Impide eliminar o desactivar la cuenta propia.
+  - Bloquea eliminación si existen relaciones activas.
+
+- **Buenas prácticas:**
+  - Uso de `compact()` para pasar variables a las vistas.
+  - `array_filter()` evita sobrescribir datos innecesarios.
+  - Mensajes flash de éxito/error (`with('success')`, `with('error')`).
+
+---
 
