@@ -8,7 +8,10 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 
-
+/**
+ * SponsorshipController
+ * Controlador para la gestión de apadrinamientos de animales.
+ */
 class SponsorshipController extends Controller
 {
     /**
@@ -120,7 +123,7 @@ class SponsorshipController extends Controller
             $sponsorship = Sponsorship::findOrFail($id);
             $sponsorship->update($request->all());
             return redirect()->route('admin.sponsorships.index')->with('success', 'Apadrinamiento actualizado exitosamente.');
-            
+
         } catch (QueryException $e) {
             Log::error('Error al actualizar el apadrinamiento: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error al actualizar el apadrinamiento.']);
