@@ -15,6 +15,7 @@ use Exception;
 
 /**
  * AdoptionController
+ * Controlador para la gestión de adopciones de animales.
  */
 class AdoptionController extends Controller
 {
