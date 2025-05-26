@@ -22,7 +22,9 @@ class AnimalController extends Controller
     /**
      * Muestra un listado paginado de animales.
      */
+
     public function index()
+
     {
         try {
             $animals = Animal::paginate(10);
@@ -31,7 +33,7 @@ class AnimalController extends Controller
                 session()->flash('info', 'No hay animales registrados aún.');
             }
 
-            return view('admin.animal.index', compact('animals'));
+            return view('public.animal.index', compact('animals'));
         } catch (Exception $e) {
             Log::error('Error inesperado al obtener los animales: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al obtener los animales.']);
@@ -93,12 +95,12 @@ class AnimalController extends Controller
     {
         try {
             $animal = Animal::with([
-                'adoption.user',
+                'adoptions.user',
                 'fosters.user',
                 'sponsorships.user'
             ])->findOrFail($id);
 
-            return view('admin.animal.show', compact('animal'));
+            return view('public.animal.show', compact('animal'));
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Animal no encontrado.']);
