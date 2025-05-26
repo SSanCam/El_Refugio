@@ -18,6 +18,8 @@ class Sponsorship extends Model
         'start_date',
         'end_date',
         'status',
+        'donation_amount',
+        'donation_interval',    
         'notes',
     ];
 
