@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->string('status');
+            $table->decimal('donation_amount', 8, 2)->default(0); 
+            $table->string('donation_interval')->default('único'); 
             $table->text('notes')->nullable();
             $table->timestamps();
         });

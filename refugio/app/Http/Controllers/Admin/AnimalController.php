@@ -9,6 +9,8 @@ use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Exception;
+use App\Mail\SponsorshipEndedMail;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Controlador para gestionar los animales del refugio.
@@ -157,6 +159,7 @@ class AnimalController extends Controller
             }
 
             $animal->update($validated);
+
             return redirect()->route('admin.animals.index')->with('success', 'Animal actualizado exitosamente.');
         } catch (QueryException $e) {
             Log::error('Error de consulta al actualizar el animal: ' . $e->getMessage());
@@ -201,10 +204,30 @@ class AnimalController extends Controller
                 'status' => 'required|in:available,adopted,fostered,sponsored,sheltered,intake,deceased',
             ]);
             $animal->update(['status' => $request->input('status')]);
+
+            if ($request->input('status') === 'deceased' || $request->input('status') === 'adopted') {
+                $activeSponsorships = $animal->sponsorships()->where('status', 'active')->get();
+
+                foreach ($activeSponsorships as $sponsorship) {
+                    $sponsorship->status = 'finished';
+                    $sponsorship->end_date = now();
+                    $sponsorship->save();
+
+                    Mail::to($sponsorship->user->email)->send(new SponsorshipEndedMail($sponsorship));
+                }
+            }
+
             return redirect()->route('admin.animals.show', $animal->id)->with('success', 'Estado actualizado correctamente.');
+
+        } catch (ModelNotFoundException $e) {
+            Log::error('Animal no encontrado: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Animal no encontrado.']);
+        } catch (QueryException $e) {
+            Log::error('Error de consulta al cambiar el estado del animal: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error de consulta al cambiar el estado del animal.']);
         } catch (Exception $e) {
-            Log::error('Error al actualizar el estado del animal: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error al actualizar el estado.']);
+            Log::error('Error inesperado al cambiar el estado del animal: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error inesperado al cambiar el estado del animal.']);
         }
     }
 
