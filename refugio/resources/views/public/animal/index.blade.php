@@ -1,38 +1,51 @@
-@extends('layouts.app') {{-- o el layout que uses en tu panel admin --}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Animales</h1>
+    @extends('layouts.app') {{-- o el layout que uses en tu panel admin --}}
 
-@section('content')
-    <div class="container">
-        <h1>Listado de Animales</h1>
+    @section('content')
+        <div class="container">
+            <h1>Listado de Animales</h1>
 
-        {{-- Mostrar mensaje flash si lo hay --}}
-        @if (session('info'))
-            <div class="alert alert-info">{{ session('info') }}</div>
-        @endif
+            {{-- Mostrar mensaje flash si lo hay --}}
+            @if (session('info'))
+                <div class="alert alert-info">{{ session('info') }}</div>
+            @endif
 
-        {{-- Mostrar mensaje de error si lo hay --}}
-        @if ($errors->any())
-            <div class="alert alert-danger">
+            {{-- Mostrar mensaje de error si lo hay --}}
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            {{-- Mostrar los animales si existen --}}
+            @if ($animals->count())
                 <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
+                    @foreach ($animals as $animal)
+                        <li>{{ $animal->name }} - {{ $animal->species }}</li>
                     @endforeach
                 </ul>
-            </div>
-        @endif
 
-        {{-- Mostrar los animales si existen --}}
-        @if ($animals->count())
-            <ul>
-                @foreach ($animals as $animal)
-                    <li>{{ $animal->name }} - {{ $animal->species }}</li>
-                @endforeach
-            </ul>
+                {{-- Paginación --}}
+                {{ $animals->links() }}
+            @else
+                <p>No hay animales registrados.</p>
+            @endif
+        </div>
+    @endsection
+</body>
+</html>
 
-            {{-- Paginación --}}
-            {{ $animals->links() }}
-        @else
-            <p>No hay animales registrados.</p>
-        @endif
-    </div>
-@endsection
+
 
