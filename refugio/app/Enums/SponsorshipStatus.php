@@ -12,9 +12,12 @@ enum SponsorshipStatus: string
     {
         return match ($this) {
             self::ACTIVE => 'Activo',
-            self::PAUSED => 'Pausado',
             self::ENDED => 'Finalizado',
-            self::CANCELED => 'Cancelado',
         };
     }
+        public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+
 }

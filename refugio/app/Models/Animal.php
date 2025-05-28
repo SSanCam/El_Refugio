@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+use App\Observers\AnimalObserver;
+
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +25,7 @@ class Animal extends Model
         'status',
         'microchip',
         'description',
+        'parent_id', 
         'image',
     ];
 
@@ -69,6 +72,5 @@ class Animal extends Model
     {
         return $this->hasMany(Animal::class, 'parent_id');
     }
-
 
 }
