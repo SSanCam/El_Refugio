@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Exception;
 use App\Mail\SponsorshipEndedMail;
+use App\Mail\SponsorshipNotificationMail;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -213,7 +214,7 @@ class AnimalController extends Controller
                     $sponsorship->end_date = now();
                     $sponsorship->save();
 
-                    Mail::to($sponsorship->user->email)->send(new SponsorshipEndedMail($sponsorship));
+                    Mail::to($sponsorship->user->email)->send(new SponsorshipNotificationMail($sponsorship, 'fin'));
                 }
             }
 

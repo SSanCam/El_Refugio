@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
+use App\Enums\SponsorshipStatus;
+use Exception;
 
 /**
  * SponsorshipController
@@ -28,46 +30,6 @@ class SponsorshipController extends Controller
         }
     }
 
-
-    /**
-     * Muestra el formulario para crear un nuevo apadrinamiento.
-     */
-    public function create()
-    {
-        try {
-            return view('admin.sponsorship.create');
-        } catch (QueryException $e) {
-            Log::error('Error al mostrar el formulario de creación de apadrinamiento: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error al mostrar el formulario de creación de apadrinamiento.']);
-        }
-    }
-
-    /**
-     * Almacena un nuevo apadrinamiento en la base de datos.
-     */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
-            'animal_id' => 'required|exists:animals,id',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'status' => 'required|string|max:50',
-            'donation_amount' => 'required|numeric|min:0',
-            'donation_interval' => 'required|string|max:50',
-            'notes' => 'nullable|string|max:500',
-        ]);
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-        try {
-            $sponsorship = Sponsorship::create($request->all());
-            return redirect()->route('admin.sponsorships.index')->with('success', 'Apadrinamiento creado exitosamente.');
-        } catch (QueryException $e) {
-            Log::error('Error al crear el apadrinamiento: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error al crear el apadrinamiento.']);
-        }
-    }
     /**
      * Muestra los detalles de un apadrinamiento específico.
      */
@@ -79,7 +41,7 @@ class SponsorshipController extends Controller
         } catch (QueryException $e) {
             Log::error('Error al obtener el apadrinamiento: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error al obtener el apadrinamiento.']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error inesperado al obtener el apadrinamiento: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al obtener el apadrinamiento.']);
         }
@@ -91,23 +53,29 @@ class SponsorshipController extends Controller
     {
         try {
             $sponsorship = Sponsorship::findOrFail($id);
-            return view('admin.sponsorship.edit', compact('sponsorship'));
+            $animal = $sponsorship->animal;
+            return view('admin.sponsorship.edit', compact('sponsorship', 'animal'));
         } catch (QueryException $e) {
             Log::error('Error al mostrar el formulario de edición de apadrinamiento: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error al mostrar el formulario de edición de apadrinamiento.']);
+        } catch (Exception $e) {
+            Log::error('Error inesperado al mostrar el formulario de edición de apadrinamiento: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error inesperado al mostrar el formulario de edición de apadrinamiento.']);
         }
     }
+
     /**
      * Actualiza un apadrinamiento existente en la base de datos.
      */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
             'animal_id' => 'required|exists:animals,id',
+            'email' => 'required|email|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'status' => 'required|string|max:50',
+            'status' => 'required|in:' . implode(',', SponsorshipStatus::values()),
             'donation_amount' => 'required|numeric|min:0',
             'donation_interval' => 'required|string|max:50',
             'notes' => 'nullable|string|max:500',
@@ -116,18 +84,27 @@ class SponsorshipController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        if ($request->has('end_date') && $request->end_date < $request->start_date) {
-            return redirect()->back()->withErrors(['end_date' => 'La fecha de finalización no puede ser anterior a la fecha de inicio.']);
-        }
+
         try {
             $sponsorship = Sponsorship::findOrFail($id);
-            $sponsorship->update($request->all());
+            $sponsorship->update($request->only([
+                'user_id',
+                'start_date',
+                'end_date',
+                'status',
+                'donation_amount',
+                'donation_interval',
+                'notes',
+                'email'
+            ]));
+
+ 
             return redirect()->route('admin.sponsorships.index')->with('success', 'Apadrinamiento actualizado exitosamente.');
 
         } catch (QueryException $e) {
             Log::error('Error al actualizar el apadrinamiento: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error al actualizar el apadrinamiento.']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error inesperado al actualizar el apadrinamiento: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al actualizar el apadrinamiento.']);
         }
@@ -145,9 +122,31 @@ class SponsorshipController extends Controller
         } catch (QueryException $e) {
             Log::error('Error al eliminar el apadrinamiento: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error al eliminar el apadrinamiento.']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error inesperado al eliminar el apadrinamiento: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al eliminar el apadrinamiento.']);
+        }
+    }
+
+    /**
+     * Cancela un apadrinamiento.
+     * @param mixed $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancel($id)
+    {
+        try {
+            $sponsorship = Sponsorship::findOrFail($id);
+            $sponsorship->status = SponsorshipStatus::CANCELED;
+            $sponsorship->save();
+
+            return redirect()->route('admin.sponsorships.index')->with('success', 'Apadrinamiento cancelado exitosamente.');
+        } catch (QueryException $e) {
+            Log::error('Error al cancelar el apadrinamiento: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error al cancelar el apadrinamiento.']);
+        } catch (Exception $e) {
+            Log::error('Error inesperado al cancelar el apadrinamiento: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error inesperado al cancelar el apadrinamiento.']);
         }
     }
 

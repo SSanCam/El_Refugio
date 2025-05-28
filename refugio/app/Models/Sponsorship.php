@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\SponsorshipStatus; 
 
 class Sponsorship extends Model
 {
@@ -15,6 +16,7 @@ class Sponsorship extends Model
     protected $fillable = [
         'user_id',
         'animal_id',
+        'email',
         'start_date',
         'end_date',
         'status',
@@ -45,5 +47,7 @@ class Sponsorship extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
+        'donation_amount' => 'decimal:2',
+        'status' => SponsorshipStatus::class,
     ];
 }

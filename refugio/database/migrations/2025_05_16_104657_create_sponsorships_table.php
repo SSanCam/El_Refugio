@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('sponsorships', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->nullable()->constrained('users');
             $table->foreignId('animal_id')->constrained('animals');
+            $table->string('email');
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->string('status');
             $table->decimal('donation_amount', 8, 2)->default(0); 
-            $table->string('donation_interval')->default('único'); 
+            $table->string('donation_interval')->default('mensual'); 
             $table->text('notes')->nullable();
             $table->timestamps();
         });
