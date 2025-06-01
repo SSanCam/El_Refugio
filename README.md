@@ -1,6 +1,6 @@
 # El Refugio
 
-**Proyecto desarrollado por Sara Sánchez Camilleri como Trabajo Din de Grado del Ciclo Formativo de Desarrollo de Aplicaciones Web.**
+**Proyecto desarrollado por Sara Sánchez Camilleri como Trabajo Fin de Grado del Ciclo Formativo de Desarrollo de Aplicaciones Web.**
 
 **I.E.S. Rafael Alberti, Cádiz**
 
@@ -89,10 +89,12 @@ La aplicación está organizada de manera modular, permitiendo una gestión efic
 
 - **User**: Representa a los usuarios que pueden estar registrados para interactuar con la web o vinculados al refugio para adopciones, acogidas, o apadrinamientos.
 - **Animal**: Almacena toda la información sobre los animales del refugio.
-- **Veterinary_History**: Almacena el historial veterinario de cada animal.
-- **Animal_Medication**: Registra los tratamientos médicos continuos de los animales.
 - **Adoptions**: Gestiona el proceso de adopción de los animales.
 - **Foster**: Gestiona las acogidas temporales de los animales.
+- **Volunteer_Request**: Almacena las solicitudes para colaborar como voluntario/a.
+- **Sponsorship** *(en pruebas)*: Entidad para gestionar apadrinamientos (prevista para desarrollo local).
+- **Animal_Images**: Galería de imágenes asociadas a cada animal.
+
 
 ---
 
