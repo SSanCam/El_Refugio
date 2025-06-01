@@ -91,8 +91,9 @@ En caso de modificar su dirección de correo electrónico, el sistema reactivar�
 
 El sistema distingue dos roles principales:
 
-- `user`: rol asignado por defecto a todo usuario que se registra en la plataforma.
-- `admin`: rol reservado a personal autorizado del refugio, con acceso total al panel de administración.
+- `user`: rol asignado por defecto a todo usuario que se registra en la plataforma. Ésto sólo puede ser modificado por un usuario administrador y no se verá en la vista pública de forma que se refuerza la seguridad del sitio.
+
+- `admin`: rol reservado a personal autorizado del refugio, con acceso total al panel de administración. Se controlará que un usuario administrador no podrá eliminarse o desactivarse ellos así mismos.
 
 El control de acceso a las rutas se realiza mediante middleware, permitiendo proteger funcionalidades específicas según el rol autenticado.
 
@@ -114,7 +115,7 @@ Estas funcionalidades forman parte de la base esencial del sistema y están prev
 
 ## 3. Gestión de acogidas
 
-El sistema contempla la posibilidad de que cualquier persona interesada pueda ofrecerse como hogar temporal para uno o más animales. Esta funcionalidad es clave dentro del flujo de adopción y bienestar del animal, ya que permite evaluar entornos y preparar futuras adopciones en un entorno familiar.
+El sistema contempla la posibilidad de que cualquier persona interesada pueda ofrecerse como hogar temporal para uno o más animales. Esta funcionalidad es clave dentro del flujo de adopción y bienestar del animal, ya que permite evaluar entornos y preparar futuras adopciones en un entorno familiar. Para los casos en los que la acogida culmina en adopción, ver punto 4.
 
 ### Formulario público de solicitud
 
@@ -172,93 +173,7 @@ Este mensaje sirve para **gestionar expectativas** y favorecer adopciones respon
 
 ---
 
-## 5. Historial veterinario (`Veterinary_History`)
-
-El historial veterinario de cada animal permite registrar todos los eventos médicos relevantes a lo largo de su estancia en el refugio. Esta funcionalidad es clave para garantizar el seguimiento de la salud de cada animal, registrar tratamientos aplicados y mantener trazabilidad médica.
-
-### Modelo y relaciones
-
-La entidad `Veterinary_History` se ha diseñado para almacenar tratamientos, observaciones clínicas, vacunas, intervenciones quirúrgicas u otros eventos médicos. Cada registro incluye:
-
-- El tipo de tratamiento.
-- La fecha en que se realizó.
-- Una descripción detallada.
-- Observaciones adicionales si las hubiera.
-
-Cada entrada está vinculada a un `Animal` mediante una relación 1:N (`id_animal`). Esta asociación permite visualizar el historial médico completo de un animal desde su ficha.
-
-### Registro de eventos médicos
-
-Los usuarios con rol `admin` pueden añadir nuevos tratamientos desde el panel de administración. Los campos requeridos son:
-
-- Animal correspondiente.
-- Fecha del tratamiento.
-- Tipo de tratamiento (vacunación, cirugía, desparasitación, etc.).
-- Descripción detallada del evento.
-- Observaciones opcionales.
-
-El sistema permite editar o eliminar registros si es necesario, siguiendo permisos restringidos por rol.
-
-### Visualización agrupada
-
-Desde la vista extendida del animal (en la parte administrativa), se presenta el historial completo agrupado por orden cronológico descendente. Esto permite al personal consultar de forma rápida todo el historial clínico sin necesidad de navegar por otras secciones.
-
-El listado incluye:
-
-- Fecha.
-- Tipo de tratamiento.
-- Descripción.
-- Observaciones.
-- Icono de edición (si el usuario tiene permisos).
-
-Esta visualización facilita la toma de decisiones sobre tratamientos futuros o evaluaciones veterinarias.
-
-### Posibilidad de exportar
-
-Como funcionalidad ampliable, se contempla la opción futura de exportar el historial completo en formato PDF. Esta función puede ser útil en procesos de adopción, informes veterinarios o entregas de documentación.
-
----
-
-## 5. Historial de medicación continua
-
-El sistema incluye la gestión de tratamientos prolongados o crónicos para cada animal, tales como medicación diaria, semanal o periódica. Esta funcionalidad permite llevar un control preciso de medicamentos activos o finalizados, y se complementa con el historial veterinario general.
-
-### Registro de tratamientos
-
-Desde el panel de administración se podrán registrar los tratamientos mediante un formulario con los siguientes campos:
-
-- Medicamento
-- Dosis
-- Frecuencia (por ejemplo: diaria, semanal)
-- Fecha de inicio (`start_date`)
-- Fecha de finalización (`end_date`, opcional)
-- Descripción o comentarios
-
-El tratamiento se considera **activo** si no tiene registrada una fecha de finalización.
-
-### Asociación con animales
-
-Cada tratamiento estará vinculado a un único animal. Desde la ficha del animal, el personal podrá acceder a todos sus tratamientos activos y pasados, visualizados de forma cronológica.
-
-### Vista agrupada y filtros
-
-Se habilitará una vista en el panel de administración que agrupe todos los tratamientos por animal. Además, se podrán aplicar filtros para visualizar únicamente los tratamientos:
-
-- En curso (sin fecha de finalización)
-- Finalizados
-- Por frecuencia (diaria, semanal, etc.)
-
-### Finalización manual del tratamiento
-
-El administrador podrá modificar cualquier tratamiento para añadirle una fecha de finalización si corresponde. Esta acción marca automáticamente el tratamiento como **cerrado** en la interfaz.
-
-### Consideraciones futuras
-
-Aunque el sistema no generará alertas automáticas, se contempla añadir en el futuro una visualización destacada de aquellos tratamientos en curso que lleven más tiempo activos o que se aproximen a una revisión programada.
-
----
-
-## 6. Gestión de formularios públicos
+## 5. Gestión de formularios públicos
 
 El sistema permite que cualquier persona interesada pueda contactar con el refugio, enviar una solicitud de adopción, acogida o voluntariado directamente desde la web, sin necesidad de registrarse previamente. Esta funcionalidad es esencial para mantener una puerta abierta a la colaboración y participación ciudadana sin barreras técnicas.
 
@@ -308,53 +223,6 @@ Si una solicitud es rechazada, se registra como tal, se mantiene en el historial
 ---
 
 Esta funcionalidad garantiza una gestión flexible, organizada y trazable de todas las solicitudes recibidas desde el exterior, sin comprometer la seguridad ni la calidad del proceso interno del refugio.
-
----
-
-## 6. Gestión de formularios públicos
-
-El sistema permite que cualquier persona, sin necesidad de estar registrada, pueda enviar solicitudes al refugio a través de formularios públicos disponibles en la web. Estas solicitudes pueden corresponder a distintos tipos: adopción, acogida, voluntariado o contacto general.
-
-Con el fin de centralizar y simplificar la gestión de todas estas peticiones, se ha diseñado una estructura unificada que almacena los datos en una única tabla de base de datos, permitiendo su posterior tratamiento por parte del personal del refugio.
-
-### Envío y confirmación visual
-
-Los formularios estarán accesibles desde la interfaz pública de la web. Una vez completados y enviados, se mostrará un mensaje visual de confirmación (por ejemplo, un popup o un aviso en pantalla) para informar al usuario de que su solicitud ha sido registrada correctamente. No es necesario estar autenticado para enviar una solicitud.
-
-### Almacenamiento unificado
-
-Todas las solicitudes recibidas se almacenan en una tabla común bajo la entidad `Public_Form_Request`. Esta entidad incluye campos genéricos como nombre, correo electrónico y mensaje, así como campos específicos como el tipo de solicitud (`type`) o el identificador del animal si procede.
-
-### Campos definidos
-
-La estructura prevista de esta entidad es la siguiente:
-
-- `id_request`: Clave primaria autogenerada.
-- `type`: Tipo de formulario enviado (`adoption`, `foster`, `volunteer`, `contact`).
-- `full_name`: Nombre completo del solicitante.
-- `email`: Correo electrónico de contacto.
-- `phone`: Número de teléfono (opcional).
-- `message`: Cuerpo del mensaje o motivo de la solicitud.
-- `animal_id`: ID del animal, si la solicitud está asociada a uno (por ejemplo, en adopciones).
-- `status`: Estado de la solicitud (`pending`, `reviewed`, `accepted`, `rejected`).
-- `admin_notes`: Campo interno para observaciones del equipo del refugio.
-- `created_at` / `updated_at`: Fechas de creación y modificación, generadas automáticamente por Laravel.
-
-### Gestión desde el panel de administración
-
-Los administradores podrán acceder a un panel centralizado desde el cual visualizar todas las solicitudes recibidas. Esta interfaz permitirá:
-
-- Filtrar por tipo (`adopción`, `acogida`, etc.), estado o fecha.
-- Consultar el detalle completo de cada solicitud.
-- Cambiar su estado y añadir observaciones internas.
-- Formalizar la solicitud, en caso de aceptación, creando registros en otras entidades (`Adoptions`, `Foster`, `User`, etc.).
-
-### Ventajas del enfoque
-
-- **Centralización**: evita la necesidad de crear múltiples tablas para formularios similares.
-- **Flexibilidad**: permite añadir fácilmente nuevos tipos de formularios en el futuro.
-- **Trazabilidad**: todas las solicitudes quedan registradas y pueden consultarse en cualquier momento.
-- **Integración**: las solicitudes aceptadas pueden transformarse en registros formales dentro del sistema (por ejemplo, generando automáticamente una entrada en la tabla `Foster` o `Adoptions`).
 
 ---
 
@@ -645,7 +513,7 @@ A continuación se presenta un resumen del estado actual de las funcionalidades 
 
 - **Gestión de animales:** CRUD completo, gestión de imágenes, búsqueda y filtros.
 - **Gestión de usuarios:** Registro, login, roles, verificación de correo, gestión de perfil.
-- **Gestión de acogidas:** Solicitud pública, gestión de estados, cierre automático por adopción.
+- **Gestión de acogidas:** Solicitud pública, gestión de estados, cierre automático por adopción, las dechas de inicio/fin pueden ser modificadas por administradores.
 - **Gestión de adopciones:** Flujo de acogida previa, formalización de adopciones.
 - **Historial veterinario:** Registro de eventos médicos y tratamientos prolongados.
 - **Gestión de formularios públicos:** Adopciones, acogidas, voluntariado y contacto organizados en entidades separadas.

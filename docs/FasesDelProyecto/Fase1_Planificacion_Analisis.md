@@ -113,299 +113,155 @@ La entidad `User` representa a cualquier persona que interactúa con la platafor
 
 **Campos principales:**
 
-| Campo            | Tipo de dato   | Descripción |
-|------------------|----------------|-------------|
-| `id_user`        | int            | Clave primaria autogenerada por Laravel |
-| `first_name`     | string         | Nombre del usuario (opcional para registros web) |
-| `last_name`      | string         | Apellidos del usuario (opcional para registros web) |
-| `email`          | string         | Correo electrónico (único y obligatorio para todos los registros) |
-| `alias`          | string/null    | Alias opcional del usuario (único si se introduce) |
-| `password`       | string         | Contraseña cifrada (bcrypt) |
-| `role`           | string         | Tipo de usuario: `admin`, `user` |
-| `dni`            | string/null    | Documento Nacional de Identidad  |
-| `phone`          | string/null    | Número de teléfono  |
-| `address`        | string/null    | Dirección del usuario  |
-| `status`         | string         | Roles adicionales como `adoptante`, `voluntario`, `acogedor`, etc. |
-| `created_at`     | timestamp      | Fecha de creación del registro (autogenerado por Laravel) |
-| `updated_at`     | timestamp      | Fecha de última modificación (autogenerado) |
+| Campo        | Tipo de dato | Descripción |
+|--------------|--------------|-------------|
+| `id_user`    | int          | Clave primaria autogenerada por Laravel |
+| `first_name` | string       | Nombre del usuario |
+| `last_name`  | string       | Apellidos del usuario |
+| `email`      | string       | Correo electrónico único |
+| `alias`      | string/null  | Alias opcional del usuario |
+| `password`   | string       | Contraseña cifrada |
+| `role`       | string       | Rol del usuario: `admin`, `user` |
+| `dni`        | string/null  | Documento de identidad |
+| `phone`      | string/null  | Teléfono de contacto |
+| `address`    | string/null  | Dirección del usuario |
+| `status`     | string       | Estado adicional: `voluntario`, `adoptante`, etc. |
+| `created_at` | timestamp    | Fecha de creación |
+| `updated_at` | timestamp    | Fecha de modificación |
 
 ---
 
-##  **Entidad: Animal**
+## **Entidad: Animal**
 
-La entidad `Animal` almacena toda la información relacionada con los animales del refugio. Incluye datos básicos como el nombre, especie, raza, sexo y tamaño, pero también detalles importantes como la fecha de entrada al refugio, estado actual (en adopción, acogido, adoptado), y otras características físicas como el peso y la altura.
+La entidad `Animal` almacena toda la información relacionada con los animales del refugio. Incluye datos básicos como el nombre, especie, raza, sexo y tamaño, así como detalles importantes como fecha de entrada, estado actual, peso y altura.
 
-El campo `fecha_adopcion` se usará para marcar la adopción de un animal, mientras que el `dni_adoptante` permite vincularlo con la persona que ha adoptado el animal, aunque no esté registrada como usuario en el sistema. Además, el campo `microchip` proporciona una referencia única para identificar a cada animal, que puede ser consultada en caso de que se necesite.
+La relación con las imágenes se gestiona a través de la entidad `AnimalImage`. El estado de adopción se representa mediante el campo `status` y la relación con el adoptante se define mediante la entidad `Adoptions`.
 
+**Campos principales:**
 
-| Field            | Data Type   | Description |
-|------------------|-------------|-------------|
-| `id_animal`             | int         | Clave primaria autogenerada por Laravel |
-| `name`           | string      | Nombre del animal |
-| `species`        | string      | Especie del animal (por ejemplo: perro, gato...) |
-| `breed`          | string      | Raza del animal |
-| `sex`            | string      | Sexo del animal (macho/hembra) |
-| `size`           | string      | Tamaño estimado (pequeño, mediano, grande) |
-| `weight`         | float       | Peso del animal en kilogramos (kg) |
-| `height`         | float       | Altura del animal en centímetros (cm) |
-| `birth_date`     | date        | Fecha de nacimiento del animal (si se conoce) |
-| `age`            | string/null | Edad estimada, en caso de no conocer la fecha exacta de nacimiento |
-| `status`         | string      | Estado actual del animal: en adopción, acogido, adoptado, etc. |
-| `entry_date`     | date        | Fecha en la que el animal ingresó al refugio |
-| `microchip`      | string/null | Código identificador del microchip (null si aún no tiene) |
-| `description`    | text        | Descripción general del animal, carácter, historia, etc. |
-| `observations`   | text/null   | Observaciones internas del personal (salud, seguimiento...) |
-| `image`          | string/null | Ruta o nombre de archivo de la imagen del animal |
-| `created_at`     | timestamp   | Fecha de creación del registro (autogenerado por Laravel) |
-| `updated_at`     | timestamp   | Fecha de última modificación del registro (autogenerado) |
-
-
----
-
-
-##  **Entidad: Veterinary_History**
-
-La entidad `Veterinary_History` almacena el historial veterinario de cada animal en el refugio. Esta tabla recoge los eventos relacionados con la salud del animal, como vacunaciones, cirugías y otros tratamientos médicos específicos. Cada registro está vinculado a un animal a través del campo `id_animal` y puede contener una descripción detallada del tratamiento, la fecha en que se realizó y observaciones adicionales sobre el estado del animal.
-
-
-| Field                | Data Type   | Description |
-|----------------------|-------------|-------------|
-| `id_history`         | int         | Clave primaria autogenerada por Laravel |
-| `id_animal`          | int         | Identificador del animal (relacionado con la entidad `Animal`) |
-| `microchip`          | string/null | Código del microchip del animal (si tiene) |
-| `treatment_date`     | date        | Fecha en la que se registró el tratamiento o intervención |
-| `treatment_description` | text     | Descripción detallada del tratamiento realizado (vacunación, cirugía, etc.) |
-| `treatment_type`     | string      | Tipo de tratamiento (vacunación, cirugía, medicamento, etc.) |
-| `observations`       | text/null   | Observaciones adicionales relacionadas con el tratamiento o estado del animal |
-| `created_at`         | timestamp   | Fecha de creación del registro (autogenerado por Laravel) |
-| `updated_at`         | timestamp   | Fecha de última modificación del registro (autogenerado) |
+| Campo         | Tipo de dato | Descripción |
+|---------------|--------------|-------------|
+| `id_animal`   | int          | Clave primaria |
+| `name`        | string       | Nombre del animal |
+| `species`     | string       | Especie (perro, gato...) |
+| `breed`       | string       | Raza |
+| `sex`         | string       | Sexo |
+| `size`        | string       | Tamaño estimado |
+| `weight`      | float        | Peso en kg |
+| `height`      | float        | Altura en cm |
+| `birth_date`  | date         | Fecha de nacimiento (si se conoce) |
+| `age`         | string/null  | Edad estimada (si no se conoce fecha exacta) |
+| `status`      | string       | Estado: `en adopción`, `acogido`, `adoptado`, etc. |
+| `entry_date`  | date         | Fecha de entrada al refugio |
+| `microchip`   | string/null  | Número de microchip (si tiene) |
+| `description` | text         | Descripción del animal |
+| `observations`| text/null    | Observaciones internas |
+| `created_at`  | timestamp    | Fecha de creación |
+| `updated_at`  | timestamp    | Fecha de última modificación |
 
 ---
 
-##  **Entidad: Animal_Medication**
+## **Entidad: AnimalImage**
 
-La entidad `Animal_Medication` gestiona los tratamientos **continuos** que requieren los animales, tales como medicamentos diarios o periódicos. A través de esta tabla se puede hacer un seguimiento de los tratamientos a largo plazo que no son eventos puntuales, sino que deben ser administrados de manera regular, como en el caso de enfermedades crónicas o tratamientos preventivos.
+La entidad `AnimalImage` gestiona la galería multimedia asociada a cada animal. Permite almacenar múltiples imágenes por animal y organizarlas según preferencia.
 
-Cada registro está vinculado a un animal mediante el campo `id_animal` y detalla el medicamento, la dosis y la frecuencia con la que debe administrarse. Además, incluye la fecha de inicio del tratamiento y, si corresponde, la fecha de finalización. Si el tratamiento está en curso, el campo `end_date` será nulo.
+Se permite añadir múltiples imágenes por animal, visibles en su ficha pública.
 
-| Field               | Data Type   | Description |
-|---------------------|-------------|-------------|
-| `id_medication`     | int         | Clave primaria autogenerada por Laravel |
-| `id_animal`         | int         | Identificador del animal (relacionado con la entidad `Animal`) |
-| `medication_name`   | string      | Nombre del medicamento |
-| `dosage`            | string      | Dosis del medicamento (por ejemplo: media pastilla) |
-| `frequency`         | string      | Frecuencia de administración (por ejemplo: diaria) |
-| `start_date`        | date        | Fecha en la que comenzó el tratamiento |
-| `end_date`          | date/null   | Fecha en la que terminó el tratamiento (si aplica) |
-| `description`       | text        | Descripción adicional o comentarios del tratamiento |
-| `created_at`        | timestamp   | Fecha de creación del registro (autogenerado por Laravel) |
-| `updated_at`        | timestamp   | Fecha de última modificación del registro (autogenerado) |
+**Campos principales:**
 
+| Campo         | Tipo de dato | Descripción |
+|---------------|--------------|-------------|
+| `id`          | int          | Clave primaria |
+| `animal_id`   | int          | Clave foránea hacia `Animal` |
+| `path`        | string       | Ruta o nombre del archivo de imagen |
+| `created_at`  | timestamp    | Fecha de subida |
+| `updated_at`  | timestamp    | Fecha de modificación |
 
 ---
-
 
 ## **Entidad: Adoptions**
 
-La entidad `Adoptions` gestiona el proceso de adopción de los animales en el refugio. Permite vincular a un adoptante con un animal adoptado, y almacenar información sobre la adopción, como la fecha, el estado y las condiciones acordadas.
+Gestiona el proceso de adopción. Relaciona a un usuario con un animal, incluyendo información como la fecha de adopción, estado y condiciones asociadas.
 
-Todos los adoptantes están representados mediante la entidad única `User`, independientemente de si tienen cuenta web o han sido registrados internamente por el refugio tras aceptar una solicitud enviada sin registro.
+**Campos principales:**
 
-| Field                | Data Type   | Description |
-|----------------------|-------------|-------------|
-| `id_adoption`        | int         | Clave primaria autogenerada por Laravel |
-| `id_animal`          | int         | Identificador del animal adoptado |
-| `id_user`            | int         | Identificador del usuario que adopta (entidad `User`) |
-| `adoption_date`      | date        | Fecha en que se formalizó la adopción |
-| `adoption_status`    | string      | Estado de la adopción: `pending`, `completed`, `cancelled`, etc. |
-| `adoption_conditions`| text/null   | Condiciones acordadas (por ejemplo, seguimiento post-adopción) |
-| `created_at`         | timestamp   | Fecha de creación del registro |
-| `updated_at`         | timestamp   | Fecha de última modificación del registro |
-
-
-### Relación con `User`:
-El campo `id_user` se relaciona con un registro de la entidad `User`, sin importar si fue creado mediante registro web o registrado internamente por el refugio tras aceptar una solicitud. De este modo, toda la gestión de usuarios queda centralizada y unificada.
-
+| Campo              | Tipo de dato | Descripción |
+|--------------------|--------------|-------------|
+| `id_adoption`      | int          | Clave primaria |
+| `id_animal`        | int          | Animal adoptado |
+| `id_user`          | int          | Usuario adoptante |
+| `adoption_date`    | date         | Fecha de adopción |
+| `adoption_status`  | string       | Estado: `pending`, `completed`, `cancelled` |
+| `adoption_conditions` | text/null | Condiciones asociadas |
+| `created_at`       | timestamp    | Fecha de creación |
+| `updated_at`       | timestamp    | Fecha de modificación |
 
 ---
-
 
 ## **Entidad: Foster**
 
-La entidad `Foster` gestiona las acogidas temporales de los animales en el refugio. Permite a cualquier usuario, con o sin cuenta en la web, ofrecerse para acoger a un animal de manera temporal.
-
-Si el animal es adoptado después de la acogida, el estado se actualizará en la entidad `Adoptions`. Además, las fechas de inicio y fin permiten gestionar el periodo de acogida de manera eficiente.
-
-| Campo          | Tipo de dato   | Descripción |
-|----------------|----------------|-------------|
-| `id_foster`    | int            | Clave primaria autogenerada por Laravel |
-| `id_animal`    | int            | Identificador del animal (relacionado con `Animal`) |
-| `id_user`      | int            | Identificador del usuario (relacionado con `User`) |
-| `start_date`   | date           | Fecha de inicio de la acogida |
-| `end_date`     | date           | Fecha de finalización de la acogida (si aplica) |
-| `status`       | string         | Estado: `pending`, `fostering`, `finished`, etc. |
-| `comments`     | text/null      | Comentarios sobre el proceso de acogida |
-| `created_at`   | timestamp      | Fecha de creación del registro |
-| `updated_at`   | timestamp      | Fecha de última modificación |
-
-
-**`id_user`**: Relaciona la acogida con el usuario que ofrece el hogar temporal. Este usuario pertenece a la entidad `User`, y puede haber sido creado desde un registro web o por el refugio tras aceptar la solicitud.
-
-
-### **Flujos de trabajo**:
-
-1. **Cambio de lugar de acogida**: Si el animal cambia de lugar de acogida, se generará un nuevo registro de acogida, mientras que el anterior se actualizará con una fecha de finalización y observaciones del cambio.
-   
-2. **Retorno al refugio**: Si el animal regresa al refugio, también se actualizará el registro de acogida con la fecha de finalización y se registrará en las observaciones.
-
-3. **Adopción**: Si el animal es adoptado, se actualizará el estado en la entidad **`Animal`** y se creará un nuevo registro en **`Adoptions`**. Además, el registro de **Foster** se actualizará con la fecha de finalización.
-
-
----
-
-### Entidades para los formularios
-
-## **Entidad: Adoption_Request**
-
-La entidad `Adoption_Request` almacena las solicitudes de adopción enviadas desde el formulario público. Puede ser rellenado por usuarios anónimos o registrados, y es gestionada desde el panel de administración.
+Gestiona las acogidas temporales de animales. Almacena la información sobre el usuario que acoge y las fechas de acogida.
 
 **Campos principales:**
 
-| Campo           | Tipo de dato   | Descripción |
-|------------------|----------------|-------------|
-| `id_request`     | INTEGER        | Clave primaria autogenerada por Laravel |
-| `first_name`     | VARCHAR(100)   | Nombre del solicitante |
-| `last_name`      | VARCHAR(100)   | Apellidos del solicitante |
-| `email`          | VARCHAR(255)   | Correo electrónico |
-| `phone`          | VARCHAR(20)    | Teléfono de contacto |
-| `address`        | VARCHAR(255)   | Dirección del solicitante |
-| `animal_name`    | VARCHAR(100)   | Nombre del animal deseado (si aplica) |
-| `has_other_pets` | TEXT NULL      | Información sobre otras mascotas en casa (opcional) |
-| `message`        | TEXT           | Motivo de la adopción o mensaje adicional |
-| `status`         | VARCHAR(50)    | Estado de la solicitud (`pending`, `reviewed`, `accepted`, `rejected`) |
-| `admin_notes`    | TEXT NULL      | Observaciones internas del personal |
-| `created_at`     | TIMESTAMP      | Fecha de creación |
-| `updated_at`     | TIMESTAMP      | Fecha de modificación |
-
-- **`User`**: si el correo electrónico coincide con uno ya registrado, se vincula automáticamente.
-- **`Animal`**: la búsqueda se realiza inicialmente por nombre, pero puede validarse contra el ID real durante la revisión.
-
-### Flujo de trabajo:
-
-1. **Envío del formulario**: el usuario completa la solicitud desde la web, sin necesidad de estar registrado.
-2. **Registro automático**: la solicitud se guarda en la tabla `Adoption_Request` con estado `pending`.
-3. **Revisión manual**: el personal del refugio revisa el formulario desde el panel de administración.
-4. **Coincidencia por email**:
-   - Si el email ya está vinculado a un `User`, se asocia automáticamente la solicitud.
-   - Si no existe, se puede crear un nuevo usuario si la solicitud es aceptada.
-5. **Conversión a adopción**: si se aprueba, se genera un nuevo registro en la tabla `Adoptions` y se actualiza el estado del animal y de la solicitud.
-6. **Seguimiento posterior**: el registro de la solicitud queda archivado para trazabilidad futura, sin ser eliminado.
-
----
-
-## **Entidad: Foster_Request**
-
-La entidad `Foster_Request` almacena las solicitudes de acogida enviadas desde el formulario público. Puede ser rellenado por usuarios anónimos o registrados, y es gestionado desde el panel de administración.
-
-**Campos principales:**
-
-| Campo           | Tipo de dato   | Descripción |
-|------------------|----------------|-------------|
-| `id_request`     | INTEGER        | Clave primaria autogenerada por Laravel |
-| `first_name`     | VARCHAR(100)   | Nombre del solicitante |
-| `last_name`      | VARCHAR(100)   | Apellidos del solicitante |
-| `email`          | VARCHAR(255)   | Correo electrónico |
-| `phone`          | VARCHAR(20)    | Teléfono de contacto |
-| `address`        | VARCHAR(255)   | Dirección del solicitante |
-| `animal_name`    | VARCHAR(100)   | Nombre del animal deseado (si aplica) |
-| `message`        | TEXT           | Motivo de la acogida o información adicional |
-| `status`         | VARCHAR(50)    | Estado de la solicitud (`pending`, `reviewed`, `accepted`, `rejected`) |
-| `admin_notes`    | TEXT NULL      | Observaciones internas del personal |
-| `created_at`     | TIMESTAMP      | Fecha de creación |
-| `updated_at`     | TIMESTAMP      | Fecha de modificación |
-
-- **`User`**: si el correo electrónico coincide con uno ya registrado, se vincula automáticamente.
-- **`Animal`**: la búsqueda se realiza inicialmente por nombre, pero puede validarse contra el ID real durante la revisión.
-
-### Flujo de trabajo:
-
-1. **Envío del formulario**: el usuario completa la solicitud desde la web, sin necesidad de estar registrado.
-2. **Registro automático**: la solicitud se guarda en la tabla `Foster_Request` con estado `pending`.
-3. **Revisión manual**: el personal del refugio revisa el formulario desde el panel de administración.
-4. **Coincidencia por email**:
-   - Si el email ya está vinculado a un `User`, se asocia automáticamente la solicitud.
-   - Si no existe, se puede crear un nuevo usuario si la solicitud es aceptada.
-5. **Conversión a acogida**: si se aprueba, se genera un nuevo registro en la tabla `Foster` y se actualiza el estado del animal y de la solicitud.
-6. **Seguimiento posterior**: el registro de la solicitud queda archivado para trazabilidad futura, sin ser eliminado.
+| Campo         | Tipo de dato | Descripción |
+|---------------|--------------|-------------|
+| `id_foster`   | int          | Clave primaria |
+| `id_animal`   | int          | Animal acogido |
+| `id_user`     | int          | Usuario que acoge |
+| `start_date`  | date         | Fecha de inicio |
+| `end_date`    | date/null    | Fecha de finalización |
+| `status`      | string       | Estado: `pending`, `fostering`, `finished` |
+| `comments`    | text/null    | Comentarios adicionales |
+| `created_at`  | timestamp    | Fecha de creación |
+| `updated_at`  | timestamp    | Fecha de modificación |
 
 ---
 
 ## **Entidad: Volunteer_Request**
 
-La entidad `Volunteer_Request` almacena las solicitudes de voluntariado enviadas desde el formulario público. Puede ser rellenado por usuarios anónimos o registrados, y es gestionado desde el panel de administración.
+Almacena las solicitudes públicas de voluntariado.
+
+Puede actualizar automáticamente el status del ``User`` a ``volunteer`` si se acepta la solicitud.
 
 **Campos principales:**
 
-| Campo           | Tipo de dato   | Descripción |
-|------------------|----------------|-------------|
-| `id_request`     | INTEGER        | Clave primaria autogenerada por Laravel |
-| `first_name`     | VARCHAR(100)   | Nombre del solicitante |
-| `last_name`      | VARCHAR(100)   | Apellidos del solicitante |
-| `email`          | VARCHAR(255)   | Correo electrónico |
-| `phone`          | VARCHAR(20)    | Teléfono de contacto |
-| `availability`   | TEXT           | Días y horarios disponibles para colaborar |
-| `motivation`     | TEXT           | Motivo o interés para colaborar como voluntario |
-| `status`         | VARCHAR(50)    | Estado de la solicitud (`pending`, `reviewed`, `accepted`, `rejected`) |
-| `admin_notes`    | TEXT NULL      | Observaciones internas del personal |
-| `created_at`     | TIMESTAMP      | Fecha de creación |
-| `updated_at`     | TIMESTAMP      | Fecha de modificación |
-
-- **`User`**: si el correo electrónico coincide con uno ya registrado, se vincula automáticamente a la solicitud.
-
-### Flujo de trabajo:
-
-1. **Envío del formulario**: el usuario completa el formulario de voluntariado desde la web sin necesidad de registrarse.
-2. **Registro automático**: se guarda la solicitud con estado `pending` en la tabla `Volunteer_Request`.
-3. **Revisión administrativa**: el personal del refugio evalúa la solicitud desde el panel de administración.
-4. **Asociación por email**:
-   - Si el email ya está vinculado a un `User`, se establece la relación.
-   - Si no existe, se puede crear un nuevo usuario si la solicitud es aceptada.
-5. **Aceptación y seguimiento**:
-   - Al aceptarse, puede actualizarse el `status` del `User` a `volunteer`.
-   - La solicitud queda registrada como parte del historial del sistema.
+| Campo         | Tipo de dato | Descripción |
+|---------------|--------------|-------------|
+| `id_request`  | int          | Clave primaria |
+| `first_name`  | string       | Nombre del solicitante |
+| `last_name`   | string       | Apellidos |
+| `email`       | string       | Correo electrónico |
+| `phone`       | string       | Teléfono (opcional) |
+| `availability`| text         | Disponibilidad para colaborar |
+| `motivation`  | text         | Motivación personal |
+| `status`      | string       | Estado: `pending`, `reviewed`, `accepted`, etc. |
+| `admin_notes` | text/null    | Notas internas |
+| `created_at`  | timestamp    | Fecha de creación |
+| `updated_at`  | timestamp    | Fecha de modificación |
 
 ---
 
-## **Entidad: Contact_Message**
+## **Entidad: Sponsorship** *(en pruebas)*
 
-La entidad `Contact_Message` almacena los mensajes enviados a través del formulario de contacto general de la web. Está disponible para cualquier persona, registrada o no, que desee realizar una consulta, comentario o sugerencia al refugio.
+Entidad destinada a gestionar apadrinamientos. Por el momento, se incluye para pruebas locales y como ampliación futura del sistema.
+
+Actualmente se encuentra en fase de pruebas locales. Se prevé activarla de forma oficial cuando se implemente la gestión de pagos recurrentes.
 
 **Campos principales:**
 
-| Campo           | Tipo de dato   | Descripción |
-|------------------|----------------|-------------|
-| `id_message`     | INTEGER        | Clave primaria autogenerada por Laravel |
-| `first_name`     | VARCHAR(100)   | Nombre del remitente |
-| `last_name`      | VARCHAR(100)   | Apellidos del remitente |
-| `email`          | VARCHAR(255)   | Correo electrónico de contacto |
-| `phone`          | VARCHAR(20)    | Teléfono de contacto (opcional) |
-| `subject`        | VARCHAR(150)   | Asunto del mensaje |
-| `message`        | TEXT           | Contenido completo del mensaje |
-| `status`         | VARCHAR(50)    | Estado de la solicitud (`pending`, `reviewed`, `archived`) |
-| `admin_notes`    | TEXT NULL      | Observaciones internas del personal |
-| `created_at`     | TIMESTAMP      | Fecha de creación |
-| `updated_at`     | TIMESTAMP      | Fecha de modificación |
+| Campo            | Tipo de dato | Descripción |
+|------------------|--------------|-------------|
+| `id_sponsorship` | int          | Clave primaria |
+| `id_animal`      | int          | Animal apadrinado |
+| `id_user`        | int          | Usuario padrino |
+| `start_date`     | date         | Fecha de inicio del apadrinamiento |
+| `end_date`       | date/null    | Fecha de finalización (si aplica) |
+| `amount`         | decimal      | Cantidad donada |
+| `status`         | string       | Estado: `active`, `cancelled`, etc. |
+| `created_at`     | timestamp    | Fecha de creación |
+| `updated_at`     | timestamp    | Fecha de modificación |
 
-**Relaciones con otras entidades:**
-
-- **`User`**: si el correo electrónico coincide con uno ya registrado, se vincula automáticamente mediante `user_id`. En caso de que el usuario esté autenticado en el momento del envío, los campos de nombre y correo se rellenan automáticamente y se establece la relación directa.
-
-### Flujo de trabajo:
-
-1. **Envío del formulario**: el usuario accede al formulario de contacto sin necesidad de registrarse.
-2. **Registro automático**: el mensaje se guarda en la base de datos con estado `pending`.
-3. **Gestión interna**: el personal del refugio visualiza los mensajes desde el panel de administración y puede marcar su estado como `reviewed` o `archived`.
-4. **Seguimiento opcional**: si el mensaje requiere respuesta o acción adicional, se puede añadir una nota interna para documentación o seguimiento posterior.
 
 ---
 

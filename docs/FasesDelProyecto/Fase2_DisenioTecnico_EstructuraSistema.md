@@ -16,7 +16,6 @@ Los principales módulos del sistema serán los siguientes:
 - **Animales (`Animal`)**: Administración de animales disponibles en adopción o acogida, incluyendo datos básicos, estado y galería multimedia.
 - **Adopciones (`Adoption`)**: Gestión de solicitudes de adopción enviadas por los usuarios, con estados para seguimiento y revisión.
 - **Acogidas (`Foster`)**: Registro de solicitudes de acogida temporal, también asociadas a usuarios.
-- **Historial veterinario (`VeterinaryHistory`)** y **medicación (`AnimalMedication`)**: Información médica, tratamientos y seguimientos de salud de cada animal.
 - **Panel de administración**: Funcionalidad privada destinada a los administradores del refugio, desde donde podrán gestionar usuarios, animales y solicitudes.
 - **Solicitudes públicas (`PublicFormRequest`)**: Entidad que centraliza todas las solicitudes enviadas desde formularios accesibles sin necesidad de estar registrado (adopción, acogida, voluntariado, contacto). Se gestiona desde el panel de administración y permite convertirlas en entidades formales (`Adoption`, `Foster`, etc.).
 
@@ -26,20 +25,53 @@ Cada módulo contará con su propio conjunto de modelos, controladores, vistas y
 ---
 
 
-### Carpetas y convenciones
+### Carpetas, convenciones y estructura del sistema
 
 El proyecto seguirá la estructura de carpetas estándar de Laravel, organizando el código por tipo de elemento (modelo, controlador, vista, componente...) para facilitar el mantenimiento y la escalabilidad. Las convenciones son las siguientes:
 
-- **`app/Models`**: Contendrá las clases modelo (entidades del sistema). Cada modelo representará una tabla de la base de datos y llevará el nombre en singular con mayúscula inicial (por ejemplo, `User`, `Animal`, `Adoption`).
-- **`app/Http/Controllers`**: Almacenará los controladores encargados de manejar la lógica de las rutas. Se usará un controlador por módulo (`UserController`, `AnimalController`, etc.).
-- **`resources/views`**: Carpeta principal para las vistas Blade. Se organizará por carpetas según el módulo (`users/`, `animals/`, `admin/`, etc.).
-- **`app/Http/Livewire`**: Almacenará los componentes interactivos de Livewire. Seguirán el patrón de nombres PascalCase (`AdoptionForm`, `AnimalList`, etc.).
-- **`resources/views/components`**: Contendrá los componentes Blade reutilizables como `header.blade.php`, `footer.blade.php`, `alert.blade.php`, etc.
+#### 📁 Estructura de Carpetas del Proyecto
 
----
+```plaintext
+📁 app/
+├── Enums/              # Enumeraciones personalizadas (si usas constantes de estados, roles, etc.)
+├── Exceptions/         # Clases de manejo de excepciones
+├── Http/
+│   ├── Controllers/    # Controladores del sistema (por entidad)
+│   ├── Livewire/       # Componentes Livewire interactivos
+│   └── Middleware/     # Middleware para rutas, autenticación, etc.
+├── Mail/               # Clases para envío de correos (si se implementa)
+├── Models/             # Entidades del sistema (User, Animal, etc.)
+├── Observers/          # Observadores de modelos (si usas eventos tipo updated/deleted)
+├── Providers/          # Configuración de servicios y bindings de Laravel
+├── Services/           # Lógica de negocio reutilizable (si se separa del controlador)
+
+📁 bootstrap/            # Configuración de arranque del framework
+📁 config/               # Archivos de configuración del sistema (app.php, database.php, etc.)
+
+📁 database/
+├── factories/          # Factories para testeo con datos ficticios
+├── migrations/         # Archivos de migración (estructura de las tablas)
+├── seeders/            # Datos de ejemplo para inicializar la base de datos
+
+📁 public/               # Archivos públicos accesibles desde el navegador (index.php, imágenes, etc.)
+
+📁 resources/
+├── css/                # Archivos de estilos (Tailwind o personalizados)
+├── js/                 # Scripts de Alpine.js o JS personalizado
+└── views/              # Vistas Blade (.blade.php)
+    ├── components/     # Componentes Blade reutilizables (botones, formularios, layout)
+    ├── livewire/       # Vistas asociadas a componentes Livewire
+    ├── animals/        # Vistas relacionadas con los animales
+    ├── users/          # Vistas del perfil o gestión de usuario
+    ├── admin/          # Panel de administración
+
+📁 routes/
+├── web.php             # Rutas web (frontend)
+├── api.php             # Rutas de API (si se expone alguna)
+```
 
 
-### Convenciones de nombres
+#### Convenciones de nombres
 
 - Todos los nombres técnicos del código (clases, métodos, variables, archivos...) estarán escritos en **inglés**, siguiendo las buenas prácticas del desarrollo internacional.
 - Los **métodos** y **variables** seguirán la convención **camelCase** (`userEmail`, `adoptionStatus`).
@@ -140,18 +172,23 @@ Planificar la creación de migraciones para cada entidad definida en la Fase 1, 
 ### Relaciones entre tablas
 Especificar qué tipo de relaciones existirán entre las entidades (1:N, N:N), cómo se aplicarán y qué claves foráneas serán necesarias.
 
-El sistema estará compuesto por entidades como `User`, `Animal`, `Adoptions`, `Foster`, `Veterinary_History`, `Animal_Medication`, y `Public_Form_Request`, entre otras. Cada una cumplirá una función específica en la gestión del refugio y se relacionará entre sí mediante claves foráneas para mantener la coherencia de los datos.
+El sistema estará compuesto por entidades como `User`, `Animal`, `Adoption`, `Foster`, `VolunteerRequest`, `Sponsorship`, y `AnimalImage`. Cada una cumplirá una función específica en la gestión del refugio y se relacionará entre sí mediante claves foráneas para mantener la coherencia de los datos.
 
 - `User`: representa a todos los usuarios del sistema, tanto visitantes registrados como personal del refugio.
 - `Animal`: almacena información detallada de cada animal alojado en el refugio.
 - `Adoptions` y `Foster`: registran las solicitudes y procesos de adopción y acogida, respectivamente.
-- `Veterinary_History` y `Animal_Medication`: gestionan la información clínica y de tratamientos continuos de los animales.
 - `Public_Form_Request`: recoge todas las solicitudes enviadas desde formularios públicos (adopción, acogida, voluntariado y contacto), sin necesidad de registro previo.
 
-### Diagrama Entidad-Relación
-Preparar un esquema gráfico que represente todas las entidades y sus relaciones, como apoyo visual al modelo físico de base de datos.
+### Diagrama Entidad-Relación (E-R) y modelo conceptual
 
-### Estrategia de archivado histórico
+Se elaborará un diagrama Entidad-Relación (E-R) que represente gráficamente las entidades principales (`User`, `Animal`, `Adoption`, `Foster`, etc.) y las relaciones entre ellas. Este diagrama sirve de apoyo visual al modelo lógico y físico de la base de datos.
+
+El diagrama se incluirá en los anexos y servirá también de guía para la implementación de las migraciones en Laravel.
+
+Además, el modelo conceptual de relaciones y navegación entre pantallas también está reflejado en los **wireframes diseñados en Figma**, disponibles en la carpeta de documentación visual del proyecto. Estos esquemas permiten vincular el flujo de datos con la estructura de interfaz prevista.
+
+
+### Archivado histórico y gestión de base de datos secundaria (refugio_archivo)
 
 Para garantizar el rendimiento, la escalabilidad y la conservación segura de los datos, se ha definido una estrategia de mantenimiento periódico que separa los datos operativos actuales de aquellos registros que ya están cerrados.
 
@@ -186,6 +223,9 @@ Planificar cómo se combinarán Blade (estructura), Livewire (interactividad) y 
 ### Archivo `.env` y entorno local
 Definir las variables necesarias en el entorno de desarrollo, como conexión a base de datos, entorno de aplicación y credenciales locales.
 
+> El archivo `.env.railway` permite configurar las variables de entorno de producción para Railway.  
+> Así se mantiene la separación entre desarrollo local y entorno de despliegue real, evitando conflictos entre configuraciones sensibles.
+
 ### Conexión con base de datos MySQL
 Configurar la conexión entre Laravel y MySQL utilizando XAMPP, incluyendo nombre de base de datos, usuario y contraseña.
 
@@ -204,6 +244,10 @@ Definir y aplicar middlewares para proteger rutas privadas y restringir el acces
 
 ### Gestión de roles: `user` y `admin`
 Establecer los roles principales del sistema y cómo se asignarán y controlarán mediante lógica de backend o middleware.
+
+- `User`: engloba a todos los usuarios registrados en el sistema, incluyendo adoptantes, acogedores, padrinos, voluntarios y colaboradores. Tienen acceso a funcionalidades básicas como visualizar animales, enviar formularios y consultar su historial.
+
+- `Admin`: rol exclusivo del personal autorizado del refugio. Tienen acceso completo al panel de administración y son responsables de gestionar usuarios, animales, formularios públicos y contenidos del sitio. También pueden aprobar solicitudes, archivar registros y modificar configuraciones del sistema.
 
 ---
 
@@ -227,3 +271,4 @@ Definir los componentes interactivos que se crearán con Livewire para evitar re
 
 ### Separación entre vistas públicas y privadas
 Establecer claramente qué vistas son accesibles sin autenticación y cuáles forman parte del panel privado para usuarios registrados o administradores.
+
