@@ -74,39 +74,59 @@ class AdoptionController extends Controller
      */
     public function store(Request $request)
     {
-        
         try {
-
+            // Validar los campos básicos
             $validated = $request->validate([
                 'animal_id' => 'required|exists:animals,id',
-                'user_id' => 'required|exists:users,id',
+                'email' => 'required|email',
+                'name' => 'nullable|string|max:255',
+                'phone' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:255',
                 'adoption_date' => 'required|date',
                 'notes' => 'nullable|string|max:255',
-            ],
-        [
-            'animal_id.required' => 'El campo "Animal" es obligatorio.',
-            'user_id.required' => 'El campo "Usuario" es obligatorio.',
-            'adoption_date.required' => 'La fecha de adopción es obligatoria.',
-            'adoption_date.date' => 'La fecha de adopción debe ser una fecha válida.',
-            'notes.max' => 'Las notas no pueden exceder los 255 caracteres.',
+            ], [
+                'animal_id.required' => 'El campo "Animal" es obligatorio.',
+                'email.required' => 'El correo electrónico del usuario es obligatorio.',
+                'email.email' => 'Debes proporcionar un correo electrónico válido.',
+                'adoption_date.required' => 'La fecha de adopción es obligatoria.',
+                'adoption_date.date' => 'La fecha debe ser válida.',
+                'notes.max' => 'Las notas no pueden exceder los 255 caracteres.',
             ]);
 
-            $newAdoption = new Adoption();
-            $newAdoption->animal_id = $validated['animal_id'];
-            $newAdoption->user_id = $validated['user_id'];
-            $newAdoption->adoption_date = $validated['adoption_date'];
-            $newAdoption->notes = $validated['notes'] ?? null;
-            $newAdoption->save();
+            // Buscar el usuario por email
+            $usuario = User::where('email', $validated['email'])->first();
 
+            // Si no existe, lo creamos con los datos disponibles
+            if (!$usuario) {
+                $usuario = User::create([
+                    'name' => $validated['name'] ?? 'Nombre pendiente',
+                    'email' => $validated['email'],
+                    'phone' => $validated['phone'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                    'role' => 'user',
+                    'password' => bcrypt('temporal_' . uniqid()), // contraseña temporal
+                ]);
+            }
+
+            // Crear la adopción
+            $adopcion = new Adoption();
+            $adopcion->animal_id = $validated['animal_id'];
+            $adopcion->user_id = $usuario->id;
+            $adopcion->adoption_date = $validated['adoption_date'];
+            $adopcion->notes = $validated['notes'] ?? null;
+            $adopcion->save();
+
+            // Cambiar estado del animal
             Animal::find($validated['animal_id'])->update(['status' => 'adopted']);
 
             return redirect()->route('admin.adoption.index')->with('success', 'Adopción registrada correctamente.');
-        
+
         } catch (Exception $e) {
             Log::error('Error al registrar la adopción: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al registrar la adopción.']);
         }
     }
+
 
     /**
      * Muestra los detalles de una adopción específica.

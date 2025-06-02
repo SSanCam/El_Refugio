@@ -29,6 +29,8 @@ class FosterController extends Controller
      * Muestra un listado de acogidas.
      *
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Exception
      */
     public function index()
     {
@@ -46,18 +48,20 @@ class FosterController extends Controller
             return redirect()->back()->withErrors(['error' => 'Error inesperado al cargar el listado de acogidas.']);
         }
     }
+
     /**
      * Muestra el formulario para crear una nueva acogida.
      *
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse 
+     * 
+     * @throws \Exception
      */
     public function create()
     {
         try {
             $animals = Animal::where('status', 'available')->get();
-            $users = User::where('role', 'foster')->get();
 
-            return view('admin.foster.create', compact('animals', 'users'));
+            return view('admin.foster.create', compact('animals'));
 
         } catch (Exception $e) {
             Log::error('Error al cargar el formulario de acogida: ' . $e->getMessage());
@@ -69,40 +73,79 @@ class FosterController extends Controller
      * Almacena una nueva acogida en la base de datos.
      *
      * @param \Illuminate\Http\Request $request Parametros de la solicitud
+     * 
      * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Exception
      */
     public function store(Request $request)
-        {
-            try {
-                $validated = $request->validate([
-                    'animal_id' => 'required|exists:animals,id',
-                    'user_id' => 'required|exists:users,id',
-                    'status' => 'required|in:pending,fostering,finished',
-                    'start_date' => 'required|date',
-                    'end_date' => 'nullable|date|after_or_equal:start_date',
+    {
+        try {
+            $validated = $request->validate([
+                'animal_id'   => 'required|exists:animals,id',
+                'email'       => 'required|email',
+                'name'        => 'nullable|string|max:255',
+                'phone'       => 'nullable|string|max:20',
+                'address'     => 'nullable|string|max:255',
+                'status'      => 'required|in:pending,fostering,finished',
+                'start_date'  => 'required|date',
+                'end_date'    => 'nullable|date|after_or_equal:start_date',
+            ], [
+                'animal_id.required' => 'El campo "Animal" es obligatorio.',
+                'email.required'     => 'El campo "Correo electrónico" es obligatorio.',
+                'email.email'        => 'Debes proporcionar un correo electrónico válido.',
+                'status.required'    => 'El campo "Estado" es obligatorio.',
+                'start_date.required'=> 'La fecha de inicio es obligatoria.',
+                'end_date.after_or_equal' => 'La fecha de finalización debe ser posterior o igual a la de inicio.',
+            ]);
+
+            // Buscar o crear usuario por email
+            $usuario = User::where('email', $validated['email'])->first();
+
+            if (!$usuario) {
+                $usuario = User::create([
+                    'name'     => $validated['name'] ?? 'Nombre pendiente',
+                    'email'    => $validated['email'],
+                    'phone'    => $validated['phone'] ?? null,
+                    'address'  => $validated['address'] ?? null,
+                    'role'     => 'user',
+                    'password' => bcrypt('temporal_' . uniqid()),
                 ]);
-
-                Animal::find($validated['animal_id'])->update(['status' => 'fostered']);
-                Foster::create($validated);
-
-                session()->flash('success', 'Acogida registrada correctamente.');
-                return redirect()->route('admin.foster.index');
-
-            } catch (QueryException $e) {
-                Log::error('Error al registrar la acogida: ' . $e->getMessage());
-                return redirect()->back()->withErrors(['error' => 'Error al registrar la acogida.']);
-            } catch (Exception $e) {
-                Log::error('Error inesperado al registrar la acogida: ' . $e->getMessage());
-                return redirect()->back()->withErrors(['error' => 'Error inesperado al registrar la acogida.']);
             }
-        }
 
+            // Crear la acogida
+            Foster::create([
+                'animal_id'  => $validated['animal_id'],
+                'user_id'    => $usuario->id,
+                'status'     => $validated['status'],
+                'start_date' => $validated['start_date'],
+                'end_date'   => $validated['end_date'] ?? null,
+            ]);
+
+            // Actualizar estado del animal
+            Animal::find($validated['animal_id'])->update(['status' => 'fostered']);
+
+            session()->flash('success', 'Acogida registrada correctamente.');
+            return redirect()->route('admin.foster.index');
+
+        } catch (QueryException $e) {
+            Log::error('Error al registrar la acogida: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error al registrar la acogida.']);
+        } catch (Exception $e) {
+            Log::error('Error inesperado al registrar la acogida: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error inesperado al registrar la acogida.']);
+        }
+    }
 
     /**
      * Muestra los detalles de una acogida específica.
      *
      * @param int $id ID de la acogida
+     * 
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Exception
      */
     public function show($id)
     {
@@ -125,15 +168,20 @@ class FosterController extends Controller
      *
      * @param int $id ID de la acogida
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Exception
      */
     public function edit($id)
     {
         try {
             $foster = Foster::with(['animal', 'user'])->findOrFail($id);
-            $animals = Animal::where('status', 'available')->get();
-            $users = User::where('role', 'foster')->get();
 
-            return view('admin.foster.edit', compact('foster', 'animals', 'users'));
+            // Asegura que el animal actual también aparezca en la lista
+            $animals = Animal::where('status', 'available')
+                            ->orWhere('id', $foster->animal_id)
+                            ->get();
+
+            return view('admin.foster.edit', compact('foster', 'animals'));
 
         } catch (ModelNotFoundException $e) {
             Log::error('Acogida no encontrada: ' . $e->getMessage());
@@ -147,27 +195,39 @@ class FosterController extends Controller
     /**
      * Actualiza una acogida existente en la base de datos.
      *
-     * @param \Illuminate\Http\Request $request Parametros de la solicitud
+     * @param \Illuminate\Http\Request $request Parámetros de la solicitud
      * @param int $id ID de la acogida
+     * 
      * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Exception
      */
     public function update(Request $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'animal_id' => 'required|exists:animals,id',
-                'user_id' => 'required|exists:users,id',
-                'status' => 'required|in:pending,fostering,finished',
-                'start_date' => 'required|date',
-                'end_date' => 'nullable|date|after_or_equal:start_date',
+            // Validación de datos recibidos
+            $validated = $request->validate([
+                'animal_id'   => 'required|exists:animals,id',
+                'status'      => 'required|in:pending,fostering,finished',
+                'start_date'  => 'required|date',
+                'end_date'    => 'nullable|date|after_or_equal:start_date',
+            ], [
+                'animal_id.required' => 'El campo "Animal" es obligatorio.',
+                'status.required'    => 'El campo "Estado" es obligatorio.',
+                'start_date.required'=> 'La fecha de inicio es obligatoria.',
+                'end_date.after_or_equal' => 'La fecha de finalización debe ser posterior o igual a la de inicio.',
             ]);
 
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
             $foster = Foster::findOrFail($id);
-            $foster->update($request->all());
+
+            // Actualización de los campos permitidos
+            $foster->update([
+                'animal_id'   => $validated['animal_id'],
+                'status'      => $validated['status'],
+                'start_date'  => $validated['start_date'],
+                'end_date'    => $validated['end_date'] ?? null,
+            ]);
 
             session()->flash('success', 'Acogida actualizada correctamente.');
             return redirect()->route('admin.foster.index');
@@ -189,6 +249,8 @@ class FosterController extends Controller
      *
      * @param int $id ID de la acogida
      * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Exception
      */
     public function destroy($id)
     {
@@ -200,14 +262,15 @@ class FosterController extends Controller
             return redirect()->route('admin.foster.index');
 
         } catch (ModelNotFoundException $e) {
-            Log::error('Acogida no encontrada: ' . $e->getMessage());
+            Log::error("Acogida no encontrada [ID: $id]: " . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Acogida no encontrada.']);
         } catch (QueryException $e) {
-            Log::error('Error al eliminar la acogida: ' . $e->getMessage());
+            Log::error("Error al eliminar la acogida [ID: $id]: " . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error al eliminar la acogida.']);
         } catch (Exception $e) {
-            Log::error('Error inesperado al eliminar la acogida: ' . $e->getMessage());
+            Log::error("Error inesperado al eliminar la acogida [ID: $id]: " . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al eliminar la acogida.']);
         }
     }
+
 }

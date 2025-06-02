@@ -5,8 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 
 class SponsorshipNotificationMail extends Mailable
 {
@@ -27,7 +25,6 @@ class SponsorshipNotificationMail extends Mailable
     {
         $animalName = $this->animalName;
         $userName = $this->userName;
-        // Determinar el asunto y el contenido del correo según el evento
 
         if ($this->evento === 'inicio') {
             return $this->subject('¡Gracias por apadrinar a ' . $animalName . '!')
@@ -49,21 +46,8 @@ class SponsorshipNotificationMail extends Mailable
                         ");
         }
 
-        // Si el evento no es ni inicio ni fin, se envía una notificación genérica
+        // Genérico
         return $this->subject('Notificación de apadrinamiento')
                     ->html("<p>Hola {$userName},</p><p>Hay una novedad en tu apadrinamiento de <strong>{$animalName}</strong>.</p>");
-    }
-
-    public function enviarCorreoDeApadrinamiento(string $userEmail, string $userName, string $animalName, string $evento)
-    {
-        try {
-            Mail::to($userEmail)->send(
-                new SponsorshipNotificationMail($animalName, $userName, $evento)
-            );
-            return response()->json(['message' => 'Correo enviado correctamente.']);
-        } catch (\Exception $e) {
-            Log::error('Error al enviar correo de apadrinamiento: ' . $e->getMessage());
-            return response()->json(['error' => 'No se pudo enviar el correo. Intenta más tarde.'], 500);
-        }
     }
 }

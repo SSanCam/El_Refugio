@@ -1,33 +1,41 @@
 <?php 
 namespace App\Http\Controllers\Public;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Mail\SponsorshipNotificationMail;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Mail\SponsorshipNotificationMail;
 use Exception;
 
 /**
  * Controlador para gestionar el envío de correos de apadrinamiento.
  */
-
 class SponsorshipMailController extends Controller
 {
     /**
-     * Envia un correo de notificación de apadrinamiento.
+     * Envía un correo de notificación de apadrinamiento sin modelo.
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function enviarCorreoDeApadrinamiento(Request $request)
     {
-        $userEmail = $request->email;
-        $userName = $request->name;
-        $animalName = $request->animal;
-        $evento = $request->evento;
+        $request->validate([
+            'email' => 'required|email',
+            'name' => 'required|string',
+            'animal' => 'required|string',
+            'evento' => 'required|string',
+        ]);
 
         try {
+            // Se construyen los datos a mano (sin modelo)
+            $userName = $request->input('name');
+            $userEmail = $request->input('email');
+            $animalName = $request->input('animal');
+            $evento = $request->input('evento');
+
+            // Enviar el correo
             Mail::to($userEmail)->send(
                 new SponsorshipNotificationMail($animalName, $userName, $evento)
             );
