@@ -11,7 +11,9 @@ return new class extends Migration
         Schema::create('animal_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('animal_id')->constrained()->onDelete('cascade');
-            $table->string('url'); // URL o ruta local de la imagen
+            $table->string('url'); 
+            $table->string('alt_text')->nullable();
+            $table->string('caption')->nullable();
             $table->timestamps();
         });
     }

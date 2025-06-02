@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
-
+  
     /**
      * Atributos que pueden ser asignados en masa.
      */
@@ -25,7 +21,6 @@ class User extends Authenticatable
 
     /**
      * Atributos que deben ocultarse cuando el modelo se convierte a array o JSON.
-     * Atributos que deben ser ocultados cuando el modelo se convierte en array o JSON.
      */
     protected $hidden = [
         'password',
@@ -35,9 +30,6 @@ class User extends Authenticatable
     /**
      * Atributos que deben ser convertidos automáticamente a tipos nativos.
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
     protected function casts(): array
     {
         return [
@@ -61,12 +53,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(Foster::class);
     }
-
-    /**
-     * Relación con el modelo Apadrinamiento.
-     */
-    public function sponsorships()
-    {
-        return $this->hasMany(Sponsorship::class);
-    }
+ 
 }

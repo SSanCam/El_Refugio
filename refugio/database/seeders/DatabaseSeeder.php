@@ -5,10 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Animal;
-use App\Models\AnimalMedication;
 use App\Models\Adoption;
-use App\Models\Sponsorship;
-
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,8 +14,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
-        Animal::factory(15)->create();
-        Adoption::factory(10)->create();
+        // Crear usuarios y animales antes
+        $users = User::factory(10)->create();
+        $animals = Animal::factory(15)->create();
+
+        // Crear adopciones con esos usuarios y animales ya creados
+        Adoption::factory(10)->make()->each(function ($adoption) use ($users, $animals) {
+            $adoption->animal_id = $animals->random()->id;
+            $adoption->user_id = $users->random()->id;
+            $adoption->save();
+        });
     }
 }

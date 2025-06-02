@@ -57,4 +57,9 @@ class Animal extends Model
         return $this->hasMany(Animal::class, 'parent_id');
     }
 
+    public function images()
+    {
+        return $this->hasMany(AnimalImage::class);
+    }
+
 }
