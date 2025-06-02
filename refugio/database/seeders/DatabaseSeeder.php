@@ -19,9 +19,6 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(10)->create();
         Animal::factory(15)->create();
-        AnimalMedication::factory(20)->create();
         Adoption::factory(10)->create();
-        Sponsorship::factory(10)->create();
-
     }
 }
