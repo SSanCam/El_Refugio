@@ -48,7 +48,7 @@ class UserController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-/**    public function updateProfile(Request $request)
+    public function updateProfile(Request $request)
     {
         try {
 
@@ -79,7 +79,7 @@ class UserController extends Controller
             return back()->withErrors(['error' => 'Ocurrió un error inesperado. Por favor, inténtalo de nuevo.']);
         }
     }
-*/
+
 
     /**
      * Muestra las adopciones del usuario autenticado.
