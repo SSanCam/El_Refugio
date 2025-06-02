@@ -7,11 +7,13 @@ use App\Models\User;
 use App\Mail\SponsorshipNotificationMail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use App\Enums\AnimalStatus;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 /**
  * Controlador para gestionar los animales del refugio.
@@ -24,6 +26,9 @@ class AnimalController extends Controller
 
     /**
      * Muestra un listado paginado de animales.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
 
     public function index()
@@ -36,7 +41,8 @@ class AnimalController extends Controller
                 session()->flash('info', 'No hay animales registrados aún.');
             }
 
-            return view('public.animal.index', compact('animals'));
+            return view('admin.animal.index', compact('animals'));
+
         } catch (Exception $e) {
             Log::error('Error inesperado al obtener los animales: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al obtener los animales.']);
@@ -45,14 +51,16 @@ class AnimalController extends Controller
 
     /**
      * Muestra el formulario para crear un nuevo animal.
+     * 
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
     public function create()
     {
         try {
-            $animalesDisponibles = Animal::where('status', AnimalStatus::AVAILABLE)->get();
-            $usuarios = User::all();
 
-            return view('admin.adoptions.create', compact('animalesDisponibles', 'usuarios'));
+            return view('admin.animal.create');
+
         } catch (Exception $e) {
             Log::error('Error al mostrar el formulario de creación de adopción: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'No se pudo mostrar el formulario. Inténtalo más tarde.']);
@@ -61,6 +69,12 @@ class AnimalController extends Controller
 
     /**
      * Almacena un nuevo animal en la base de datos.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Database\QueryException
+     * @throws \Exception
      */
     public function store(Request $request)
     {
@@ -96,6 +110,11 @@ class AnimalController extends Controller
 
     /**
      * Muestra los detalles de un animal específico.
+     * 
+     * @param int $id ID del animal
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function show($id)
     {
@@ -106,7 +125,7 @@ class AnimalController extends Controller
                 'sponsorships.user'
             ])->findOrFail($id);
 
-            return view('public.animal.show', compact('animal'));
+            return view('admin.animal.show', compact('animal'));
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Animal no encontrado.']);
@@ -118,6 +137,11 @@ class AnimalController extends Controller
 
     /**
      * Muestra el formulario para editar un animal.
+     * 
+     * @param int $id ID del animal
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function edit($id)
     {
@@ -135,6 +159,13 @@ class AnimalController extends Controller
 
     /**
      * Actualiza un animal existente en la base de datos.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param int $id ID del animal
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Database\QueryException
+     * @throws \Exception
      */
     public function update(Request $request, $id)
     {
@@ -176,6 +207,12 @@ class AnimalController extends Controller
 
     /**
      * Elimina un animal.
+     * 
+     * @param int $id ID del animal
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
+     * @throws \Illuminate\Database\QueryException
      */
     public function destroy($id)
     {
@@ -198,18 +235,36 @@ class AnimalController extends Controller
     }
 
     /**
+     * ==================================================================
+     * Funcionalidades adicionales para la gestión de estados de animales
+     * ==================================================================
+     */
+
+    /**
      * Cambia el estado de un animal.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param int $id ID del animal
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Illuminate\Database\QueryException
+     * @throws \Exception
      */
     public function changeStatus(Request $request, $id)
     {
         try {
             $animal = Animal::findOrFail($id);
+
             $request->validate([
-                'status' => 'required|in:available,adopted,fostered,sponsored,sheltered,intake,deceased',
+                'status' => ['required', Rule::in(array_column(AnimalStatus::cases(), 'value'))],
             ]);
+
             $animal->update(['status' => $request->input('status')]);
 
-            if ($request->input('status') === 'deceased' || $request->input('status') === 'adopted') {
+            // Si el nuevo estado es "fallecido" o "adoptado", notificar a los padrinos
+            if (in_array($request->input('status'), ['deceased', 'adopted'])) {
                 $activeSponsorships = $animal->sponsorships()->where('status', 'active')->get();
 
                 foreach ($activeSponsorships as $sponsorship) {
@@ -217,12 +272,17 @@ class AnimalController extends Controller
                     $sponsorship->end_date = now();
                     $sponsorship->save();
 
-                    Mail::to($sponsorship->user->email)->send(new SponsorshipNotificationMail($sponsorship, 'fin'));
+                    Mail::to($sponsorship->user->email)->send(
+                        new SponsorshipNotificationMail(
+                            $animal->name,
+                            $sponsorship->user->name,
+                            'fin'
+                        )
+                    );
                 }
             }
 
             return redirect()->route('admin.animals.show', $animal->id)->with('success', 'Estado actualizado correctamente.');
-
         } catch (ModelNotFoundException $e) {
             Log::error('Animal no encontrado: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Animal no encontrado.']);
@@ -235,14 +295,4 @@ class AnimalController extends Controller
         }
     }
 
-    /**
-     * Desactiva un animal (estado neutral).
-     */
-    public function deactivate($id)
-    {
-        $animal = Animal::findOrFail($id);
-        $animal->status = 'sheltered';
-        $animal->save();
-        return redirect()->route('admin.animals.index')->with('success', 'Animal desactivado.');
-    }
 }
