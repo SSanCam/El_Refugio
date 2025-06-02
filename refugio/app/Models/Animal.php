@@ -30,14 +30,6 @@ class Animal extends Model
     ];
 
     /**
-     * Relación con la medicación de los animales.
-     */
-    public function animalMedications()
-    {
-        return $this->hasMany(AnimalMedication::class);
-    }
-
-    /**
      * Relación con las adopciones.
      */
     public function adoptions()
@@ -51,14 +43,6 @@ class Animal extends Model
     public function fosters()
     {
         return $this->hasMany(Foster::class);
-    }
-
-    /**
-     * Relación con los apadrinamientos.
-     */
-    public function sponsorships()
-    {
-        return $this->hasMany(Sponsorship::class);
     }
 
     // Animal del que proviene (ej. madre/padre)

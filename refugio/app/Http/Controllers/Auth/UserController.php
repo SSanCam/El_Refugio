@@ -3,30 +3,83 @@
 namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
+use Exception;
+
+/**
+ * UserController
+ *
+ * Controlador para manejar las operaciones relacionadas con los usuarios autenticados.
+ */
 
 class UserController extends Controller
 {
-    // Funciones del perfil del usuario autenticado
+    /**
+     * ======================================
+     * Funcionalidades básicas de usuario autenticado
+     * ======================================
+     */
 
     /**
      * Muestra el perfil del usuario autenticado.
-     * @return void
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function showProfile()
     {
-        //
+        try {
+            $user = Auth::user();
+
+            return view('auth.user.profile', compact('user'));
+
+        } catch (Exception $e) {
+            Log::error('Error al mostrar el perfil del usuario: ' . $e->getMessage());
+            return redirect()->route('login')->withErrors(['error' => 'No se pudo cargar el perfil. Por favor, inténtalo de nuevo.']);
+        }
     }
+
 
     /**
      * Actualiza el perfil del usuario autenticado.
      * @param Request $request
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateProfile(Request $request)
+/**    public function updateProfile(Request $request)
     {
-        //
+        try {
+
+            $user = Auth::user();
+            
+            // Validación de los datos del perfil
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+                'phone' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:255',
+            ]);
+
+             $user->update([
+                'name'    => $validated['name'],
+                'email'   => $validated['email'],
+                'phone'   => $validated['phone'] ?? $user->phone,
+                'address' => $validated['address'] ?? $user->address,
+            ]);
+
+            return redirect()->route('profile')->with('success', 'Perfil actualizado correctamente.');
+
+        } catch (QueryException $e) {
+            Log::error('Error al actualizar el perfil del usuario: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'No se pudo actualizar el perfil. Por favor, inténtalo de nuevo.']);
+        } catch (Exception $e) {
+            Log::error('Error inesperado al actualizar el perfil del usuario: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Ocurrió un error inesperado. Por favor, inténtalo de nuevo.']);
+        }
     }
+*/
 
     /**
      * Muestra las adopciones del usuario autenticado.
@@ -56,6 +109,11 @@ class UserController extends Controller
     }
 
     /**
+     * ======================================
+     * Funcionalidades de gestión de cuenta
+     * ======================================
+     */
+    /**
      * Solicita la eliminación de la cuenta del usuario autenticado.
      * @return void
      */
@@ -64,7 +122,25 @@ class UserController extends Controller
         //
     }
 
-    // Funcionalidades de seguridad
+    /**
+     * Cierra la sesión del usuario autenticado.
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Database\QueryException
+     */
+    public function logOut()
+    {
+        // Cierra la sesión del usuario autenticado
+        Auth::logout();
+        return redirect()->route('login')->with('success', 'Has cerrado sesión correctamente.');
+    }
+
+    /**
+     * ============================================
+     * Funcionalidades de seguridad y autenticación
+     * ============================================
+     */
 
     /**
      * Cambia la contraseña del usuario autenticado.
