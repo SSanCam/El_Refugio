@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Adoption;
 use App\Models\Animal;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -61,7 +60,7 @@ class AdoptionController extends Controller
             $animals = Animal::where('status', 'available')->get();
             $users = User::where('active', true)->get();
             
-            return view('admin.adoptions.create', compact('animals', 'users'));
+            return view('admin.adoption.create', compact('animals', 'users'));
 
         } catch (Exception $e) {
             Log::error('Error al cargar el formulario de creación de adopciones: ' . $e->getMessage());
@@ -92,13 +91,6 @@ class AdoptionController extends Controller
             'notes.max' => 'Las notas no pueden exceder los 255 caracteres.',
             ]);
 
-            $validated = $request->validate([
-                'animal_id' => 'required|exists:animals,id',
-                'user_id' => 'required|exists:users,id',
-                'adoption_date' => 'required|date',
-                'notes' => 'nullable|string|max:255',
-            ]);
-
             $newAdoption = new Adoption();
             $newAdoption->animal_id = $validated['animal_id'];
             $newAdoption->user_id = $validated['user_id'];
@@ -108,10 +100,7 @@ class AdoptionController extends Controller
 
             Animal::find($validated['animal_id'])->update(['status' => 'adopted']);
 
-
-
-            return redirect()->route('admin.adoptions.index')->with('success', 'Adopción registrada correctamente.');
-
+            return redirect()->route('admin.adoption.index')->with('success', 'Adopción registrada correctamente.');
         
         } catch (Exception $e) {
             Log::error('Error al registrar la adopción: ' . $e->getMessage());
@@ -156,7 +145,7 @@ class AdoptionController extends Controller
             $animals = Animal::where('status', 'available')->orWhere('id', $adoption->animal_id)->get();
             $users = User::where('active', true)->get();
 
-            return view('admin.adoptions.edit', compact('adoption', 'animals', 'users'));
+            return view('admin.adoption.edit', compact('adoption', 'animals', 'users'));
 
         } catch (ModelNotFoundException $e) {
             Log::error('Adopción no encontrada: ' . $e->getMessage());
@@ -198,7 +187,7 @@ class AdoptionController extends Controller
             $adoption->notes = $validated['notes'] ?? null;
             $adoption->save();
 
-            return redirect()->route('admin.adoptions.index')->with('success', 'Adopción actualizada correctamente.');
+            return redirect()->route('admin.adoption.index')->with('success', 'Adopción actualizada correctamente.');
 
         } catch (ModelNotFoundException $e) {
             Log::error('Adopción no encontrada: ' . $e->getMessage());

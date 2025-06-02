@@ -3,14 +3,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Animal;
+use App\Models\User;
+use App\Mail\SponsorshipNotificationMail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Exception;
-use App\Mail\SponsorshipEndedMail;
-use App\Mail\SponsorshipNotificationMail;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -49,10 +49,13 @@ class AnimalController extends Controller
     public function create()
     {
         try {
-            return view('admin.animal.create');
+            $animalesDisponibles = Animal::where('status', AnimalStatus::AVAILABLE)->get();
+            $usuarios = User::all();
+
+            return view('admin.adoptions.create', compact('animalesDisponibles', 'usuarios'));
         } catch (Exception $e) {
-            Log::error('Error al mostrar el formulario de creación de animal: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error al mostrar el formulario de creación de animal.']);    
+            Log::error('Error al mostrar el formulario de creación de adopción: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'No se pudo mostrar el formulario. Inténtalo más tarde.']);
         }
     }
 
