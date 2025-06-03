@@ -1,5 +1,6 @@
+{{-- resources/views/public/user/register.blade.php --}}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -10,63 +11,43 @@
 <body>
     <h1>Crea una cuenta</h1>
 
-    @extends('layouts.app') 
-
-    @section('content')
-    <div class="container">
-        <h2>Registro de usuario</h2>
-
-        {{-- Mostrar errores de validación --}}
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
+    {{-- Mostrar errores de validación --}}
+    @if ($errors->any())
+        <div style="color: red;">
+            <ul>
                 @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+                    <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
-        @endif
+    @endif
 
-        {{-- Mensaje de éxito --}}
-        @if (session('success'))
-        <div class="alert alert-success">
+    {{-- Mensaje de éxito --}}
+    @if (session('success'))
+        <div style="color: green;">
             {{ session('success') }}
         </div>
-        @endif
+    @endif
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
+    <form method="POST" action="{{ route('register') }}">
+        @csrf
 
-            <div class="mb-3">
-                <label for="name">Nombre completo</label>
-                <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
-            </div>
+        <label for="name">Nombre completo:</label><br>
+        <input type="text" name="name" id="name" value="{{ old('name') }}" required><br><br>
 
-            <div class="mb-3">
-                <label for="email">Correo electrónico</label>
-                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
-            </div>
+        <label for="email">Correo electrónico:</label><br>
+        <input type="email" name="email" id="email" value="{{ old('email') }}" required><br><br>
 
-            <div class="mb-3">
-                <label for="password">Contraseña</label>
-                <input type="password" name="password" id="password" class="form-control" required>
-            </div>
+        <label for="password">Contraseña:</label><br>
+        <input type="password" name="password" id="password" required><br><br>
 
-            <div class="mb-3">
-                <label for="password_confirmation">Confirmar contraseña</label>
-                <input type="password" name="password_confirmation" id="password_confirmation" class="form-control"
-                    required>
-            </div>
+        <label for="password_confirmation">Confirmar contraseña:</label><br>
+        <input type="password" name="password_confirmation" id="password_confirmation" required><br><br>
 
-            <button type="submit" class="btn btn-primary">Registrarse</button>
+        <button type="submit">Registrarse</button>
+    </form>
 
-            <p class="mt-3">
-                ¿Ya tienes cuenta? <a href="{{ route('login') }}">Inicia sesión</a>
-            </p>
-        </form>
-    </div>
-    @endsection
-
+    <p>¿Ya tienes cuenta? <a href="{{ route('login') }}">Inicia sesión</a></p>
 </body>
 
 </html>

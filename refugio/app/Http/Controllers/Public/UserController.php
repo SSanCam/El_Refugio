@@ -9,6 +9,8 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
+use Exception;
+
 /**
  * UserController
  *
@@ -32,6 +34,10 @@ class UserController extends Controller
      * Almacena un nuevo usuario en la base de datos.
      *
      * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Database\QueryException
+     * @throws \Exception
      */
     public function store()
     {
@@ -44,15 +50,24 @@ class UserController extends Controller
         ]);
 
          try {
+
             $data['password'] = Hash::make($data['password']);
-            User::create($data);
+            $user = User::create($data);
+            $user->sendEmailVerificationNotification();
 
             return redirect()->route('login')->with('success', 'Usuario registrado exitosamente.');
+
         } catch (QueryException $e) {
             Log::error('Error al registrar usuario: ' . $e->getMessage());
 
             return back()->withErrors([
                 'email' => 'El correo ya está en uso o ha ocurrido un error inesperado.',
+            ])->withInput();
+        } catch (Exception $e) {
+            Log::error('Error al registrar usuario: ' . $e->getMessage());
+
+            return back()->withErrors([
+                'email' => 'Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde.',
             ])->withInput();
         }
     }   
