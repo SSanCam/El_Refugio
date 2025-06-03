@@ -17,4 +17,5 @@ enum UserRole: string
             self::ADMIN => 'Administrador',
         };
     }
+
 }
