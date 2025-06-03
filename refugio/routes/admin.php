@@ -31,8 +31,7 @@ Route::middleware(['auth', 'is_admin'])
         Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::post('users', [UserController::class, 'store'])->name('users.store');
         Route::post('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
-        Route::post('users/{user}/activate', [UserController::class, 'activateUser'])->name('users.activate');
-        Route::post('users/{user}/deactivate', [UserController::class, 'deactivateUser'])->name('users.deactivate');
+        Route::patch('users/{user}/toggle', [UserController::class, 'toggleActive'])->name('users.toggleActive');
         Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
    

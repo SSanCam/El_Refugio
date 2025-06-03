@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+class User extends Authenticatable implements MustVerifyEmail
 {
   
     /**
@@ -30,7 +30,7 @@ class User extends Authenticatable
     /**
      * Atributos que deben ser convertidos automáticamente a tipos nativos.
      */
-    protected function casts(): array
+    public function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
