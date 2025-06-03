@@ -2,13 +2,14 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;    
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
+use Illuminate\Database\QueryException;
 use Exception;
 
 /**
@@ -46,7 +47,7 @@ class UserController extends Controller
         $data = request()->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/^[A-Za-z\d@$!%*?&]+$/'],
         ]);
 
          try {
@@ -102,4 +103,55 @@ class UserController extends Controller
             'email' => 'Las credenciales no son válidas.'
         ])->onlyInput('email');
     }
+
+    /**
+     * Muestra el formulario de contacto general.
+     *
+     * @return \Illuminate\View\View
+     * 
+     */
+    public function contact()
+    {
+        return view('public.user.contact');
+    }
+
+    /**
+     * Envía un mensaje de contacto.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Illuminate\Database\QueryException
+     * @throws \Exception
+     */
+    public function sendContact(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+            'message' => 'required|string|min:10|max:1000',
+        ]);
+
+        try {
+            // Sanitiza el mensaje para evitar HTML malicioso
+            $sanitizedMessage = strip_tags($validated['message']);
+
+            Mail::raw($sanitizedMessage, function ($message) use ($validated) {
+                $message->to('elrefugio@example.com')
+                        ->subject('Nuevo mensaje de contacto')
+                        ->from($validated['email']);
+            });
+
+            return back()->with('success', 'Mensaje enviado correctamente.');
+
+        } catch (Exception $e) {
+            Log::error('Error al enviar el mensaje de contacto: ' . $e->getMessage());
+
+            return back()->withErrors([
+                'email' => 'Ha ocurrido un error al enviar el mensaje. Inténtalo de nuevo más tarde.',
+            ])->withInput();
+        }
+    }
+
 }
