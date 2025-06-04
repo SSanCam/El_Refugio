@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
@@ -32,6 +29,7 @@ class UserController extends Controller
     public function showProfile()
     {
         try {
+
             $user = Auth::user();
 
             return view('auth.user.profile', compact('user'));
@@ -50,34 +48,7 @@ class UserController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        try {
-
-            $user = Auth::user();
-            
-            // Validación de los datos del perfil
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-                'phone' => 'nullable|string|max:20',
-                'address' => 'nullable|string|max:255',
-            ]);
-
-             $user->update([
-                'name'    => $validated['name'],
-                'email'   => $validated['email'],
-                'phone'   => $validated['phone'] ?? $user->phone,
-                'address' => $validated['address'] ?? $user->address,
-            ]);
-
-            return redirect()->route('profile')->with('success', 'Perfil actualizado correctamente.');
-
-        } catch (QueryException $e) {
-            Log::error('Error al actualizar el perfil del usuario: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'No se pudo actualizar el perfil. Por favor, inténtalo de nuevo.']);
-        } catch (Exception $e) {
-            Log::error('Error inesperado al actualizar el perfil del usuario: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Ocurrió un error inesperado. Por favor, inténtalo de nuevo.']);
-        }
+       //
     }
 
 
