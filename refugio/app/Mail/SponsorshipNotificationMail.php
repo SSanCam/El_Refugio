@@ -46,7 +46,6 @@ class SponsorshipNotificationMail extends Mailable
                         ");
         }
 
-        // Genérico
         return $this->subject('Notificación de apadrinamiento')
                     ->html("<p>Hola {$userName},</p><p>Hay una novedad en tu apadrinamiento de <strong>{$animalName}</strong>.</p>");
     }

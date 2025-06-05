@@ -12,7 +12,7 @@ use App\Http\Controllers\Admin\FosterController;
  * Solo los usuarios con el rol de administrador pueden acceder a estas rutas.
  * Las rutas están agrupadas bajo el prefijo 'admin' y tienen un nombre específico para facilitar su referencia.
  */
-Route::middleware(['auth', 'is_admin'])
+Route::middleware(['auth', 'is_admin', 'throttle:5,1'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -25,29 +25,39 @@ Route::middleware(['auth', 'is_admin'])
          * Las rutas están protegidas por middleware de autenticación y verificación de rol.
          * Cada ruta está nombrada para facilitar su referencia en las vistas y controladores.
          */
-        Route::get('users', [UserController::class, 'index'])->name('users.index');
-        Route::get('users/create', [UserController::class, 'create'])->name('users.create');
-        Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
-        Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-        Route::post('users', [UserController::class, 'store'])->name('users.store');
-        Route::post('users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
-        Route::patch('users/{user}/toggle', [UserController::class, 'toggleActive'])->name('users.toggleActive');
-        Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-   
+        Route::prefix('user')
+            ->as('user.')
+            ->group(function () {
+
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
+            Route::get('/{user}', [UserController::class, 'show'])->name('show');
+            Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::post('', [UserController::class, 'store'])->name('store');
+            Route::post('/{user}/assign-role', [UserController::class, 'assignRole'])->name('assignRole');
+            Route::patch('/{user}/toggle', [UserController::class, 'toggleActive'])->name('toggleActive');
+            Route::put('/{user}', [UserController::class, 'update'])->name('update');
+            Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+        });
+
         /**
          * Rutas para la gestión de animales
          * Estas rutas permiten crear, editar, eliminar y listar animales en el refugio.
          * Incluyen funcionalidades para cambiar el estado de un animal y desactivarlo.
          */
-        Route::get('animals', [AnimalController::class, 'index'])->name('animals.index');
-        Route::get('animals/create', [AnimalController::class, 'create'])->name('animals.create');
-        Route::post('animals', [AnimalController::class, 'store'])->name('animals.store');
-        Route::get('animals/{id}', [AnimalController::class, 'show'])->name('animals.show');
-        Route::get('animals/{id}/edit', [AnimalController::class, 'edit'])->name('animals.edit');
-        Route::put('animals/{id}', [AnimalController::class, 'update'])->name('animals.update');
-        Route::delete('animals/{id}', [AnimalController::class, 'destroy'])->name('animals.destroy');
-        Route::post('animals/{id}/status', [AnimalController::class, 'changeStatus'])->name('animals.changeStatus');
+        Route::prefix('animal')
+            ->as('animal.')
+            ->group(function () {
+
+            Route::get('/', [AnimalController::class, 'index'])->name('index');
+            Route::get('/create', [AnimalController::class, 'create'])->name('create');
+            Route::post('/', [AnimalController::class, 'store'])->name('store');
+            Route::get('/{id}', [AnimalController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [AnimalController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [AnimalController::class, 'update'])->name('update');
+            Route::delete('/{id}', [AnimalController::class, 'destroy'])->name('destroy');
+            Route::post('/{id}/status', [AnimalController::class, 'changeStatus'])->name('changeStatus');
+            });
 
         /**
          * Rutas para la gestión de adopciones
@@ -57,13 +67,17 @@ Route::middleware(['auth', 'is_admin'])
          * Cada ruta está nombrada para facilitar su referencia en las vistas y controladores.
          * Estas rutas son accesibles solo para administradores.
          */
-        Route::get('adoptions', [AdoptionController::class, 'index'])->name('adoptions.index');
-        Route::get('adoptions/create', [AdoptionController::class, 'create'])->name('adoptions.create');
-        Route::post('adoptions', [AdoptionController::class, 'store'])->name('adoptions.store');
-        Route::get('adoptions/{id}', [AdoptionController::class, 'show'])->name('adoptions.show');
-        Route::get('adoptions/{id}/edit', [AdoptionController::class, 'edit'])->name('adoptions.edit');
-        Route::put('adoptions/{id}', [AdoptionController::class, 'update'])->name('adoptions.update');
-        Route::delete('adoptions/{id}', [AdoptionController::class, 'destroy'])->name('adoptions.destroy');
+        Route::prefix('adoption')
+            ->as('adoption.')
+            ->group(function () {
+            Route::get('/', [AdoptionController::class, 'index'])->name('index');
+            Route::get('/create', [AdoptionController::class, 'create'])->name('create');
+            Route::post('/', [AdoptionController::class, 'store'])->name('store');
+            Route::get('/{id}', [AdoptionController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [AdoptionController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [AdoptionController::class, 'update'])->name('update');
+            Route::delete('/{id}', [AdoptionController::class, 'destroy'])->name('destroy');
+        });
 
         /**
          * Rutas para la gestión de acogidas
@@ -72,12 +86,15 @@ Route::middleware(['auth', 'is_admin'])
          * Las rutas están protegidas por middleware de autenticación y verificación de rol.
          * Estas rutas son accesibles solo para administradores.
          */
-        Route::get('fosters', [FosterController::class, 'index'])->name('foster.index');
-        Route::get('fosters/create', [FosterController::class, 'create'])->name('foster.create');
-        Route::post('fosters', [FosterController::class, 'store'])->name('foster.store');
-        Route::get('fosters/{id}', [FosterController::class, 'show'])->name('foster.show');
-        Route::get('fosters/{id}/edit', [FosterController::class, 'edit'])->name('foster.edit');
-        Route::put('fosters/{id}', [FosterController::class, 'update'])->name('foster.update');
-        Route::delete('fosters/{id}', [FosterController::class, 'destroy'])->name('foster.destroy');
-   
+        Route::prefix('foster')
+            ->as('foster.')
+            ->group(function () {
+            Route::get('/', [FosterController::class, 'index'])->name('index');
+            Route::get('/create', [FosterController::class, 'create'])->name('create');
+            Route::post('/', [FosterController::class, 'store'])->name('store');
+            Route::get('/{id}', [FosterController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [FosterController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [FosterController::class, 'update'])->name('update');
+            Route::delete('/{id}', [FosterController::class, 'destroy'])->name('destroy');
+        });
     });

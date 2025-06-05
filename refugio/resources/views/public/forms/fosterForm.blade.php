@@ -8,9 +8,13 @@
 
     <form action="{{ route('foster.submit') }}" method="POST">
         @csrf
-        <input type="text" name="nombre" placeholder="Tu nombre" required><br><br>
+
+        <input type="text" name="name" placeholder="Tu nombre" required><br><br>
         <input type="email" name="email" placeholder="Tu correo electrónico" required><br><br>
-        <input type="tel" name="telefono" placeholder="Tu número de teléfono" required><br><br>
+        <input type="tel" name="phone" placeholder="Tu número de teléfono"><br><br>
+        <input type="text" name="address" placeholder="Dirección completa" required><br><br>
+
+        <textarea name="message" placeholder="Comentarios adicionales... (opcional)"></textarea><br><br>
 
         <p>Tipo de vivienda:</p>
         <label><input type="radio" name="vivienda" value="casa" required> Casa</label>

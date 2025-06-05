@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum('role', ['user', 'admin'])->default('user');            $table->string('phone')->nullable()->unique(); 
             $table->string('address')->nullable(); 
             $table->date('birthdate')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });
