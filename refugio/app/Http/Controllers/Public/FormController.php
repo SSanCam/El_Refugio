@@ -25,7 +25,7 @@ class FormController extends Controller
                 'address' => 'required|string|max:500',
                 'message' => 'nullable|string|max:1000',
             ],
-            'public.animal.adoptionForm',
+            'public.forms.adoptionForm',
             'New Adoption Form',
             'elrefugio@example.com'
         );
@@ -33,7 +33,7 @@ class FormController extends Controller
 
     public function sponsorshipForm()
     {
-        return view('public.animal.sponsorshipForm');
+        return view('public.forms.sponsorshipForm');
     }
 
     public function sendSponsorshipForm(Request $request)
@@ -64,7 +64,7 @@ class FormController extends Controller
 
     public function fosterForm()
     {
-        return view('public.animal.fosterForm');
+        return view('public.forms.fosterForm');
     }
 
     /**
@@ -101,7 +101,7 @@ class FormController extends Controller
      */
     public function contact()
     {
-        return view('public.user.contact');
+        return view('public.forms.contact');
     }
 
     /**
@@ -120,7 +120,7 @@ class FormController extends Controller
                 'email' => 'required|email|max:255',
                 'message' => 'required|string|min:10|max:1000',
             ],
-            'public.user.contact',
+            'public.forms.contact',
             'New Contact Message',
             'elrefugio@example.com'
         );
@@ -133,7 +133,7 @@ class FormController extends Controller
      */
     public function volunteerForm()
     {
-        return view('public.user.volunteerForm');
+        return view('public.forms.volunteerForm');
     }
 
     /**
@@ -154,7 +154,7 @@ class FormController extends Controller
                 'phone' => 'nullable|string|max:20',
                 'message' => 'required|string|min:10|max:1000',
             ],
-            'public.user.volunteerForm',
+            'public.forms.volunteerForm',
             'New Volunteer Form',
             'elrefugio@example.com'
         );
@@ -173,7 +173,7 @@ class FormController extends Controller
      * 
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function handleFormSubmission(Request $request, array $rules, string $redirectRoute, string $subject, string $recipient, \Closure $customMessageBuilder = null)
+    private function handleFormSubmission(Request $request, array $rules, string $redirectRoute, string $subject, string $recipient, ?\Closure $customMessageBuilder = null)
     {
         $validated = $request->validate($rules);
 
@@ -188,13 +188,13 @@ class FormController extends Controller
                         ->from($validated['email']);
             });
 
-            return redirect()->route($redirectRoute)->with('success', 'Form submitted successfully.');
+            return redirect()->back()->with('success', 'Formulario enviado correctamente.');
 
         } catch (Exception $e) {
             Log::error("Error sending form ($subject): " . $e->getMessage());
 
             return back()->withErrors([
-                'email' => 'An error occurred while sending the form. Please try again later.',
+                'email' => 'Error inesperado en el envio del formulario. Inténtalo de nuevo.',
             ])->withInput();
         }
     }
