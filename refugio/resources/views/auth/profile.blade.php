@@ -1,66 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Perfil del Usuario</title>
 </head>
 
 <body>
-    <h1>Perfil del usuario</h1>
+    <h1>Mi perfil</h1>
 
-    @extends('layouts.app')
-
-    @section('content')
-    <div class="container">
-        <h2>Mi perfil</h2>
-
-        {{-- Mensajes de éxito --}}
-        @if(session('success'))
-        <div class="alert alert-success">
+    {{-- Mensajes de éxito --}}
+    @if(session('success'))
+        <div style="color: green; border: 1px solid green; padding: 10px;">
             {{ session('success') }}
         </div>
-        @endif
+    @endif
 
-        {{-- Mensajes de error --}}
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
+    {{-- Mensajes de error --}}
+    @if ($errors->any())
+        <div style="color: red; border: 1px solid red; padding: 10px;">
+            <ul style="margin: 0;">
                 @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+                    <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
-        @endif
+    @endif
 
-        {{-- Mostrar información del usuario --}}
-        <div class="card mb-4">
-            <div class="card-body">
-                <p><strong>Nombre:</strong> {{ $user->first_name }} {{ $user->last_name }}</p>
-                <p><strong>Email:</strong> {{ $user->email }}</p>
-                <p><strong>Alias:</strong> {{ $user->alias ?? '—' }}</p>
-                <p><strong>Teléfono:</strong> {{ $user->phone ?? '—' }}</p>
-                <p><strong>Dirección:</strong> {{ $user->address ?? '—' }}</p>
-                <p><strong>Estado:</strong> {{ ucfirst($user->status) }}</p>
-            </div>
-        </div>
-
-        {{-- Botones de acciones --}}
-        <div>
-            <a href="{{ route('user.deactivate') }}" class="btn btn-outline-danger"
-                onclick="return confirm('¿Estás segura de que deseas desactivar tu cuenta?')">
-                Desactivar cuenta
-            </a>
-
-            <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                @csrf
-                <button type="submit" class="btn btn-outline-secondary">Cerrar sesión</button>
-            </form>
-        </div>
+    {{-- Información del usuario --}}
+    <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+        <p><strong>Nombre:</strong> {{ $user->name }}</p>
+        <p><strong>Email:</strong> {{ $user->email }}</p>
+        <p><strong>Teléfono:</strong> {{ $user->phone ?? '—' }}</p>
+        <p><strong>Dirección:</strong> {{ $user->address ?? '—' }}</p>
+        <p><strong>Estado:</strong> {{ $user->is_active ? 'Activo' : 'Inactivo' }}</p>
     </div>
-    @endsection
 
+    {{-- Acciones --}}
+    <div>
+        <form method="POST" action="{{ route('user.deleteAccount') }}" style="display: inline;">
+            @csrf
+            <button type="submit" onclick="return confirm('¿Estás segura de que deseas desactivar tu cuenta?')">Desactivar cuenta</button>
+        </form>
+
+        <form method="POST" action="{{ route('logout') }}" style="display: inline; margin-left: 10px;">
+            @csrf
+            <button type="submit">Cerrar sesión</button>
+        </form>
+    </div>
 </body>
 
 </html>

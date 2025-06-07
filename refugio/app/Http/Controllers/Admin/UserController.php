@@ -52,9 +52,10 @@ class UserController extends Controller
     /**
      * Muestra el formulario para crear un nuevo usuario.
      * 
-     * @return \Illuminate\View\View Vista del formulario de creación de usuario.
+     * @return \Illuminate\View\View| \Illuminate\Http\RedirectResponse
      * 
      * @throws \Exception Si ocurre un error al mostrar el formulario.
+     * @throws \Illuminate\Http\RedirectResponse Si ocurre un error, redirige al listado de usuarios con un mensaje de error.
      * @throws \Illuminate\Http\RedirectResponse Si ocurre un error, redirige al listado de usuarios con un mensaje de error.
      */
     public function create()
@@ -63,7 +64,7 @@ class UserController extends Controller
             return view('admin.user.create');
         } catch (Exception $e) {
             session()->flash('error', 'Ocurrió un error al mostrar el formulario de creación.');
-            return redirect()->route('admin.user.index');
+            return redirect()->route('admin.user.index')->with('error', 'Ocurrió un error al mostrar el formulario de creación.');
         }
     }
 

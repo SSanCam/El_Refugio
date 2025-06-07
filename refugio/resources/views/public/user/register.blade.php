@@ -29,7 +29,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('public.user.register.store') }}">
         @csrf
 
         <label for="name">Nombre completo:</label><br>
@@ -47,7 +47,7 @@
         <button type="submit">Registrarse</button>
     </form>
 
-    <p>¿Ya tienes cuenta? <a href="{{ route('login') }}">Inicia sesión</a></p>
+    <p>¿Ya tienes cuenta? <a href="{{ route('public.user.login') }}">Inicia sesión</a></p>
 </body>
 
 </html>
