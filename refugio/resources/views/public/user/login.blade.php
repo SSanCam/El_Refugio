@@ -1,3 +1,4 @@
+{{-- resources/views/public/user/login.blade.php --}}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -28,7 +29,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('public.user.login.authenticate') }}">
         @csrf
 
         <div>
@@ -50,7 +51,7 @@
     </form>
 
     <p>
-        ¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate aquí</a>
+        ¿No tienes cuenta? <a href="{{ route('public.user.register') }}">Regístrate aquí</a>
     </p>
 
     <p>

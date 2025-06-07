@@ -14,7 +14,7 @@ use Exception;
 /**
  * UserController
  *
- * Controlador para manejar las operaciones relacionadas con los usuarios.
+ * Controlador para manejar las operaciones relacionadas con los usuarios no autenticados.
  */
 
 class UserController extends Controller

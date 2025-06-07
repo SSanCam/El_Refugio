@@ -11,7 +11,7 @@ use App\Http\Controllers\Public\UserController;
  */
 Route::middleware(['throttle:5,1'])
     ->prefix('public')
-    ->as('public.')
+    ->name('public.')
     ->group(function () {
     /** 
      * =========================
@@ -19,7 +19,7 @@ Route::middleware(['throttle:5,1'])
      * =========================
     */
     Route::prefix('animal')
-        ->as('animal.')
+        ->name('animal.')
         ->group(function () {
 
     Route::get('/', [AnimalController::class, 'index'])->name('index');
@@ -37,7 +37,7 @@ Route::middleware(['throttle:5,1'])
      * =========================
     */
     Route::prefix('user')
-        ->as('user.')
+        ->name('user.')
         ->group(function () {
 
         Route::get('/register', [UserController::class, 'register'])->name('register');
@@ -52,7 +52,7 @@ Route::middleware(['throttle:5,1'])
      * ============================
      */
     Route::prefix('forms')
-        ->as('forms.')
+        ->name('forms.')
         ->group(function () {
 
         Route::get('/contacto', [FormController::class, 'contact'])->name('contact');

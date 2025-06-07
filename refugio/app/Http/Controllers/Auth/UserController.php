@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
 
 use Exception;
 
@@ -54,7 +55,7 @@ class UserController extends Controller
         }
     }
 
-        /**
+    /**
      * Actualiza el perfil del usuario autenticado.
      *
      * @param \Illuminate\Http\Request $request
@@ -177,9 +178,7 @@ class UserController extends Controller
                 ''            
             ));
 
-            if (!$user->is_active) {
-                return redirect('/')->with('info', 'Esta cuenta ya estaba desactivada.');
-            } 
+            return redirect('/')->with('success', 'Tu cuenta ha sido desactivada.');
 
         } catch (Exception $e) {
             Log::error('Error al solicitar la eliminación de la cuenta: ' . $e->getMessage());
@@ -194,23 +193,139 @@ class UserController extends Controller
      */
 
 
+    public function changePasswordForm(Request $request)
+    {
+        return view('auth.changePasswordForm', ['user' => Auth::user()]);
+    }
+
     public function changePassword(Request $request)
     {
-        //
+        try {
+            $user = User::findOrFail(Auth::id());
+
+            $validated = $request->validate([
+                'current_password' => 'required|string',
+                'new_password' => [
+                    'required',
+                    'min:8',
+                    'confirmed',
+                    'regex:/[A-Z]/',
+                    'regex:/[0-9]/',
+                    'regex:/[@$!%*?&]/'
+                ]
+            ], [
+                'new_password.regex' => 'La nueva contraseña debe contener al menos una mayúscula, un número y un carácter especial.',
+                'new_password.confirmed' => 'Las contraseñas no coinciden.',
+            ]);
+
+            if (!Hash::check($validated['current_password'], $user->password)) {
+                return redirect()->back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.']);
+            }
+
+            if (Hash::check($validated['new_password'], $user->password)) {
+                return redirect()->back()->withErrors(['new_password' => 'La nueva contraseña no puede ser igual a la actual.']);
+            }
+
+            $user->password = bcrypt($validated['new_password']);
+            $user->save();
+
+            Mail::to($user->email)->send(new EmailNotifications(
+                $user->email,
+                'Contraseña actualizada',
+                ''
+            ));
+
+            Auth::logoutOtherDevices($validated['current_password']);
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('profile.show')->with('success', 'Contraseña actualizada correctamente.');
+        } catch (Exception $e) {
+            Log::error('Error al validar la contraseña actual: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Contraseña actual incorrecta.']);
+        }
     }
 
-    public function confirmCurrentPassword(Request $request)
-    {
-        //
-    }
-
-    public function twoFactorAuthentication(Request $request)
-    {
-        //
-    }
+    /**
+     * Habilita la autenticación de dos factores para el usuario autenticado.
+     *
+     * @param \Illuminate\Http\Request $request
+     * 
+     */
     public function enableTwoFactorAuthentication(Request $request)
     {
-        //
+        try {
+            $user = User::findOrFail(Auth::id());
+            $user->two_factor_expires_at = now()->addMinutes(5);
+            // Generar código aleatorio de 6 dígitos
+            $code = random_int(100000, 999999);
+            $user->two_factor_enabled = true;
+            $user->two_factor_code = $code;
+            $user->save();
+
+            // Enviar email con el código 2FA
+            Mail::to($user->email)->send(new EmailNotifications(
+                $user->email,
+                'Código de verificación 2FA',
+                (string) $code
+            ));
+
+            
+            return response()->json(['message' => 'Autenticación en dos pasos habilitada con éxito.',], 200);
+        
+        } catch (Exception $e) {
+            Log::error('Error al habilitar la autenticación de dos factores: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al habilitar la autenticación de dos factores.'], 500);
+        }
+    }
+
+    /**
+     * Muestra el formulario para la autenticación de dos factores.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+   
+    public function twoFactorAuthentication()
+    {
+        return view('2fa');
+    }
+
+    /**
+     * Verifica el código de autenticación de dos factores ingresado por el usuario.
+     *
+     * @param \Illuminate\Http\Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function verifyTwoFactorCode(Request $request)
+    {
+        
+        try{
+            $request->validate([
+                'two_factor_code' => 'required|string',
+            ]);
+
+            $user = User::findOrFail(Auth::id());
+        
+
+            if ($user->two_factor_code !== $request->input('two_factor_code')) {
+                return redirect()->back()->withErrors(['two_factor_code' => 'El código de verificación es incorrecto.']);
+            }
+
+            if (now()->greaterThan($user->two_factor_expires_at)) {
+              return redirect()->back()->withErrors(['two_factor_code' => 'El código ha expirado. Solicita uno nuevo.']);
+            }
+
+            $user->two_factor_code = null;
+            $user->save();
+
+            return redirect()->route('profile.show')->with('success', 'Verificación en dos pasos completada con éxito.');
+
+        } catch (Exception $e) {
+            Log::error('Error al verificar el código de autenticación de dos factores: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error al verificar el código de autenticación de dos factores.']);
+        }
+    
     }
 
     /**
@@ -249,14 +364,14 @@ class UserController extends Controller
 
     public function showAdoptions(Request $request)
     {
-        //
+        //TODO
     }
     public function showFosters(Request $request)
     {
-        //
+        //TODO
     }
     public function showSponsorships(Request $request)
     {
-        //  
+        //TODO
     }
 }

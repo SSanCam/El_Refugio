@@ -26,7 +26,7 @@ Route::middleware(['auth', 'is_admin', 'throttle:5,1'])
          * Cada ruta está nombrada para facilitar su referencia en las vistas y controladores.
          */
         Route::prefix('user')
-            ->as('user.')
+            ->name('user.')
             ->group(function () {
 
             Route::get('/', [UserController::class, 'index'])->name('index');
@@ -46,7 +46,7 @@ Route::middleware(['auth', 'is_admin', 'throttle:5,1'])
          * Incluyen funcionalidades para cambiar el estado de un animal y desactivarlo.
          */
         Route::prefix('animal')
-            ->as('animal.')
+            ->name('animal.')
             ->group(function () {
 
             Route::get('/', [AnimalController::class, 'index'])->name('index');
@@ -68,8 +68,9 @@ Route::middleware(['auth', 'is_admin', 'throttle:5,1'])
          * Estas rutas son accesibles solo para administradores.
          */
         Route::prefix('adoption')
-            ->as('adoption.')
+            ->name('adoption.')
             ->group(function () {
+
             Route::get('/', [AdoptionController::class, 'index'])->name('index');
             Route::get('/create', [AdoptionController::class, 'create'])->name('create');
             Route::post('/', [AdoptionController::class, 'store'])->name('store');
@@ -87,8 +88,9 @@ Route::middleware(['auth', 'is_admin', 'throttle:5,1'])
          * Estas rutas son accesibles solo para administradores.
          */
         Route::prefix('foster')
-            ->as('foster.')
+            ->name('foster.')
             ->group(function () {
+                
             Route::get('/', [FosterController::class, 'index'])->name('index');
             Route::get('/create', [FosterController::class, 'create'])->name('create');
             Route::post('/', [FosterController::class, 'store'])->name('store');

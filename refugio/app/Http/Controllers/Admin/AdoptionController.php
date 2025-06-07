@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Adoption;
 use App\Models\Animal;
 use App\Models\User;
+use App\Enums\AnimalStatus;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -93,7 +94,7 @@ class AdoptionController extends Controller
                 'notes.max' => 'Las notas no pueden exceder los 255 caracteres.',
             ]);
 
-            // Buscar el usuario por email
+            // Verificar si el usuario ya existe por email
             $usuario = User::where('email', $validated['email'])->first();
 
             // Si no existe, lo creamos con los datos disponibles
@@ -106,6 +107,20 @@ class AdoptionController extends Controller
                     'role' => 'user',
                     'password' => bcrypt('temporal_' . uniqid()), // contraseña temporal
                 ]);
+            }
+
+            $animal = Animal::find($validated['animal_id']);
+            // Verificar que el animal esté disponible para adopción
+            if (!in_array($animal->status, [
+                AnimalStatus::AVAILABLE->value,
+                AnimalStatus::FOSTERED->value,
+                AnimalStatus::SHELTERED->value
+            ])) {
+                return redirect()->back()->withErrors(['animal_id' => 'El animal seleccionado no está disponible para adopción.']);
+            }
+            // Verificar que la fecha de adopción no sea anterior a la fecha de ingreso del animal
+            if ($validated['adoption_date'] < $animal->intake_date) {
+                return redirect()->back()->withErrors(['adoption_date' => 'La fecha de adopción no puede ser anterior a la fecha de ingreso del animal.']);
             }
 
             // Crear la adopción
@@ -234,7 +249,7 @@ class AdoptionController extends Controller
             $adoption->delete();
             $animal->update(['status' => 'available']);
 
-            return redirect()->route('admin.adoptions.index')->with('success', 'Adopción eliminada correctamente.');
+            return redirect()->route('admin.adoption.index')->with('success', 'Adopción eliminada correctamente.');
 
         } catch (ModelNotFoundException $e) {
             Log::error('Adopción no encontrada: ' . $e->getMessage());
