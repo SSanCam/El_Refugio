@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Sponsorship;
+use App\Models\Adoption;
+use App\Models\Foster;
 use App\Mail\EmailNotifications;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -335,24 +338,130 @@ class UserController extends Controller
      */
 
 
+    /**
+     * Summary of verifyEmail
+     * 
+     * @param \Illuminate\Http\Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Exception
+     */
     public function verifyEmail(Request $request)
     {
-        //
+        try {
+            $user = User::findOrFail($request->user()->id);
+
+            if (!hash_equals($user->email_verification_code, $request->input('code'))) {
+                return redirect()->back()->withErrors(['code' => 'El código de verificación es incorrecto.']);
+            }
+
+            if($user->email_verified_at) {
+                return redirect()->route('profile.show')->with('info', 'Tu correo electrónico ya ha sido verificado.');
+            }
+
+            $user->markEmailAsVerified();
+
+            Mail::to($user->email)->send(new EmailNotifications(
+                $user->email,
+                'Email verificado',
+                ''
+            ));
+
+            return redirect()->route('profile.show')->with('success', 'Correo electrónico verificado correctamente.');
+
+        } catch (Exception $e) {
+            Log::error('Error al verificar el correo electrónico: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error al verificar el correo electrónico.']);
+        }
     }
 
+    /**
+     * Summary of resendVerificationEmail
+     * 
+     * @param \Illuminate\Http\Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Exception
+     */
     public function resendVerificationEmail(Request $request)
     {
-        //
+        try {
+            $user = User::findOrFail(Auth::id());
+
+            if ($user->email_verified_at) {
+                return redirect()->route('profile.show')->with('info', 'Tu correo electrónico ya ha sido verificado.');
+            }
+
+            $user->email_verification_code = bin2hex(random_bytes(16));
+            $user->save();
+
+            Mail::to($user->email)->send(new EmailNotifications(
+                $user->email,
+                'Nueva verificación de correo electrónico',
+                $user->email_verification_code
+            ));
+
+            return redirect()->route('profile.show')->with('success', 'Correo electrónico de verificación enviado correctamente.');
+
+        } catch (Exception $e) {
+            Log::error('Error al reenviar el correo electrónico de verificación: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error al reenviar el correo electrónico de verificación.']);
+        }
     }
 
-    public function resetPassword(Request $request)
+    /**
+     * Muestra el formulario para restablecer la contraseña.
+     * 
+     * @return \Illuminate\Contracts\View\View| \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Exception
+     */
+    public function resetPassword()
     {
-        //
+        try {
+            return view('auth.resetPassword');
+        } catch (Exception $e) {
+            Log::error('Error al mostrar el formulario de restablecimiento de contraseña: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error al cargar el formulario de restablecimiento de contraseña.']);
+        }
     }
 
-    public function sendPasswordResetLink(Request $request)
+    /**
+     * Envía un enlace para restablecer la contraseña al correo electrónico del usuario.
+     *
+     * @param \Illuminate\Http\Request $request
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws \Exception
+     */
+    public function sendPasswordReset(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'email' => 'required|email|exists:users,email',
+            ]);
+
+            $user = User::where('email', $request->input('email'))->firstOrFail();
+            
+            $newPassword = bin2hex(random_bytes(10));
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            Mail::to($user->email)->send(new EmailNotifications(
+                $user->email,
+                'Restablecimiento de contraseña',
+                $newPassword
+            ));
+
+            return redirect()->route('login')->with('success', 'Se ha enviado un enlace para restablecer la contraseña a tu correo electrónico.');
+
+        } catch (Exception $e) {
+            Log::error('Error al enviar el enlace de restablecimiento de contraseña: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error al enviar el enlace de restablecimiento de contraseña.']);
+        }
     }
 
     /**
@@ -362,16 +471,28 @@ class UserController extends Controller
      */
 
 
-    public function showAdoptions(Request $request)
+    /**
+     * Muestra las relaciones activas del usuario autenticado con animales del refugio
+     * (adopciones y acogidas).
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+    public function showAnimalRelations(Request $request)
     {
-        //TODO
+        $user = User::findOrFail(Auth::id());
+
+        $adoptions = Adoption::with('animal')
+            ->where('user_id', $user->id)
+            ->where('status', '!=', 'rejected')
+            ->get();
+
+        $fosters = Foster::with('animal')
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['pending', 'fostering'])
+            ->get();
+
+        return view('user.animal-relations', compact('adoptions', 'fosters'));
     }
-    public function showFosters(Request $request)
-    {
-        //TODO
-    }
-    public function showSponsorships(Request $request)
-    {
-        //TODO
-    }
+
 }
