@@ -38,20 +38,20 @@ class EmailNotifications extends Mailable
     public function build()
     {
         
-        $message = [
+        $contenido = match ($this->subject) {
             'Cuenta creada' => "¡Bienvenida! Tu cuenta ha sido creada con éxito.",
             'Cuenta eliminada' => "Tu cuenta ha sido eliminada correctamente.",
             'Correo electrónico actualizado' => "Tu correo electrónico ha sido actualizado correctamente.",
             'Contraseña actualizada' => "Su contraseña ha sido modificada correctamente.",
             'Solicitud de eliminación de cuenta' => "Tu cuenta ha sido desactivada y se ha solicitado su eliminación. Si no has solicitado esto, por favor contacta con el soporte.",
             'Activación de verificación en dos pasos' => "Has iniciado la activación de la verificación en dos pasos (2FA). Por favor, escanea el código QR mostrado en pantalla para completar la configuración.",
-        ];
+            'Código de verificación 2FA' => "Tu código de verificación en dos pasos es: <strong>{$this->code}</strong>. Este código expirará en 5 minutos.",
+            'Email verificado' => "Tu correo electrónico ha sido verificado correctamente.",
+            'Nueva verificación de correo electrónico' => "Tu código de verificación es: {$this->code}",
+            'Restablecimiento de contraseña' => "Has solicitado un restablecimiento de contraseña. Tu nueva clave es: <strong>{$this->code}</strong>. Si no has solicitado esto, ignora este mensaje.",
 
-        if ($this->subject === 'Código de verificación 2FA') {
-            $contenido = "Tu código de verificación en dos pasos es: <strong>{$this->code}</strong>. Este código expirará en 5 minutos.";
-        } else {
-            $contenido = $message[$this->subject] ?? "Tienes una nueva notificación.";
-        }
+            default => "Tienes una nueva notificación.",
+        };
 
         return $this->subject($this->subject)->html("<p>{$contenido}</p>");
     }

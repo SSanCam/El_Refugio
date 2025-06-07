@@ -18,12 +18,20 @@ return new class extends Migration
             $table->string('name');
             $table->string('dni')->nullable()->unique();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['user', 'admin'])->default('user');            $table->string('phone')->nullable()->unique(); 
+            $table->enum('role', ['user', 'admin'])->default('user');            
+            $table->string('phone')->nullable()->unique(); 
             $table->string('address')->nullable(); 
             $table->date('birthdate')->nullable();
             $table->boolean('is_active')->default(true);
+            
+            $table->string('two_factor_code')->nullable();
+            $table->timestamp('two_factor_expires_at')->nullable();
+            $table->boolean('two_factor_enabled')->default(false);
+            
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('email_verification_code')->nullable();
+            
             $table->rememberToken();
             $table->timestamps();
         });
