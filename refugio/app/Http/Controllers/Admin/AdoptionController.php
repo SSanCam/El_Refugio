@@ -8,7 +8,6 @@ use App\Models\Animal;
 use App\Models\User;
 use App\Enums\AnimalStatus;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Exception;
@@ -23,12 +22,14 @@ class AdoptionController extends Controller
      * ==========================================================
      * Funcionalidades básicas para la gestión de adopciones 
      * ==========================================================
-    */
-    
+     */
+
     /**
      * Muestra un listado de adopciones.
      *
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * 
+     * @throws Exception
      */
     public function index()
     {
@@ -41,7 +42,6 @@ class AdoptionController extends Controller
             }
 
             return view('admin.adoption.index', compact('adoptions'));
-
         } catch (Exception $e) {
             Log::error('Error al cargar el listado de adopciones: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al cargar el listado de adopciones.']);
@@ -53,25 +53,28 @@ class AdoptionController extends Controller
      * Muestra el formulario para crear una nueva adopción.
      *
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse 
+     * 
+     * @throws Exception
      */
     public function create()
     {
-        try {
+            try {
+                $animals = Animal::where('status', AnimalStatus::AVAILABLE->value)->get();
+                $users = User::where('active', true)->get();
 
-            $animals = Animal::where('status', 'available')->get();
-            $users = User::where('active', true)->get();
-            
-            return view('admin.adoption.create', compact('animals', 'users'));
-
-        } catch (Exception $e) {
-            Log::error('Error al cargar el formulario de creación de adopciones: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error inesperado al cargar el formulario de creación de adopciones.']);
-        }
+                return view('admin.adoption.create', compact('animals', 'users'));
+            } catch (Exception $e) {
+                Log::error('Error al cargar el formulario de creación de adopciones: ' . $e->getMessage());
+                return redirect()->back()->withErrors(['error' => 'Error inesperado al cargar el formulario de creación de adopciones.']);
+            }
     }
 
     /**
      * Registra una nueva adopción.
+     * 
      * @return mixed|\Illuminate\Http\RedirectResponse
+     * 
+     * @throws Exception
      */
     public function store(Request $request)
     {
@@ -95,7 +98,7 @@ class AdoptionController extends Controller
             ]);
 
             // Verificar si el usuario ya existe por email
-            $usuario = User::where('email', $validated['email'])->first();
+            $usuario = User::where('email', $validated['email'])->where('active', true)->first();
 
             // Si no existe, lo creamos con los datos disponibles
             if (!$usuario) {
@@ -135,7 +138,6 @@ class AdoptionController extends Controller
             Animal::find($validated['animal_id'])->update(['status' => 'adopted']);
 
             return redirect()->route('admin.adoption.index')->with('success', 'Adopción registrada correctamente.');
-
         } catch (Exception $e) {
             Log::error('Error al registrar la adopción: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Error inesperado al registrar la adopción.']);
@@ -147,7 +149,11 @@ class AdoptionController extends Controller
      * Muestra los detalles de una adopción específica.
      *
      * @param int $id ID de la adopción
+     * 
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * 
+     * @throws ModelNotFoundException     
+     * @throws Exception
      */
     public function show($id)
     {
@@ -156,7 +162,6 @@ class AdoptionController extends Controller
             $adoption = Adoption::with(['animal', 'user'])->findOrFail($id);
 
             return view('admin.adoption.show', compact('adoption'));
-
         } catch (ModelNotFoundException $e) {
             Log::error('Adopción no encontrada: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Adopción no encontrada.']);
@@ -170,7 +175,11 @@ class AdoptionController extends Controller
      * Muestra el formulario para editar una adopción específica.
      *
      * @param int $id ID de la adopción
+     * 
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * 
+     * @throws ModelNotFoundException     
+     * @throws Exception
      */
     public function edit($id)
     {
@@ -181,7 +190,6 @@ class AdoptionController extends Controller
             $users = User::where('active', true)->get();
 
             return view('admin.adoption.edit', compact('adoption', 'animals', 'users'));
-
         } catch (ModelNotFoundException $e) {
             Log::error('Adopción no encontrada: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Adopción no encontrada.']);
@@ -194,9 +202,13 @@ class AdoptionController extends Controller
     /**
      * Actualiza una adopción existente.
      *
-     * @param Request $request
+     * @param Request $request 
      * @param int $id ID de la adopción
+     * 
      * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws ModelNotFoundException     
+     * @throws Exception
      */
     public function update(Request $request, $id)
     {
@@ -223,7 +235,6 @@ class AdoptionController extends Controller
             $adoption->save();
 
             return redirect()->route('admin.adoption.index')->with('success', 'Adopción actualizada correctamente.');
-
         } catch (ModelNotFoundException $e) {
             Log::error('Adopción no encontrada: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Adopción no encontrada.']);
@@ -237,7 +248,11 @@ class AdoptionController extends Controller
      * Elimina una adopción existente.
      *
      * @param int $id ID de la adopción
+     * 
      * @return \Illuminate\Http\RedirectResponse
+     * 
+     * @throws ModelNotFoundException
+     * @throws Exception
      */
     public function destroy($id)
     {
@@ -250,7 +265,6 @@ class AdoptionController extends Controller
             $animal->update(['status' => 'available']);
 
             return redirect()->route('admin.adoption.index')->with('success', 'Adopción eliminada correctamente.');
-
         } catch (ModelNotFoundException $e) {
             Log::error('Adopción no encontrada: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Adopción no encontrada.']);

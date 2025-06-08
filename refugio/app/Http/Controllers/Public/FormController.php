@@ -33,7 +33,13 @@ class FormController extends Controller
 
     public function sponsorshipForm()
     {
-        return view('public.forms.sponsorshipForm');
+        try {
+            return view('public.forms.sponsorshipForm');
+        } catch (Exception $e) {
+            Log::error("Error al cargar el formulario: " . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Error loading sponsorship form.']);
+        }
+        
     }
 
     public function sendSponsorshipForm(Request $request)
@@ -48,19 +54,12 @@ class FormController extends Controller
                 'address' => 'nullable|string|max:500',
                 'message' => 'nullable|string|max:1000',
             ],
-            'public.animal.sponsorshipForm',
-            'New Sponsorship Form',
-            'elrefugio@example.com',
-            function($data) {
-                return "Name: {$data['name']}\n"
-                    . "Email: {$data['email']}\n"
-                    . "Phone: " . ($data['phone'] ?? 'Not provided') . "\n"
-                    . "Address: " . ($data['address'] ?? 'Not provided') . "\n"
-                    . "Amount: {$data['amount']} €\n"
-                    . "Message:\n" . strip_tags($data['message'] ?? '');
-            }
+            'public.forms.sponsorshipForm',  
+            'New Sponsorship Form',           
+            'elrefugio@example.com'           
         );
     }
+
 
     public function fosterForm()
     {

@@ -12,13 +12,15 @@ class SponsorshipNotificationMail extends Mailable
 
     public $animalName;
     public $userName;
-    public $evento;
+    public $event;
+    public $animalStatus;
 
-    public function __construct(string $animalName, string $userName, string $evento)
+    public function __construct(string $animalName, string $userName, string $event, string $animalStatus)
     {
         $this->animalName = $animalName;
         $this->userName = $userName;
-        $this->evento = $evento;
+        $this->event = $event;
+        $this->animalStatus = $animalStatus;
     }
 
     public function build()
@@ -26,27 +28,28 @@ class SponsorshipNotificationMail extends Mailable
         $animalName = $this->animalName;
         $userName = $this->userName;
 
-        if ($this->evento === 'inicio') {
-            return $this->subject('¡Gracias por apadrinar a ' . $animalName . '!')
-                        ->html("
-                            <p>Hola {$userName},</p>
-                            <p>Gracias por iniciar el apadrinamiento de <strong>{$animalName}</strong>.</p>
-                            <p>Nos alegra contar con tu apoyo para el bienestar de los animales del refugio.</p>
-                            <p>Un saludo,</p>
-                        ");
-        }
+        switch ($this->event) {
+            case 'inicio':
+                return $this->subject("¡Gracias por apadrinar a {$animalName}!")
+                    ->html("<p>Hola {$userName},</p><p>Gracias por iniciar el apadrinamiento de <strong>{$animalName}</strong>.</p>");
+            
+            case 'fin':
+                if ($this->animalStatus === 'adopted') {
+                    return $this->subject("¡Tu apadrinamiento ha finalizado!")
+                        ->html("<p>Hola {$userName},</p><p>Nos complace informarte que el animal <strong>{$animalName}</strong> ha sido adoptado gracias a tu apoyo.</p>");
+                } elseif ($this->animalStatus === 'deceased') {
+                    return $this->subject("Tu apadrinamiento ha finalizado")
+                        ->html("<p>Hola {$userName},</p><p>Lamentamos comunicarte que <strong>{$animalName}</strong> a quién apadrinabas ha fallecido.</p>");
+                } else {
+                    return $this->subject("Tu apadrinamiento ha finalizado")
+                        ->html("<p>Hola {$userName},</p><p>Tu apadrinamiento de <strong>{$animalName}</strong> ha finalizado.</p>");
+                }
 
-        if ($this->evento === 'fin') {
-            return $this->subject('Tu apadrinamiento ha finalizado')
-                        ->html("
-                            <p>Hola {$userName},</p>
-                            <p>El animal que apadrinabas, <strong>{$animalName}</strong>, ha sido adoptado.</p>
-                            <p>Tu apadrinamiento ha sido finalizado. Si estabas realizando una donación periódica, por favor considera cancelarla.</p>
-                            <p>Gracias por tu apoyo.</p>
-                        ");
-        }
-
-        return $this->subject('Notificación de apadrinamiento')
+            default:
+                return $this->subject("Notificación de apadrinamiento")
                     ->html("<p>Hola {$userName},</p><p>Hay una novedad en tu apadrinamiento de <strong>{$animalName}</strong>.</p>");
+        }
     }
+
+
 }

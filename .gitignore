@@ -1,0 +1,89 @@
+# ─────────────────────────────
+# Archivos de entorno
+# ─────────────────────────────
+.env
+.env.*
+!.env.example
+.env.backup
+.env.production
+
+# ─────────────────────────────
+# Claves sensibles
+# ─────────────────────────────
+*.key
+*.pem
+auth.json
+stripe_keys.json
+
+# ─────────────────────────────
+# Directorios de dependencias
+# ─────────────────────────────
+/vendor
+/node_modules
+
+# ─────────────────────────────
+# Archivos del sistema y del editor
+# ─────────────────────────────
+.DS_Store
+Thumbs.db
+/.idea
+/.vscode
+/.fleet
+/.nova
+/.zed
+*.sublime-project
+*.sublime-workspace
+
+# ─────────────────────────────
+# Archivos de Laravel
+# ─────────────────────────────
+
+# Storage
+/storage/*.key
+/storage/debugbar
+/storage/pail
+/storage/app/public
+/storage/framework/*
+!/storage/framework/.gitignore
+/storage/logs/*
+
+# Bootstrap
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# Public
+/public/storage
+/public/hot
+/public/mix-manifest.json
+/public/build
+
+# ─────────────────────────────
+# Archivos de testing
+# ─────────────────────────────
+coverage/
+/.phpunit.result.cache
+/.phpunit.cache
+
+# ─────────────────────────────
+# Laravel Sail / Docker / Homestead
+# ─────────────────────────────
+docker-compose.override.yml
+Homestead.yaml
+Homestead.json
+
+# ─────────────────────────────
+# Otros
+# ─────────────────────────────
+npm-debug.log
+yarn-error.log
+*.local
+*.log
+*.bak
+*.tmp
+
+# ─────────────────────────────
+# Bases de datos locales
+# ─────────────────────────────
+*.sql
+*.sqlite
+*.dump

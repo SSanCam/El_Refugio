@@ -276,7 +276,8 @@ class AnimalController extends Controller
                         new SponsorshipNotificationMail(
                             $animal->name,
                             $sponsorship->user->name,
-                            'fin'
+                            'fin',
+                            $request->input('status') === 'adopted' ? 'adopted' : 'deceased'
                         )
                     );
                 }
