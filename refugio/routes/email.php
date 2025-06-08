@@ -6,30 +6,23 @@ use Illuminate\Http\Request;
 
 /**
  * =====================================
- * Rutas públicas para verificación de email
+ * RUTAS PÚBLICAS PARA VERIFICACIÓN DE EMAIL
  * =====================================
  */
-Route::middleware(['auth', 'throttle:6,1']) // Limita a 6 solicitudes por minuto
+Route::middleware(['auth', 'throttle:6,1'])
     ->prefix('email')
     ->name('verification.')
     ->group(function () {
 
-   
-// Página que solicita verificación
-Route::get('/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
+        // Muestra la vista que solicita al usuario verificar su correo electrónico
+        Route::get('/verify', fn() => view('auth.verify-email'))->middleware('auth')->name('notice');
 
-// Enlace de verificación clicado en email
-Route::get('/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill(); // marca el email como verificado
-    return redirect('/'); // redirige tras verificación
-})->middleware(['auth', 'signed'])->name('verification.verify');
+        // Procesa el enlace de verificación recibido por email y marca el correo como verificado
+        Route::get('/verify/{id}/{hash}', fn(EmailVerificationRequest $request) => tap($request)->fulfill() && redirect('/'))
+            ->middleware(['auth', 'signed'])
+            ->name('verify');
 
-// Reenviar verificación
-Route::post('/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Correo de verificación reenviado.');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
-});
+        // Reenvía el correo de verificación al usuario autenticado
+        Route::post('/verification-notification', fn(Request $request) => tap($request->user())->sendEmailVerificationNotification() && back()->with('message', 'Correo de verificación reenviado.'))
+            ->name('send');
+    });

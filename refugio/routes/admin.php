@@ -35,7 +35,7 @@ Route::middleware(['auth', 'is_admin', 'throttle:5,1'])
             Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
             Route::post('', [UserController::class, 'store'])->name('store');
             Route::post('/{user}/assign-role', [UserController::class, 'assignRole'])->name('assignRole');
-            Route::patch('/{user}/toggle', [UserController::class, 'toggleActive'])->name('toggleActive');
+            Route::patch('/{user}/toggle/{status}', [UserController::class, 'updateActivationStatus'])->name('toggleActive');
             Route::put('/{user}', [UserController::class, 'update'])->name('update');
             Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
         });
