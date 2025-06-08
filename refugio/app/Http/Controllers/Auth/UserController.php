@@ -38,7 +38,19 @@ class UserController extends Controller
      */
     public function showProfile()
     {
-        return view('auth.profile', ['user' => Auth::user()]);
+        $user = Auth::user();
+
+        $adoptions = Adoption::with('animal')
+            ->where('user_id', $user->id)
+            ->where('status', '!=', 'rejected')
+            ->get();
+
+        $fosters = Foster::with('animal')
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['pending', 'fostering'])
+            ->get();
+
+        return view('auth.profile', compact('user', 'adoptions', 'fosters'));
     }
 
     /**
@@ -464,35 +476,5 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * ===============================================
-     * Relación con el refugio y sus servicios
-     * ===============================================
-     */
-
-
-    /**
-     * Muestra las relaciones activas del usuario autenticado con animales del refugio
-     * (adopciones y acogidas).
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
-    public function showAnimalRelations(Request $request)
-    {
-        $user = User::findOrFail(Auth::id());
-
-        $adoptions = Adoption::with('animal')
-            ->where('user_id', $user->id)
-            ->where('status', '!=', 'rejected')
-            ->get();
-
-        $fosters = Foster::with('animal')
-            ->where('user_id', $user->id)
-            ->whereIn('status', ['pending', 'fostering'])
-            ->get();
-
-        return view('user.animal-relations', compact('adoptions', 'fosters'));
-    }
-
+  
 }

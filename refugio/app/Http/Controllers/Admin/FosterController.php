@@ -255,6 +255,7 @@ class FosterController extends Controller
     public function destroy($id)
     {
         try {
+            
             $foster = Foster::findOrFail($id);
             $foster->delete();
 

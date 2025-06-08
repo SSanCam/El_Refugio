@@ -11,7 +11,7 @@ class FormController extends Controller
 {
     public function adoptionForm()
     {
-        return view('public.animal.adoptionForm');
+        return view('public.forms.adoptionForm');
     }
 
     public function sendAdoptionForm(Request $request)

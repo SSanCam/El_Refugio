@@ -54,7 +54,7 @@ class UserController extends Controller
             $user = User::create($data);
             $user->sendEmailVerificationNotification();
 
-            return redirect()->route('login')->with('success', 'Usuario registrado exitosamente.');
+            return redirect()->route('public.user.login')->with('success', 'Usuario registrado exitosamente.');
 
         } catch (QueryException $e) {
             Log::error('Error al registrar usuario: ' . $e->getMessage());
@@ -97,9 +97,7 @@ class UserController extends Controller
             return redirect()->intended('profile')->with('success', 'Has iniciado sesión correctamente.');
         }
 
-        return back()->withErrors([
-            'email' => 'Las credenciales no son válidas.'
-        ])->onlyInput('email');
+        return back()->withErrors(['email' => 'Las credenciales no son válidas.'])->onlyInput('email');
     }
 
 }

@@ -45,6 +45,7 @@ Route::middleware(['throttle:5,1'])
 
         Route::get('/login', [UserController::class, 'logIn'])->name('login');
         Route::post('/login', [UserController::class, 'authenticate'])->name('login.authenticate');
+
     });
     /**
      * ============================
