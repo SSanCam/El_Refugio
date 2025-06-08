@@ -87,3 +87,9 @@ yarn-error.log
 *.sql
 *.sqlite
 *.dump
+
+
+# ─────────────────────────────
+# Directorio no necesario
+# ─────────────────────────────
+Rubricas/
