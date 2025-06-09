@@ -6,57 +6,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="{{ asset('css/globalStyles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/user/loginRegistrer.css') }}">
+
 </head>
 
 <body>
-    <h2>Iniciar sesión</h2>
+    <div class="content">
 
-    {{-- Mensajes de error --}}
-    @if ($errors->any())
-        <div style="color: red;">
-            <ul>
-                @foreach ($errors->all() as $error)
+        <div class="form-content">
+
+            @if(session('success'))
+            <p>{{ session('success') }}</p>
+            @endif
+
+            @if ($errors->any())
+            <div>
+                <ul>
+                    @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+            <div class="form">
+                <form method="POST" action="{{ route('public.user.login.authenticate') }}">
+                    @csrf
+                    <label>Email: <input type="email" name="email" value="{{ old('email') }}"></label><br>
+                    <label>Contraseña: <input type="password" name="password"></label><br>
+                    <label><input type="checkbox" name="remember"> Recordarme</label><br>
+                    <div class="btn-login">
+                        <button type="submit">Iniciar sesión</button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="links">
+                <a href="{{ route('public.user.register') }}">¿No tienes cuenta? Regístrate</a>
+                @livewire('layout.home-page-button')
+            </div>
+
         </div>
-    @endif
+    </div>
 
-    {{-- Mensaje de éxito --}}
-    @if (session('success'))
-        <div style="color: green;">
-            {{ session('success') }}
-        </div>
-    @endif
 
-    <form method="POST" action="{{ route('public.user.login.authenticate') }}">
-        @csrf
 
-        <div>
-            <label for="email">Correo electrónico</label><br>
-            <input id="email" type="email" name="email" placeholder="ejemplo@correo.com" value="{{ old('email') }}" required>
-        </div>
-
-        <div>
-            <label for="password">Contraseña</label><br>
-            <input id="password" type="password" name="password" placeholder="********" required>
-        </div>
-
-        <div>
-            <input type="checkbox" name="remember" id="remember">
-            <label for="remember">Recuérdame</label>
-        </div>
-
-        <button type="submit">Iniciar sesión</button>
-    </form>
-
-    <p>
-        ¿No tienes cuenta? <a href="{{ route('public.user.register') }}">Regístrate aquí</a>
-    </p>
-
-    <p>
-        <a href="{{ url('/') }}">Volver al inicio</a>
-    </p>
 </body>
 
 </html>

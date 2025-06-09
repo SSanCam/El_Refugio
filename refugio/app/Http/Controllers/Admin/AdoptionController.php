@@ -117,7 +117,6 @@ class AdoptionController extends Controller
             if (!in_array($animal->status, [
                 AnimalStatus::AVAILABLE->value,
                 AnimalStatus::FOSTERED->value,
-                AnimalStatus::SHELTERED->value
             ])) {
                 return redirect()->back()->withErrors(['animal_id' => 'El animal seleccionado no está disponible para adopción.']);
             }

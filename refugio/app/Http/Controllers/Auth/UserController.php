@@ -40,6 +40,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
+        /*
         $adoptions = Adoption::with('animal')
             ->where('user_id', $user->id)
             ->where('status', '!=', 'rejected')
@@ -49,7 +50,10 @@ class UserController extends Controller
             ->where('user_id', $user->id)
             ->whereIn('status', ['pending', 'fostering'])
             ->get();
-
+        */
+        $user = Auth::user();
+        $adoptions = $user->adoptions ?? [];
+        $fosters = $user->fosters ?? [];
         return view('auth.profile', compact('user', 'adoptions', 'fosters'));
     }
 

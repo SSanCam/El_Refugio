@@ -8,15 +8,19 @@
 </head>
 
 <body>
-    <h1>Bienvenida</h1>
 
-    <a href="{{ route('register') }}">
-        <button>Crear cuenta</button>
-    </a>
+    <div class="header">
+        @livewire('layout.header')
+    </div>
 
-    <a href="{{ route('login') }}">
-        <button>Iniciar sesión</button>
-    </a>
+    <div class="container">
+
+    </div>
+
+    <div class="footer">
+
+    </div>
+
 </body>
 
 </html>

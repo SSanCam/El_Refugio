@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AnimalController; 
 use App\Http\Controllers\Admin\AdoptionController;
 use App\Http\Controllers\Admin\FosterController;
+use App\Http\Controllers\Public\UserController as PublicUserController;
 
 /**
  * Rutas de administración del refugio
@@ -12,11 +13,17 @@ use App\Http\Controllers\Admin\FosterController;
  * Solo los usuarios con el rol de administrador pueden acceder a estas rutas.
  * Las rutas están agrupadas bajo el prefijo 'admin' y tienen un nombre específico para facilitar su referencia.
  */
-Route::middleware(['auth', 'is_admin', 'throttle:5,1'])
+Route::middleware(['auth', 'throttle:5,1'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
         
+        /**
+         * Ruta administrativa para el panel de control
+         */
+        Route::get('/dashboard', [PublicUserController::class, 'dashboard'])->name('admin.dashboard');
+           
+
         /**
          * Rutas para la gestión de usuarios
          * Estas rutas permiten crear, editar, eliminar y listar usuarios del sistema.

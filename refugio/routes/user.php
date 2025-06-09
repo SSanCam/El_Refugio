@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\UserController;
 
-Route::middleware(['auth', 'verified'])
+Route::middleware(['auth'])
     ->prefix('auth')
     ->name('auth.')
     ->group(function () {

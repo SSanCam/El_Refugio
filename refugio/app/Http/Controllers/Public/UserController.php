@@ -2,12 +2,13 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;    
-use Illuminate\Http\Request;
+use App\Mail\EmailNotifications;
+use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Exception;
 
@@ -52,7 +53,11 @@ class UserController extends Controller
 
             $data['password'] = Hash::make($data['password']);
             $user = User::create($data);
-            $user->sendEmailVerificationNotification();
+            
+            Mail::to($user->email)->send(new EmailNotifications(
+                $user->email,
+                'Cuenta creada'
+            ));
 
             return redirect()->route('public.user.login')->with('success', 'Usuario registrado exitosamente.');
 
@@ -82,6 +87,15 @@ class UserController extends Controller
     }
 
     /**
+     * Muestra el panel administrativo
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function dashboard()
+    {
+        return view('admin.dashboard');
+    }
+
+    /**
      * Maneja el inicio de sesión del usuario.
      *
      * @return \Illuminate\Http\RedirectResponse
@@ -89,15 +103,22 @@ class UserController extends Controller
     public function authenticate(Request $request)
     {
         $credentials = $request->only('email', 'password');
-
         $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
+
             $request->session()->regenerate(); 
-            return redirect()->intended('profile')->with('success', 'Has iniciado sesión correctamente.');
+
+            $user = Auth::user();
+
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard')->with('success', 'Bienvenida, administradora.');
+            }
+
+            return redirect()->route('auth.profile')->with('success', 'Has iniciado sesión correctamente.');
         }
 
         return back()->withErrors(['email' => 'Las credenciales no son válidas.'])->onlyInput('email');
     }
 
-}
+} 

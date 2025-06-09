@@ -16,7 +16,7 @@ class IsAdmin
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(Request $request, Closure $next): mixed
+    public function handle($request, Closure $next): mixed
     {
         if (Auth::check() && Auth::user()->role === UserRole::ADMIN->value) {
             return $next($request);
