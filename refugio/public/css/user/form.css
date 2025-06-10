@@ -86,8 +86,9 @@ ESTILOS DEL FORMULARIO
 }
 
 .form a {
-    color: #4b0082;
+    color: #000000;
     text-decoration: none;
+    text-decoration: underline;
 }
 
 .form a:hover {

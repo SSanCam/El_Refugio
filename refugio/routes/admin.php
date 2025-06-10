@@ -21,7 +21,7 @@ Route::middleware(['auth', 'throttle:5,1', 'admin'])
         /**
          * Ruta administrativa para el panel de control
          */
-        Route::get('/dashboard', [PublicUserController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/dashboard', [PublicUserController::class, 'authenticate'])->name('dashboard');
         
         /**
          * Rutas para la gestión de animales

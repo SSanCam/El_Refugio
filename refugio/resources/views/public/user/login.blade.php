@@ -6,12 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
+    @livewireStyles
     <link rel="stylesheet" href="{{ asset('css/globalStyles.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/user/loginRegistrer.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/user/form.css') }}">
 
 </head>
 
-<body>
+<body class="body">
+
     <div class="content">
 
         <div class="form-content">
@@ -42,9 +44,9 @@
 
             </div>
             <div class="links">
-                <a href="{{ route('public.user.register') }}">¿No tienes cuenta? Regístrate</a>
-                @livewire('layout.home-page-button')
+                <span>¿No tienes cuenta? <a href="{{ route('public.user.register') }}">Regístrate</a></span>
             </div>
+            <livewire:layout.home-page-button />
 
         </div>
     </div>

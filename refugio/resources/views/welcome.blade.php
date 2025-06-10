@@ -1,26 +1,36 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_','-',app()->getLocale()) }}">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de bienvenida</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>El Refugio - Inicio</title>
+    {{-- Livewire styles --}}
+    @livewireStyles
+    <link rel="stylesheet" href="{{ asset('css/globalStyles.css') }}">
+    {{-- Alpine.js desde CDN (v3.x) --}}
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
 </head>
 
-<body>
+<body class="antialiased">
 
-    <div class="header">
-        @livewire('layout.header')
-    </div>
+    {{-- Contenido de header --}}
+    <header>
+        <livewire:layout.header />
+    </header>
 
-    <div class="container">
+    <main>
+        {{-- Contenido de tu landing --}}
+        <h1>Bienvenido al Refugio</h1>
+    </main>
 
-    </div>
+    {{-- Contenido de footer --}}
+    <footer>
 
-    <div class="footer">
-
-    </div>
-
+    </footer>
+    
 </body>
 
 </html>
