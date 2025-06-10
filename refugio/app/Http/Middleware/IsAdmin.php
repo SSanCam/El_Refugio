@@ -18,10 +18,9 @@ class IsAdmin
      */
     public function handle($request, Closure $next): mixed
     {
-        if (Auth::check() && Auth::user()->role === UserRole::ADMIN->value) {
+        if (Auth::check() && Auth::user()->role === UserRole::ADMIN) {
             return $next($request);
         }
-
         abort(403, 'Acceso denegado.');
     }
 }

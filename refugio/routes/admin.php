@@ -13,7 +13,7 @@ use App\Http\Controllers\Public\UserController as PublicUserController;
  * Solo los usuarios con el rol de administrador pueden acceder a estas rutas.
  * Las rutas están agrupadas bajo el prefijo 'admin' y tienen un nombre específico para facilitar su referencia.
  */
-Route::middleware(['auth', 'throttle:5,1'])
+Route::middleware(['auth', 'throttle:5,1', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -22,31 +22,7 @@ Route::middleware(['auth', 'throttle:5,1'])
          * Ruta administrativa para el panel de control
          */
         Route::get('/dashboard', [PublicUserController::class, 'dashboard'])->name('admin.dashboard');
-           
-
-        /**
-         * Rutas para la gestión de usuarios
-         * Estas rutas permiten crear, editar, eliminar y listar usuarios del sistema.
-         * Incluyen funcionalidades para asignar roles, activar y desactivar usuarios.
-         * Además, se asegura que solo los administradores puedan acceder a estas rutas.
-         * Las rutas están protegidas por middleware de autenticación y verificación de rol.
-         * Cada ruta está nombrada para facilitar su referencia en las vistas y controladores.
-         */
-        Route::prefix('user')
-            ->name('user.')
-            ->group(function () {
-
-            Route::get('/', [UserController::class, 'index'])->name('index');
-            Route::get('/create', [UserController::class, 'create'])->name('create');
-            Route::get('/{user}', [UserController::class, 'show'])->name('show');
-            Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
-            Route::post('', [UserController::class, 'store'])->name('store');
-            Route::post('/{user}/assign-role', [UserController::class, 'assignRole'])->name('assignRole');
-            Route::patch('/{user}/toggle/{status}', [UserController::class, 'updateActivationStatus'])->name('toggleActive');
-            Route::put('/{user}', [UserController::class, 'update'])->name('update');
-            Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
-        });
-
+        
         /**
          * Rutas para la gestión de animales
          * Estas rutas permiten crear, editar, eliminar y listar animales en el refugio.

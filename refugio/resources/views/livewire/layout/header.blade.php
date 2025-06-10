@@ -1,9 +1,19 @@
-<header class="main-header">
-    <div class="container-main">
-        <nav>
-            <a href="/" class="nav-link">Inicio</a>
-            <a href="/public/user/login" class="nav-link">Iniciar sesión</a>
-            <a href="/public/user/register" class="nav-link">Registrarse</a>
-        </nav>
-    </div>
+<header x-data="{ isAuth: {{ auth()->check() ? 'true' : 'false' }} }">
+  <nav class="flex space-x-4">
+    <a href="{{ route('home') }}">Inicio</a>
+    <template x-if="! isAuth">
+      <a href="{{ route('public.user.login') }}">Iniciar sesión</a>
+    </template>
+    <template x-if="! isAuth">
+      <a href="{{ route('public.user.register') }}">Registrarse</a>
+    </template>
+    <template x-if="isAuth">
+      <a href="{{ route('public.user.profile') }}">Perfil</a>
+    </template>
+    <template x-if="isAuth">
+      <button
+        @click="$wire.logout().then(() => location.href='{{ route('home') }}')"
+      >Cerrar sesión</button>
+    </template>
+  </nav>
 </header>
