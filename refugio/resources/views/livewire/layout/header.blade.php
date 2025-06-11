@@ -1,33 +1,45 @@
-<header class="header" x-data="{ isAuth: {{ auth()->check() ? 'true' : 'false' }} ,
-isAdmin: @json(
-auth()->check() && auth()->user()->role === \App\Enums\UserRole::ADMIN->value)}">
-
-    <nav class="flex space-x-4">
-        <!-- Botones que se muestran públicamente-->
-        <div class="logo">
-            a href="{{ url('/') }}" class="nav-logo">
-            <img src="{{ asset('../images/logo_sin_fondo.png') }}" alt="Logo El Refugio">
+<header class="header" x-data="{
+          isAuth: @json(Auth::check()),
+          isAdmin: @json(Auth::check() && Auth::user()->role === \App\Enums\UserRole::ADMIN->value)
+        }">
+    <nav class="header__nav" aria-label="Menú principal">
+        <section class="header__logo" aria-label="Logotipo">
+            <a href="{{ url('/') }}">
+                <img src="{{ asset('media/icons/logo_sin_fondo.png') }}" alt="El Refugio">
             </a>
-        </div>
-        <div class="buttons">
-            <a href="{{ route('public.user.login') }}">Iniciar sesión</a>
-            <a href="{{ route('public.user.register') }}" class="btn-nav">Registrarse</a>
+        </section>
 
-            <!-- Botones que se muestran bajo una condición-->
-            <!-- Usuarios autenticados -->
-            <template x-show="isAuth">
-                <a href="{{ route('auth.profile') }}" class="btn-nav">Perfil</a>
-            </template>
-            <template x-show="isAuth">
-                <button @click="$wire.logout().then(() => location.href='{{ url('/') }}')" class="btn-nav">Cerrar
-                    sesión</button>
-            </template>
-            <!-- Usuarios administradores -->
-            <template x-show="isAdmin">
-                <a href="{{ route('admin.dashboard') }}" class="btn-nav">Panel Administrativo</a>
-            </template>
-        </div>
+        <section class="header__buttons" aria-label="Accesos rápidos">
+            <ul class="buttons-list" role="menubar">
+                <li role="none" x-show="!isAuth">
+                    <a role="menuitem" href="{{ route('public.user.login') }}" class="btn-nav">
+                        Iniciar sesión
+                    </a>
+                </li>
+                <li role="none" x-show="!isAuth">
+                    <a role="menuitem" href="{{ route('public.user.register') }}" class="btn-nav">
+                        Registrarse
+                    </a>
+                </li>
 
+                <li role="none" x-show="isAuth">
+                    <a role="menuitem" href="{{ route('auth.profile') }}" class="btn-nav">
+                        Perfil
+                    </a>
+                </li>
+                <li role="none" x-show="isAuth">
+                    <button role="menuitem" type="button" class="btn-nav"
+                        @click="$wire.logout().then(() => window.location='{{ url('/') }}')">
+                        Cerrar sesión
+                    </button>
+                </li>
+
+                <li role="none" x-show="isAdmin">
+                    <a role="menuitem" href="{{ route('admin.dashboard') }}" class="btn-nav">
+                        Panel Admin
+                    </a>
+                </li>
+            </ul>
+        </section>
     </nav>
-
 </header>

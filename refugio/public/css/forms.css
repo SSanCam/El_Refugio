@@ -1,0 +1,99 @@
+/* Contenedor “card” genérico para formularios */
+/* --- Centrado del modal --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.form-card {
+  background-color: #D29F68;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.form-card__header {
+  display: flex;
+  justify-content: center;
+}
+
+.form-card__header h2 {
+  color: #ffffff;
+}
+/* Agrupa cada campo (label + input) */
+.form-card__field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+}
+
+/* Label genérico */
+.form-card__label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #000;
+}
+
+/* Input genérico */
+.form-card__input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #909090;
+}
+
+/* Placeholder */
+.form-card__input::placeholder {
+  color: #999;
+}
+
+/* Grupo de checkbox/ radio */
+.form-card__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+}
+
+/* Botones genéricos */
+.btn-generic {
+  display: inline-block;
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-family: 'Quicksand_Light';
+}
+
+
+.btn-generic:hover {
+  background-color: #7aaa3f;
+}
+
+/* Pie de formulario (links, mensajes) */
+.form-card__footer {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; 
+  align-items: center;
+  gap: 0.5rem;            
+  font-size: 0.9rem;
+}
+
+.form-card__footer p {
+  margin: 0;
+}

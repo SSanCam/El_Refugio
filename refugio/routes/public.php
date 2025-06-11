@@ -5,11 +5,14 @@ use App\Http\Controllers\Admin\AnimalController;
 use App\Http\Controllers\Public\FormController;
 use App\Http\Controllers\Public\UserController;
 
+use App\Http\Livewire\Public\RegisterForm;
+use App\Http\Livewire\Public\LoginForm;
+
 /**
  * Rutas Públicas del Refugio
  * Estas rutas son accesibles sin autenticación y permiten a los usuarios interactuar con el refugio.
  */
-Route::middleware(['throttle:5,1'])
+Route::middleware(['throttle:10,1'])
     ->prefix('public')
     ->name('public.')
     ->group(function () {
@@ -40,10 +43,9 @@ Route::middleware(['throttle:5,1'])
         ->name('user.')
         ->group(function () {
 
-        Route::get('/register', [UserController::class, 'register'])->name('register');
+        Route::get('register', RegisterForm::class)->name('register');
         Route::post('/register', [UserController::class, 'store'])->name('register.store');
-
-        Route::get('/login', [UserController::class, 'logIn'])->name('login');
+        Route::get('login',    LoginForm::class)   ->name('login');
         Route::post('/login', [UserController::class, 'authenticate'])->name('login.authenticate');
 
     });

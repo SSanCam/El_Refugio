@@ -1,51 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{{-- resources/views/public/user/register.blade.php --}}
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{ asset('css/globalStyles.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/user/form.css') }}">
-</head>
+@section('title', 'Cuenta Nueva')
 
-<body>
-
-    <div class="content">
-
-        <div class="form-content">
-
-            @if ($errors->any())
-            <div>
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-            <div class="form">
-                <form method="POST" action="{{ route('public.user.register.store') }}">
-                    @csrf
-                    <label>Nombre: <input type="text" name="name" value="{{ old('name') }}"></label><br>
-                    <label>Email: <input type="email" name="email" value="{{ old('email') }}"></label><br>
-                    <label>Contraseña: <input type="password" name="password"></label><br>
-                    <label>Confirmar contraseña: <input type="password" name="password_confirmation"></label><br>
-                    <div class="btn-register">
-                        <button type="submit">Registrarse</button>
-                    </div>
-                </form>
-
-            </div>
-
-            <div class="links">
-                <span>¿Ya tienes cuenta? <a href="{{ route('public.user.login') }}">Inicia sesión</a></span>
-            </div>
-            <livewire:layout.home-page-button />
-
-        </div>
-    </div>
-</body>
-
-</html>
+@section('content')
+   <livewire:public.register-form />
+@endsection

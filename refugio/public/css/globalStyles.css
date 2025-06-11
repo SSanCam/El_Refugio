@@ -1,49 +1,131 @@
-/*
-==========================
-=========HEADER===========
-==========================
-*/
+/* ======================= */
+/* FUENTES */
+/* ======================= */
 
-.header {
-    background-color: #8BC24A;
-    width: 100vw;
-    height: 10vh;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+@font-face {
+    font-family: 'Lemon Juice';
+    src: url('../fonts/LemonJuice.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
 }
 
-.header .btn-nav a {
-    color: white;
-    text-decoration: none;
-    margin-left: 1rem;
+@font-face {
+    font-family: 'Quicksand_Light';
+    src: url('../fonts/Quicksand_Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
 }
 
-.header .btn-nav a:hover {
-    text-decoration: underline;
+@font-face {
+    font-family: 'Quicksand_Bold';
+    src: url('../fonts/Quicksand_Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
 }
 
-.header .nav-logo img {
-    height: 10vh;
-    width: auto;
+/* ======================= */
+/* COLORES CORPORATIVOS */
+/* ======================= */
+
+:root {
+  --color-principal-light: #8BC24A;  /* 8BC24A */
+  --color-principal-dark:  #33691D;  /* 33691D */
+  --color-acento:          #FDC206;  /* FDC206 */
+  --color-texto:           #000000;  /* 000000 */
+  --color-fondo:           #FFFFFF;  /* FFFFFF */
 }
 
-/*
-==========================
-=========FOOTER===========
-==========================
-*/
-
-/*
-    ESTILOS DE BOTONES
-*/
-.btn-home {
-    display: inline-block;
-    text-decoration: none;
+/**/
+.site-main {
+  margin-top: 1.5rem;
+}
+/* ======================= */
+/* WELCOME SECTION */
+/* ======================= */
+.welcome-section {
+  padding: 2rem;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: 'Quicksand_Light', sans-serif;
 }
 
-.btn-home button:hover {
-    transform: scale(1.05);
+.welcome-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.welcome-title {
+  font-family: 'Lemon Juice', cursive;
+  font-size: 3rem;
+  color: var(--color-principal-dark);
+}
+
+.welcome-story {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+.welcome-text {
+  line-height: 1.6;
+}
+
+.welcome-figure {
+  margin: 0;
+  text-align: center;
+}
+
+.welcome-image {
+  max-width: 100%;
+  border-radius: 0.5rem;
+}
+
+.welcome-figcaption {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  color: var(--color-principal-dark);
+}
+
+/* ======================= */
+/* MISSION ARTICLE */
+/* ======================= */
+.welcome-mission {
+  padding: 1.5rem;
+  background-color: var(--color-principal-light);
+  border-radius: 0.5rem;
+}
+
+.mission-title {
+  font-family: 'Quicksand_Bold', sans-serif;
+  margin-bottom: 1rem;
+  color: var(--color-principal-dark);
+}
+
+.mission-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mission-item {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mission-item::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-acento);
+}
+
+/* ======================= */
+/* ANIMAL INDEX */
+/* ======================= */
+.animal-index {
+  padding: 2rem;
+  /* estilos adicionales para la galería de animales */
 }
