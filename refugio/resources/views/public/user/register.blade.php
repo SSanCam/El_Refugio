@@ -6,3 +6,4 @@
 @section('content')
    <livewire:public.register-form />
 @endsection
+@endsection

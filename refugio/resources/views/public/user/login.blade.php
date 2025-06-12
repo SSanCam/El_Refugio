@@ -3,6 +3,8 @@
 
 @section('title', 'Iniciar sesión')
 
-@section('content')
-   <livewire:public.login-form />
+   @section('content')
+      <livewire:public.login-form />
+      <livewire:public.register-form />
+   @endsection
 @endsection
