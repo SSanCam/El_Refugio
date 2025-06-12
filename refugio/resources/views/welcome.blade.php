@@ -23,8 +23,7 @@
     </p>
     <figure class="welcome-figure">
       <img src="{{ asset('media/images/refugio1.jpg') }}" alt="Nuestra historia" class="welcome-image">
-      <figcaption class="welcome-figcaption">Nuestra Historia</figcaption>
-    </figure>
+s    </figure>
   </article>
 
   <article class="welcome-mission">

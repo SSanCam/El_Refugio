@@ -43,10 +43,10 @@ Route::middleware(['throttle:10,1'])
         ->name('user.')
         ->group(function () {
 
-        Route::get('register', RegisterForm::class)->name('register');
-        Route::post('/register', [UserController::class, 'store'])->name('register.store');
-        Route::get('login',    LoginForm::class)   ->name('login');
-        Route::post('/login', [UserController::class, 'authenticate'])->name('login.authenticate');
+        Route::get('register', [UserController::class, 'register'])->name('register');
+        Route::post('register', [UserController::class, 'store'])->name('register.store');
+        Route::get('login',    [UserController::class, 'logIn'])->name('login');
+        Route::post('login',   [UserController::class, 'authenticate'])->name('login.authenticate');
 
     });
     /**
