@@ -1,14 +1,8 @@
 # El_Refugio
 
+Proyecto de fin de grado orientado a la gestión integral de un refugio de animales. La aplicación ofrece una API diseñada para cubrir procesos esenciales como adopciones, acogidas, voluntariado, apadrinamientos y gestión interna de animales.
 
-### Proyecto Fin de Grado – Desarrollo de Aplicaciones Web (DAW)
-### Autora: Sara Sánchez Camilleri
-### Centro: I.E.S. Rafael Alberti, Cádiz
-
-
-# ❓ ¿Qué es?
-
-Proyecto de fin de grado orientado a la gestión integral de un refugio de animales. La aplicación ofrece una API diseñada para cubrir procesos generales de un refugio de animales.
+El sistema está concebido para ser escalable, intuitivo y de fácil mantenimiento, de forma que cualquier refugio, independientemente de su tamaño o recursos, pueda utilizarlo como base tecnológica para organizar su trabajo y mejorar la visibilidad de los animales a su cargo.
 
 # 🎯 ¿Por qué?
 
@@ -48,7 +42,7 @@ Con ello, los responsables podrán concentrarse en el cuidado de los animales y,
 
 --- 
 
-# 👤 Autora  
+# Autoría
 
 Sara Sánchez Camilleri  
 
