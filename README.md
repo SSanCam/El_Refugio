@@ -1,22 +1,58 @@
 # El_Refugio
 
+## 🌐 Propuesta de Modelo de Proyecto
+
 Proyecto de fin de grado orientado a la gestión integral de un refugio de animales. La aplicación ofrece una API diseñada para cubrir procesos esenciales como adopciones, acogidas, voluntariado, apadrinamientos y gestión interna de animales.
 
 El sistema está concebido para ser escalable, intuitivo y de fácil mantenimiento, de forma que cualquier refugio, independientemente de su tamaño o recursos, pueda utilizarlo como base tecnológica para organizar su trabajo y mejorar la visibilidad de los animales a su cargo.
 
-# 🎯 ¿Por qué?
+# 🎯 Objetivo
 
-Los refugios suelen depender de hojas de cálculo, formularios dispersos o procesos manuales. 
+El propósito del proyecto es desarrollar una API que facilite la gestión integral de un refugio 
+de animales, permitiendo centralizar procesos como adopciones, acogidas, voluntariado y 
+apadrinamientos. 
 
-Esto genera duplicidades, pérdida de información y falta de trazabilidad. El proyecto busca centralizar la información y optimizar la gestión para mejorar la transparencia y eficiencia en el trabajo diario.
+Los refugios suelen carecer de herramientas digitales unificadas, operando con hojas de 
+cálculo o formularios dispersos que dificultan la trazabilidad y actualización de la 
+información. Además, el personal suele estar compuesto por voluntarios sin formación 
+técnica, lo que hace inviable mantener una infraestructura compleja o costosa. 
 
-Además, la gestión de la información pública destinada a encontrar adoptantes suele ser limitada, ya que los recursos económicos y el tiempo disponible se concentran en el cuidado directo de los animales. Como consecuencia, las páginas web o redes sociales rara vez se mantienen actualizadas de forma constante.
+El proyecto busca ofrecer una solución funcional, escalable y de bajo mantenimiento que 
+optimice el trabajo administrativo, reduzca la carga de gestión y mejore la visibilidad pública 
+de los animales que necesitan ayuda, permitiendo que el tiempo y los recursos se destinen 
+prioritariamente al cuidado directo de los mismos. 
 
 # 🧩 ¿Para qué?
 
-Esta API proporcionará un sistema centralizado, sencillo y de bajo coste de mantenimiento. Permitirá mantener la información pública actualizada sin necesidad de invertir tiempo ni recursos técnicos adicionales.
+## Funcionalidad principal
 
-Con ello, los responsables podrán concentrarse en el cuidado de los animales y, al mismo tiempo, se incrementará la visibilidad de aquellos que necesitan adopción, acogida o apoyo urgente.
+El proyecto tiene como finalidad desarrollar una API y un panel de administración que 
+permitan a un refugio gestionar de forma centralizada la información de los animales y las 
+solicitudes de adopción o acogida. 
+
+En la parte pública, los usuarios podrán consultar el listado de animales disponibles y 
+acceder a sus fichas individuales. Según el estado de publicación, podrán enviar un 
+formulario de adopción o acogida, el cual registrará los datos del solicitante y generará un 
+expediente interno asociado al animal. 
+
+El sistema contará con un registro de usuarios con roles diferenciados: **usuario** y 
+**administración**. Los usuarios podrán enviar solicitudes y realizar un seguimiento básico, 
+mientras que la administración podrá crear, modificar o eliminar fichas de animales, 
+gestionar su visibilidad pública y actualizar sus estados (por ejemplo, de “borrador” a 
+“publicado” o “reservado”). 
+
+---
+
+## Escalabilidad y evolución del proyecto
+
+El desarrollo se plantea con una visión a largo plazo. La arquitectura y la documentación 
+estarán diseñadas para permitir la incorporación progresiva de nuevas funcionalidades, 
+como la generación de contratos, el seguimiento de animales, solicitudes de voluntariado, 
+método de donaciones puntuales o apadrinamientos recurrentes, las notificaciones 
+automatizadas o la ampliación de módulos dedicados a voluntariado y donaciones. 
+
+De esta forma, se garantiza la **escalabilidad del sistema** y la **continuidad del trabajo más allá de la fase inicial**.
+
 
 # ⚙️ Tecnologías utilizadas
 
@@ -31,7 +67,9 @@ Con ello, los responsables podrán concentrarse en el cuidado de los animales y,
 - **Control de versiones:** Git + GitHub  
 - **IDE principal:** Visual Studio Code  
 - **Pruebas:** PHPUnit / Pest + pruebas de endpoints (API REST)  
-- **Servicios externos (testing y despliegue):**  
+
+- **Servicios externos:**  
+
   - Mailtrap (pruebas de correo)  
   - Cloudinary / S3 (almacenamiento de imágenes)  
   - Render / Railway (despliegue en la nube)  
@@ -44,15 +82,15 @@ Con ello, los responsables podrán concentrarse en el cuidado de los animales y,
 
 # Autoría
 
-Sara Sánchez Camilleri  
-
-Tutor:
+Sara Sánchez Camilleri 
 
 I.E.S. Rafael Alberti – Ciclo Formativo DAW  
 
+Tutor:  
+
 Email: sarasanchezcamilleri@gmail.com
 
-Repositorio del proyecto: 
+Repositorio del proyecto: [GitHub](https://github.com/SSanCam/El_Refugio.git) 
 
 Versión actual : v1.0
 
