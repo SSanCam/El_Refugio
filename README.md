@@ -2,7 +2,7 @@
 
 ## 🌐 Propuesta de Modelo de Proyecto
 
-Proyecto de fin de grado orientado a la gestión integral de un refugio de animales. La aplicación ofrece una API diseñada para cubrir procesos esenciales como adopciones, acogidas, voluntariado, apadrinamientos y gestión interna de animales.
+Proyecto de fin de grado orientado a la gestión integral de un refugio de animales. La aplicación ofrece una API diseñada para cubrir procesos esenciales como adopciones, acogidas y gestión interna de animales.
 
 El sistema está concebido para ser escalable, intuitivo y de fácil mantenimiento, de forma que cualquier refugio, independientemente de su tamaño o recursos, pueda utilizarlo como base tecnológica para organizar su trabajo y mejorar la visibilidad de los animales a su cargo.
 
