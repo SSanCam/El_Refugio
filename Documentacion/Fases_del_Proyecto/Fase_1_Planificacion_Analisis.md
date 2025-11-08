@@ -1,4 +1,4 @@
-# Fase 1 - Planifiación y Análisis
+# Fase 1 - Planificación y Análisis
 
 Este documento corresponde a la primera fase del desarrollo del proyecto "El Refugio". Su objetivo es definir las bases funcionales y estructurales de la aplicación antes de iniciar su implementación técnica. Se analizarán los distintos tipos de usuarios, las funcionalidades clave, los primeros diseños de interfaz (wireframes), y un primer esbozo del modelo de datos.
 
@@ -54,10 +54,10 @@ En esta sección se detallan las funcionalidades que debe ofrecer la aplicación
 #### Para usuarios generales (rol: usuario)
 
 - **Registrarse e iniciar sesión**: Sistema de autenticación para acceder a funcionalidades personalizadas.
-- **Consultar el estado de sus solicitudes**: Visualizar el historial y estado actual de adopciones, acogidas y apadrinamientos asociados a su cuenta.
 - **Actualizar su perfil**: Los usuarios podrán modificar sus datos personales y preferencias.
-- **Consultar el estado de sus solicitudes**: ver el historial y estado actual de las solicitudes enviadas (pendiente, en revisión, concedida o denegada).
+
 ```
+Todas las solicitudes se envían por correo, para que el refugio las gestione manualmente.
 Las adopciones o acogidas se cierran presencialmente en el refugio, donde se realiza la firma del contrato y la entrega oficial del animal.
 Este procedimiento sigue las prácticas habituales del sector y garantiza que la documentación se complete correctamente antes del cierre del expediente.
 ``` 
@@ -65,7 +65,7 @@ Este procedimiento sigue las prácticas habituales del sector y garantiza que la
 
 - **Gestión de animales (CRUD)**: Crear, editar, eliminar o actualizar fichas de animales en la base de datos.
 - **Gestión de usuarios**: Ver, editar o eliminar usuarios registrados. Cambiar roles si es necesario.
-- **Gestión de solicitudes**: Revisar, aprobar o rechazar solicitudes.
+- **Gestión de solicitudes**: Revisar, aprobar o rechazar solicitudes (vía correo y cambio manual de estado del animal).
 - **Panel de administración**: Acceso a un panel privado donde se centralizan todas las gestiones internas del refugio.
 - **Gestión de contenido adicional**: Modificar textos de la web, datos de contacto o información general del refugio.
 
@@ -75,7 +75,7 @@ Aunque el objetivo principal es desarrollar una aplicación web funcional y prá
 
 - **Sistema de gestión de visitas:** permitir que los usuarios interesados puedan solicitar una cita para visitar el refugio o conocer a un animal concreto. Los administradores podrán gestionar estas solicitudes desde el panel interno.
 
-- **Sistema de gestión de voluntariado:** Permite a ususarios interesados (registrados o no) enviar una solicitud a través de un formulario para ejercer un voluntariado en el refugio(limpieza, mantenimiento, reparaciones, etc.)
+- **Sistema de gestión de voluntariado:** Permite a usuarios interesados (registrados o no) enviar una solicitud a través de un formulario para ejercer un voluntariado en el refugio (limpieza, mantenimiento, reparaciones, etc.)
 
 - **Blog o sección de noticias:** será la página de inicio o landing page de la plataforma, donde se publicarán actualizaciones del refugio, historias de adopción, actividades realizadas y otra información de interés.
 
@@ -147,6 +147,7 @@ Almacena la información básica de los animales del refugio, su estado y detall
 | Campo | Tipo de dato | Descripción |
 |-------|---------------|-------------|
 | `id` | int | Clave primaria |
+| `user_id` | int/null (FK → users.id) | Usuario tutor actual (adoptante/acogida) |
 | `name` | string | Nombre del animal |
 | `species` | string | Especie (perro, gato, etc.) |
 | `breed` | string/null | Raza |
@@ -155,7 +156,7 @@ Almacena la información básica de los animales del refugio, su estado y detall
 | `weight` | decimal(5,2)/null | Peso en kg |
 | `height` | decimal(5,2)/null | Altura en cm |
 | `birth_date` | date/null | Fecha de nacimiento (si se conoce) |
-| `status` | enum(`draft`, `published`, `reserved`, `adopted`) | Estado de publicación/adopción |
+| `status` | enum('unavailable','sheltered','fostered','adopted','deceased') | Indica la situación del animal |
 | `entry_date` | date | Fecha de entrada al refugio |
 | `microchip` | string/null | Número de microchip (si tiene) |
 | `description` | text/null | Descripción general |
@@ -190,11 +191,11 @@ Cada animal puede tener múltiples imágenes, almacenadas externamente (p. ej. C
 
 ##  5. Diagramas del proyecto
 
-### A. Modelo Entidad-Relación
+### A. Casos de uso
 
-### B. Casos de usos
+### B. Diagrama de flujo
 
-### D. Diagrama de flujo
+### C. Modelo conceptual de datos
 
-### E. WireFrame
+### D. Wireframe
 

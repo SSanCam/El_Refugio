@@ -12,14 +12,12 @@ El sistema "El Refugio" se organizará en torno a módulos funcionales clarament
 
 Los principales módulos del sistema serán los siguientes:
 
-- **Usuarios (`User`)**: Gestión de registros, inicio de sesión, perfiles y roles (`user` y `admin`). Todos los tipos de usuario (adoptantes, padrinos, voluntarios, etc.) estarán unificados en esta única entidad.
-- **Animales (`Animal`)**: Administración de animales disponibles en adopción o acogida, incluyendo datos básicos, estado y galería multimedia.
-- **Adopciones (`Adoption`)**: Gestión de solicitudes de adopción enviadas por los usuarios, con estados para seguimiento y revisión.
-- **Acogidas (`Foster`)**: Registro de solicitudes de acogida temporal, también asociadas a usuarios.
-- **Panel de administración**: Funcionalidad privada destinada a los administradores del refugio, desde donde podrán gestionar usuarios, animales y solicitudes.
-- **Solicitudes públicas (`PublicFormRequest`)**: Entidad que centraliza todas las solicitudes enviadas desde formularios accesibles sin necesidad de estar registrado (adopción, acogida, voluntariado, contacto). Se gestiona desde el panel de administración y permite convertirlas en entidades formales (`Adoption`, `Foster`, etc.).
+* Usuarios (User): gestión de registros, inicio de sesión, perfiles y roles (user, admin).
+* Animales (Animal): administración de fichas, estados y galería de imágenes.
+* Formularios públicos (PublicRequest): envío de solicitudes de adopción, acogida y contacto por email; registro opcional en BD para trazabilidad.
+* Panel de administración: gestión interna de usuarios, animales y solicitudes.
 
-Cada módulo contará con su propio conjunto de modelos, controladores, vistas y componentes Livewire si aplica. Esta organización sigue el patrón MVC proporcionado por Laravel, adaptado al enfoque modular del proyecto.
+Cada módulo contará con su propio conjunto de modelos, controladores, vistas y componentes Livewire según necesidad. Esta organización sigue el patrón MVC proporcionado por Laravel, adaptado al enfoque modular del proyecto.
 
 
 ---
@@ -74,8 +72,8 @@ El proyecto seguirá la estructura de carpetas estándar de Laravel, organizando
 #### Convenciones de nombres
 
 - Todos los nombres técnicos del código (clases, métodos, variables, archivos...) estarán escritos en **inglés**, siguiendo las buenas prácticas del desarrollo internacional.
-- Los **métodos** y **variables** seguirán la convención **camelCase** (`userEmail`, `adoptionStatus`).
-- Los **nombres de clases** y componentes seguirán la convención **PascalCase** (`UserProfile`, `AdoptionRequest`).
+- Los **métodos** y **variables** seguirán la convención **camelCase** (`userEmail`, `animalStatus`).
+- Los **nombres de clases** y componentes seguirán la convención **PascalCase** (`UserProfile`, `PublicRequest`).
 - Las **vistas y rutas** se nombrarán en **kebab-case** o **snake_case**, según lo recomendado por Laravel.
 - El **contenido textual de la interfaz de usuario (etiquetas, formularios, mensajes)** estará en **español**, ya que el proyecto está destinado a un público hispanohablante.
 - Los **comentarios y documentación** también estarán en español, para mantener la coherencia del entorno académico y facilitar su comprensión.
@@ -118,30 +116,20 @@ Se utilizarán para elementos de interfaz sin lógica compleja, y se almacenará
 Estos componentes se ubicarán en `app/Http/Livewire` y sus vistas asociadas en `resources/views/livewire/`. Se utilizarán para añadir interactividad sin necesidad de recargar la página.
 
 **Animales**
-- `AnimalList`: listado dinámico con filtros.
 - `AnimalGallery`: galería de imágenes del animal.
 - `AnimalProfile`: ficha extendida con pestañas (descripción, historial...).
-- `AnimalStatusToggle`: interruptor de cambio de estado del animal.
 
 **Formularios**
-- `AdoptionForm`: formulario interactivo para solicitar adopción.
-- `FosterForm`: formulario para acogida temporal.
-- `SponsorshipForm`: formulario de apadrinamiento.
-- `ContactForm`: formulario general de contacto.
-- `VisitRequestForm`: formulario para solicitar una cita o visita al refugio.
+- `PublicForm`: formularios que podrán ser de adopción, acogida o contacto.
 
 **Usuarios**
 - `UserProfile`: vista editable del perfil del usuario.
-- `UserRequestHistory`: listado de solicitudes del usuario actual.
-- `UserRoleBadge`: identificador visual del rol (`user`, `admin`).
 
 **Administración**
 - `AdminDashboard`: panel principal con resumen de estadísticas y accesos rápidos.
 - `AnimalTable`: tabla editable con filtros para gestión de animales.
 - `UserManagement`: componente para gestión de usuarios.
-- `RequestApprovalPanel`: revisión y control de solicitudes pendientes.
 - `ContentEditor`: edición de textos estáticos de la web desde el panel.
-
 
 ---
 
@@ -167,41 +155,36 @@ Esta previsión de componentes ayudará a estructurar mejor el desarrollo en la 
 ## 2. Diseño de la Base de Datos
 
 ### Migraciones
-Planificar la creación de migraciones para cada entidad definida en la Fase 1, utilizando el sistema de migraciones de Laravel para definir tablas y restricciones.
+
+Crear migraciones para `User`, `Animal`, `AnimalImage` y, opcionalmente, `PublicRequest`. Definir claves primarias, foráneas, índices y restricciones.
 
 ### Relaciones entre tablas
-Especificar qué tipo de relaciones existirán entre las entidades (1:N, N:N), cómo se aplicarán y qué claves foráneas serán necesarias.
 
-El sistema estará compuesto por entidades como `User`, `Animal`, `Adoption`, `Foster`, `VolunteerRequest`, `Sponsorship`, y `AnimalImage`. Cada una cumplirá una función específica en la gestión del refugio y se relacionará entre sí mediante claves foráneas para mantener la coherencia de los datos.
+* `Animal` 1:N `AnimalImage` (`animal_id` FK).
+* `Animal` 1:N `PublicRequest` (`animal_id` FK) 
+* `Animal` N:1 `User` (`user_id` FK, NULLABLE). [Un animal sólo tendrá un único tutor aunque sea de forma temporal, como las acogidas].
+* `User` 1:N `PublicRequest` (`user_id` FK nullable) [ opcional ].
 
-- `User`: representa a todos los usuarios del sistema, tanto visitantes registrados como personal del refugio.
-- `Animal`: almacena información detallada de cada animal alojado en el refugio.
-- `Adoptions` y `Foster`: registran las solicitudes y procesos de adopción y acogida, respectivamente.
-- `Public_Form_Request`: recoge todas las solicitudes enviadas desde formularios públicos (adopción, acogida, voluntariado y contacto), sin necesidad de registro previo.
+--- 
+
+1. `User`: usuarios autenticados del sistema con rol admin|user.
+2. `Animal`: status (enum): unavailable, sheltered, fostered, adopted, deceased.
+    - unavailable: no disponible (cuarentena, valoración veterinaria, etc.).
+    - sheltered: el animal permanece en el centro y está disponible.
+    - fostered: el animal está en acogida temporal.
+    - adopted: adopción formalizada.
+    - deceased: fallecido; se oculta de los listados públicos.
+    > **nota**: Sólo los animales con estado sheltered o fostered podrán mostrarse como disponibles para adopción.
+
+3. `AnimalImage`: galería de imágenes del animal.
+Campos clave: `secure_url`, `provider`, `public_id` (si Cloudinary/S3), `profile_pic` (bool), `sort_order` (int).
+
+4. `PublicRequest`: envío de solicitudes de adopción, acogida y contacto por email; registro opcional en BD para trazabilidad.
+**Nota**: el envío de la solicitud no altera `Animal.status`; el estado solo cambia tras decisión final manual.
 
 ### Diagrama Entidad-Relación (E-R) y modelo conceptual
 
-Se elaborará un diagrama Entidad-Relación (E-R) que represente gráficamente las entidades principales (`User`, `Animal`, `Adoption`, `Foster`, etc.) y las relaciones entre ellas. Este diagrama sirve de apoyo visual al modelo lógico y físico de la base de datos.
-
-El diagrama se incluirá en los anexos y servirá también de guía para la implementación de las migraciones en Laravel.
-
-Además, el modelo conceptual de relaciones y navegación entre pantallas también está reflejado en los **wireframes diseñados en Figma**, disponibles en la carpeta de documentación visual del proyecto. Estos esquemas permiten vincular el flujo de datos con la estructura de interfaz prevista.
-
-
-### Archivado histórico y gestión de base de datos secundaria (refugio_archivo)
-
-Para garantizar el rendimiento, la escalabilidad y la conservación segura de los datos, se ha definido una estrategia de mantenimiento periódico que separa los datos operativos actuales de aquellos registros que ya están cerrados.
-
-Dado que entidades como `Foster`, `Adoptions` o `Sponsorship` representan procesos que pueden finalizar (por ejemplo, cuando un animal es adoptado, finaliza una acogida o se cierra un apadrinamiento), no es necesario que estos registros permanezcan indefinidamente en la base de datos principal una vez han concluido.
-
-Por ello, se ha creado una **base de datos secundaria** llamada `refugio_archivo`, destinada exclusivamente a almacenar registros históricos. Esta base de datos permite liberar la carga de la base activa sin perder información relevante para seguimiento, auditoría o análisis posteriores.
-
-- Un **comando programado (cron job o tarea Laravel)** se ejecutará **mensualmente**, detectando los registros marcados como finalizados mediante campos como `status` (`finished`, `cancelled`) o fechas como `end_date` o `adoption_date`.
-- Estos registros serán **copiados a la base de datos de archivo**, y posteriormente **eliminados de la base principal** para mantenerla optimizada.
-- Esta operación estará **limitada a usuarios con rol de administrador**, garantizando seguridad y trazabilidad.
-- La base de datos de archivo quedará accesible exclusivamente desde el sistema interno, con permisos restringidos, para consultas administrativas, legales o estadísticas.
-
-Esta estrategia permite **preservar todo el historial del refugio** de forma segura, a la vez que mantiene el sistema principal **ágil, ordenado y eficiente**.
+Se elaborará un diagrama E-R con las entidades `User`, `Animal`, `AnimalImage` y `PublicRequest` y sus relaciones.
 
 ---
 
@@ -230,40 +213,51 @@ Definir las variables necesarias en el entorno de desarrollo, como conexión a b
 Configurar la conexión entre Laravel y MySQL utilizando XAMPP, incluyendo nombre de base de datos, usuario y contraseña.
 
 ### Instalación de dependencias necesarias
-Listar las dependencias que deben instalarse al iniciar el proyecto (Livewire, Alpine.js, Tailwind opcional, Laravel UI o Breeze si aplica).
+Listar las dependencias que deben instalarse al iniciar el proyecto (Livewire, Alpine.js y, opcionalmente, Tailwind CSS).
 
 ---
 
 ## 5. Seguridad y Gestión de Roles
 
 ### Sistema de autenticación
-Seleccionar el paquete o método de autenticación (por ejemplo, Laravel Breeze) e implementar registro, login, logout y recuperación de contraseña.
+
+Autenticación por sesiones utilizando el sistema nativo de Laravel (Auth).
 
 ### Middleware y protección de rutas
-Definir y aplicar middlewares para proteger rutas privadas y restringir el acceso según el tipo de usuario autenticado.
+
+Definir y aplicar middlewares para proteger rutas privadas y restringir el acceso según el tipo de usuario autenticado. 
+
+- `Anti-spam`: limitación de tasa por IP/email mediante throttle (p. ej., 5 solicitudes/minuto en formularios públicos).
 
 ### Gestión de roles: `user` y `admin`
+
 Establecer los roles principales del sistema y cómo se asignarán y controlarán mediante lógica de backend o middleware.
 
-- `User`: engloba a todos los usuarios registrados en el sistema, incluyendo adoptantes, acogedores, padrinos, voluntarios y colaboradores. Tienen acceso a funcionalidades básicas como visualizar animales, enviar formularios y consultar su historial.
+- `User`: engloba a todos los usuarios registrados en el sistema, incluyendo adoptantes y acogedores. Tienen acceso a funcionalidades básicas como visualizar animales, enviar formularios y consultar su historial.
 
-- `Admin`: rol exclusivo del personal autorizado del refugio. Tienen acceso completo al panel de administración y son responsables de gestionar usuarios, animales, formularios públicos y contenidos del sitio. También pueden aprobar solicitudes, archivar registros y modificar configuraciones del sistema.
+- `Admin`: acceso completo al panel. Gestiona usuarios, animales y formularios públicos; puede cambiar estados de animales y administrar el contenido visible en la web.
+
+
 
 ---
 
 ## 6. Flujo de Datos y Navegación
 
 ### Ciclo general de interacción
-Describir cómo fluye la información entre el frontend y el backend, desde que el usuario realiza una acción hasta que se guarda en la base de datos.
 
-### Ejemplo: Solicitud de adopción
-Documentar como ejemplo una interacción completa: usuario inicia sesión, accede a un animal, rellena un formulario y se guarda la solicitud.
+1. El usuario accede a la ficha del animal desde el listado público.
+2. Selecciona la acción “Adoptar” o “Acoger”, lo que abre el formulario correspondiente.
+3. El formulario recopila los datos y los envía por correo al personal administrativo.
+4. El asunto del correo incluye el tipo de solicitud y el nombre del animal (ejemplo: ADOPCIÓN – Paquito).
+5. El refugio evalúa las solicitudes y decide si procede la adopción o acogida.
+6. Tras la decisión final, el estado del animal se actualiza a `unavailable`(no disponible), `adopted` (adoptado), `fostered` (en acogida), `sheltered` (si vuelve) o `deceased` (fallecido).
 
 ---
 
 ## 7. Componentes Reutilizables y Modularidad
 
 ### Componentes Blade
+
 Enumerar los componentes de interfaz estática que se reutilizarán en múltiples vistas (por ejemplo: menús, tarjetas, pie de página).
 
 ### Componentes Livewire
