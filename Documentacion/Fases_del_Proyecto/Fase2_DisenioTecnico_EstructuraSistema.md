@@ -2,11 +2,13 @@
 
 Este documento define los aspectos técnicos previos a la implementación del sistema "El Refugio". Se especifican las decisiones clave sobre la arquitectura, la organización del proyecto, la base de datos, el entorno de desarrollo y la seguridad.
 
+Estas decisiones se alinean con la Fase 1: los *formularios públicos* no se persisten en base de datos (se gestionan por correo) y la actualización del status de los animales se realizará desde la lógica de backend (Observers/Events de Laravel), no mediante triggers SQL.
+
 ---
 
 ## 1. Estructura del Proyecto en Laravel
 
-### Organización general
+### a. Organización general
 
 El sistema "El Refugio" se organizará en torno a módulos funcionales claramente definidos, cada uno encargado de gestionar una parte concreta del dominio de la aplicación. Esta modularidad permite estructurar el código de forma coherente y facilita tanto el mantenimiento como la escalabilidad del sistema.
 
@@ -14,20 +16,18 @@ Los principales módulos del sistema serán los siguientes:
 
 * Usuarios (User): gestión de registros, inicio de sesión, perfiles y roles (user, admin).
 * Animales (Animal): administración de fichas, estados y galería de imágenes.
-* Formularios públicos (PublicRequest): envío de solicitudes de adopción, acogida y contacto por email; registro opcional en BD para trazabilidad.
-* Panel de administración: gestión interna de usuarios, animales y solicitudes.
+* Formularios públicos: envío por email; sin persistencia en la base de datos.
+* Panel de administración: gestión interna de usuarios, animales, registros manuales de adopciones y acogidas, ademas de visualización de información sobre las mismas.
 
 Cada módulo contará con su propio conjunto de modelos, controladores, vistas y componentes Livewire según necesidad. Esta organización sigue el patrón MVC proporcionado por Laravel, adaptado al enfoque modular del proyecto.
 
-
 ---
 
-
-### Carpetas, convenciones y estructura del sistema
+### b. Carpetas, convenciones y estructura del sistema
 
 El proyecto seguirá la estructura de carpetas estándar de Laravel, organizando el código por tipo de elemento (modelo, controlador, vista, componente...) para facilitar el mantenimiento y la escalabilidad. Las convenciones son las siguientes:
 
-#### 📁 Estructura de Carpetas del Proyecto
+- #### Estructura de Carpetas del Proyecto
 
 ```plaintext
 📁 app/
@@ -66,27 +66,33 @@ El proyecto seguirá la estructura de carpetas estándar de Laravel, organizando
 📁 routes/
 ├── web.php             # Rutas web (frontend)
 ├── api.php             # Rutas de API (si se expone alguna)
+
 ```
+   > **nota:** Si el entorno de desarrollo o despliegue se dockeriza, los archivos **Dockerfile** y **docker-compose.yml** se ubicarán en el directorio raíz del proyecto. Estos contendrán la configuración de los servicios necesarios (contenedor PHP/Laravel, servidor web y base de datos MySQL) para facilitar la instalación, despliegue y replicación del entorno en diferentes sistemas.
 
+- #### Convenciones de nombres
 
-#### Convenciones de nombres
-
-- Todos los nombres técnicos del código (clases, métodos, variables, archivos...) estarán escritos en **inglés**, siguiendo las buenas prácticas del desarrollo internacional.
-- Los **métodos** y **variables** seguirán la convención **camelCase** (`userEmail`, `animalStatus`).
-- Los **nombres de clases** y componentes seguirán la convención **PascalCase** (`UserProfile`, `PublicRequest`).
-- Las **vistas y rutas** se nombrarán en **kebab-case** o **snake_case**, según lo recomendado por Laravel.
-- El **contenido textual de la interfaz de usuario (etiquetas, formularios, mensajes)** estará en **español**, ya que el proyecto está destinado a un público hispanohablante.
-- Los **comentarios y documentación** también estarán en español, para mantener la coherencia del entorno académico y facilitar su comprensión.
+    - Todos los nombres técnicos del código (clases, métodos, variables, archivos...) estarán escritos en **inglés**, siguiendo las buenas prácticas del desarrollo internacional.
+    
+    - Los **métodos** y **variables** seguirán la convención **camelCase** (`userEmail`, `animalStatus`).
+    
+    - Los **nombres de clases** y componentes seguirán la convención **PascalCase** (`UserProfile`, `PublicForm`).
+    
+    - Las **vistas y rutas** se nombrarán en **kebab-case** (url, rutas y Blade) o **snake_case** (campos de las vistas de la base de datos o variables de PHP), según lo recomendado por Laravel.
+    
+    - El **contenido textual de la interfaz de usuario (etiquetas, formularios, mensajes)** estará en **español**, ya que el proyecto está destinado a un público hispanohablante.
+    
+    - Los **comentarios y documentación** también estarán en español, para mantener la coherencia del entorno académico y facilitar su comprensión.
 
 Este enfoque mixto garantiza que el proyecto sea técnicamente robusto y legible tanto por desarrolladores como por usuarios, manteniendo una estructura profesional y adecuada al contexto del TFG.
 
 --- 
 
-### Distribución de componentes Blade y Livewire
+### c. Distribución de componentes Blade y Livewire
 
 La aplicación contará con múltiples elementos reutilizables para facilitar la escalabilidad, la coherencia visual y la eficiencia del desarrollo. Estos componentes se dividirán en dos grandes grupos: **estáticos (Blade)** e **interactivos (Livewire)**, cada uno con su ubicación específica dentro de la estructura del proyecto.
 
-#### Componentes Blade (estáticos)
+- #### Componentes Blade (estáticos)
 
 Se utilizarán para elementos de interfaz sin lógica compleja, y se almacenarán en `resources/views/components/`.
 
@@ -111,7 +117,7 @@ Se utilizarán para elementos de interfaz sin lógica compleja, y se almacenará
 
 ---
 
-#### Componentes Livewire (interactivos)
+- #### Componentes Livewire (interactivos)
 
 Estos componentes se ubicarán en `app/Http/Livewire` y sus vistas asociadas en `resources/views/livewire/`. Se utilizarán para añadir interactividad sin necesidad de recargar la página.
 
@@ -120,7 +126,7 @@ Estos componentes se ubicarán en `app/Http/Livewire` y sus vistas asociadas en 
 - `AnimalProfile`: ficha extendida con pestañas (descripción, historial...).
 
 **Formularios**
-- `PublicForm`: formularios que podrán ser de adopción, acogida o contacto.
+- `PublicForm`: formularios de adopción, acogida o contacto (envío por email; sin persistencia en BD)
 
 **Usuarios**
 - `UserProfile`: vista editable del perfil del usuario.
@@ -133,11 +139,13 @@ Estos componentes se ubicarán en `app/Http/Livewire` y sus vistas asociadas en 
 
 ---
 
-#### Componentes adicionales (ampliaciones futuras)
+- #### Componentes adicionales (ampliaciones futuras)
 
 **Colaboración**
 - `DonationWidget`: widget para integrar donaciones en cualquier vista.
 - `SponsorshipStatusBox`: muestra visual del estado del animal apadrinado.
+- `StoreProductCard`: componente para mostrar productos en una futura tienda solidaria.
+- `CartWidget`: resumen visual del carrito de compras (si se implementa la tienda).
 
 **Seguimiento**
 - `AdoptionTimeline`: línea de tiempo del proceso de adopción.
@@ -146,45 +154,55 @@ Estos componentes se ubicarán en `app/Http/Livewire` y sus vistas asociadas en 
 **Multimedia**
 - `MultimediaViewer`: visor integrado de imágenes y vídeos dentro de las fichas.
 
----
-
 Esta previsión de componentes ayudará a estructurar mejor el desarrollo en la Fase 3 y permitirá mantener una interfaz coherente, reutilizable y escalable en todas las secciones del sistema. La lista podrá ajustarse o ampliarse en función de las necesidades que surjan durante la implementación.
 
 ---
 
 ## 2. Diseño de la Base de Datos
 
-### Migraciones
+### a. Migraciones
 
-Crear migraciones para `User`, `Animal`, `AnimalImage` y, opcionalmente, `PublicRequest`. Definir claves primarias, foráneas, índices y restricciones.
+Crear migraciones para `User`, `Animal`, `AnimalImage`, `Adoption` y `Foster`. Definir claves primarias, foráneas, índices y restricciones.
 
-### Relaciones entre tablas
+> Las tablas `Adoption` y `Foster` se completarán manualmente por el personal administrativo del refugio, una vez formalizados los procesos correspondientes.  
+
+> No se generarán automáticamente desde la web pública, pero garantizan trazabilidad y coherencia en la gestión interna.
+
+### b. Relaciones entre tablas
 
 * `Animal` 1:N `AnimalImage` (`animal_id` FK).
-* `Animal` 1:N `PublicRequest` (`animal_id` FK) 
-* `Animal` N:1 `User` (`user_id` FK, NULLABLE). [Un animal sólo tendrá un único tutor aunque sea de forma temporal, como las acogidas].
-* `User` 1:N `PublicRequest` (`user_id` FK nullable) [ opcional ].
+* `User` 1:N `Adoption` (`user_id` FK).
+* `Animal` 1:N `Adoption` (`animal_id` FK).
+* `User` 1:N `Foster` (`user_id` FK).
+* `Animal` 1:N `Foster` (`animal_id` FK).
+
+> Al crear/cerrar `Adoption`/`Foster`, `animals.status` se actualiza desde backend (Observers/Events).
+> Restringir: una adopción activa por animal y una acogida activa por animal (índices/constraints lógicas).
 
 --- 
 
 1. `User`: usuarios autenticados del sistema con rol admin|user.
-2. `Animal`: status (enum): unavailable, sheltered, fostered, adopted, deceased.
-    - unavailable: no disponible (cuarentena, valoración veterinaria, etc.).
-    - sheltered: el animal permanece en el centro y está disponible.
-    - fostered: el animal está en acogida temporal.
-    - adopted: adopción formalizada.
-    - deceased: fallecido; se oculta de los listados públicos.
-    > **nota**: Sólo los animales con estado sheltered o fostered podrán mostrarse como disponibles para adopción.
 
-3. `AnimalImage`: galería de imágenes del animal.
-Campos clave: `secure_url`, `provider`, `public_id` (si Cloudinary/S3), `profile_pic` (bool), `sort_order` (int).
+2. `Animal`: status (enum): unavailable, sheltered, fostered, adopted, deceased.  
+    - unavailable: no disponible (cuarentena, valoración veterinaria, etc.).  
+    - sheltered: el animal permanece en el centro y está disponible.  
+    - fostered: el animal está en acogida temporal.  
+    - adopted: adopción formalizada.  
+    - deceased: fallecido; se oculta de los listados públicos.  
+    > **nota:** Sólo los animales con estado `sheltered` o `fostered` podrán mostrarse como disponibles para adopción.
 
-4. `PublicRequest`: envío de solicitudes de adopción, acogida y contacto por email; registro opcional en BD para trazabilidad.
-**Nota**: el envío de la solicitud no altera `Animal.status`; el estado solo cambia tras decisión final manual.
+3. `AnimalImage`: galería de imágenes del animal.  
+Campos clave: `secure_url`, `provider`, `public_id` (si Cloudinary/S3), `profile_pic` (bool).
 
-### Diagrama Entidad-Relación (E-R) y modelo conceptual
+4. `Adoption` y `Foster`: registros manuales creados por el personal administrativo para mantener el historial de adopciones y acogidas.  
+> La creación de un registro en cualquiera de estas tablas actualiza automáticamente el campo `status` del animal correspondiente.
 
-Se elaborará un diagrama E-R con las entidades `User`, `Animal`, `AnimalImage` y `PublicRequest` y sus relaciones.
+
+### c. Diagrama Entidad-Relación (E-R) y modelo conceptual
+
+El modelo conceptual de datos ya fue definido en la **Fase 1 – Planificación y Análisis**, donde se detallan las entidades y sus relaciones principales.
+
+>[Ver modelo de datos](../Diagramas/Modelo_Datos_ER.svg)
 
 ---
 
@@ -192,12 +210,18 @@ Se elaborará un diagrama E-R con las entidades `User`, `Animal`, `AnimalImage` 
 
 ### Patrón MVC en Laravel
 Aplicar la estructura Modelo-Vista-Controlador para separar la lógica de negocio, la interfaz de usuario y el acceso a datos.
+La validación de datos se realizará mediante Form Requests ubicados en `app/Http/Requests`, y la autorización de acciones mediante Policies o Gates, manteniendo controladores ligeros y fácilmente mantenibles.
 
 ### Capa de servicios
-Evaluar la necesidad de una capa intermedia para manejar lógica de negocio más compleja o reutilizable, separándola del controlador.
+Se valorará la creación de una capa intermedia de servicios destinada a manejar lógica de negocio más compleja o reutilizable, separándola del controlador principal.
+Por ejemplo, un servicio podría encargarse de coordinar los procesos de adopción o acogida (creación del registro correspondiente, actualización automática del `status` del animal y notificación por correo).
+El cambio de estado de los animales se reforzará mediante Model Observers, asegurando la coherencia de los datos internos.
 
 ### Integración Blade + Livewire + Alpine.js
-Planificar cómo se combinarán Blade (estructura), Livewire (interactividad) y Alpine.js (funcionalidad frontend ligera) en el desarrollo.
+El sistema combinará **Blade** (estructura y maquetación), Livewire v3 (interactividad sin recargar la página) y **Alpine.js v3** (funcionalidad frontend ligera).
+Se mantendrá el orden correcto de carga: Alpine antes y `@livewireScripts` al final del documento, para evitar conflictos entre librerías.
+En aquellos componentes de terceros que manipulen directamente el DOM se aplicará la directiva `wire:ignore`.
+El envío de correos electrónicos derivados de formularios se realizará mediante Jobs en cola, evitando bloquear las peticiones del usuario.
 
 ---
 
@@ -206,14 +230,18 @@ Planificar cómo se combinarán Blade (estructura), Livewire (interactividad) y 
 ### Archivo `.env` y entorno local
 Definir las variables necesarias en el entorno de desarrollo, como conexión a base de datos, entorno de aplicación y credenciales locales.
 
-> El archivo `.env.railway` permite configurar las variables de entorno de producción para Railway.  
-> Así se mantiene la separación entre desarrollo local y entorno de despliegue real, evitando conflictos entre configuraciones sensibles.
+> El archivo `.env.railway` permite configurar las variables de entorno de producción para Railway.
+>De esta forma se mantiene la separación entre desarrollo local y entorno de despliegue real, evitando conflictos entre configuraciones sensibles.
 
 ### Conexión con base de datos MySQL
 Configurar la conexión entre Laravel y MySQL utilizando XAMPP, incluyendo nombre de base de datos, usuario y contraseña.
+El servidor local se ejecutará con `php artisan serve` (o Docker/Sail). XAMPP se empleará únicamente para el servicio de base de datos MySQL.
 
 ### Instalación de dependencias necesarias
-Listar las dependencias que deben instalarse al iniciar el proyecto (Livewire, Alpine.js y, opcionalmente, Tailwind CSS).
+Instalar las dependencias requeridas al iniciar el proyecto, incluyendo Livewire, Alpine.js y, opcionalmente, Tailwind CSS.
+
+> **Nota:** El despliegue se documentará un despliegue temporal en Render o Railway (con capturas y vídeo demostrativo).
+>La presentación final se realizará en entorno local, por limitaciones de los planes gratuitos de estos servicios.
 
 ---
 
@@ -237,8 +265,6 @@ Establecer los roles principales del sistema y cómo se asignarán y controlará
 
 - `Admin`: acceso completo al panel. Gestiona usuarios, animales y formularios públicos; puede cambiar estados de animales y administrar el contenido visible en la web.
 
-
-
 ---
 
 ## 6. Flujo de Datos y Navegación
@@ -252,17 +278,19 @@ Establecer los roles principales del sistema y cómo se asignarán y controlará
 5. El refugio evalúa las solicitudes y decide si procede la adopción o acogida.
 6. Tras la decisión final, el estado del animal se actualiza a `unavailable`(no disponible), `adopted` (adoptado), `fostered` (en acogida), `sheltered` (si vuelve) o `deceased` (fallecido).
 
+> **Nota:** la actualización de estado se realiza automáticamente mediante la lógica de backend (Observers o Services), garantizando coherencia y evitando duplicidades.
+
 ---
 
 ## 7. Componentes Reutilizables y Modularidad
 
 ### Componentes Blade
 
-Enumerar los componentes de interfaz estática que se reutilizarán en múltiples vistas (por ejemplo: menús, tarjetas, pie de página).
+Componentes de interfaz estática reutilizables en múltiples vistas (por ejemplo: menús, cabeceras, tarjetas, pie de página o modales).
 
 ### Componentes Livewire
-Definir los componentes interactivos que se crearán con Livewire para evitar recargas de página (por ejemplo: formularios, listados dinámicos).
+Componentes interactivos diseñados para formularios y listados dinámicos sin recargar la página.
 
 ### Separación entre vistas públicas y privadas
-Establecer claramente qué vistas son accesibles sin autenticación y cuáles forman parte del panel privado para usuarios registrados o administradores.
-
+Las vistas públicas (`animals`, `adoption`, `contact` ...) serán accesibles sin autenticación.
+Las vistas privadas (`admin`, `users`, `dashboard`...) requerirán autenticación y rol apropiado (`user` o `admin`).
