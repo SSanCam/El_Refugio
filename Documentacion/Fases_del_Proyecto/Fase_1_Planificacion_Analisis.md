@@ -179,7 +179,7 @@ La asignación de un tutor no se realiza directamente en esta entidad, sino que 
 | `status` | enum('unavailable','sheltered','fostered','adopted','deceased') | Indica la situación actual del animal |
 | `entry_date` | date | Fecha de entrada al refugio |
 | `description` | text/null | Descripción general |
-| `observations` | text/null | Observaciones internas |
+| `observations` | text/null | Observaciones internas, como tratamiento necesario, si aplica |
 | `is_featured` | bool | Indica si el animal está destacado |
 | `featured_at` | timestamp/null | Fecha en que fue destacado |
 | `created_at` | timestamp | Fecha de creación |
