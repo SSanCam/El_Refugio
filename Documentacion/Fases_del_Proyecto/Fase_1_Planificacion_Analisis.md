@@ -140,7 +140,7 @@ Estos datos ampliados serán privados y accesibles solo para el personal adminis
 | Campo | Tipo de dato | Descripción |
 |-------|---------------|-------------|
 | `id` | int | Clave primaria autoincremental |
-| `first_name` | string | Nombre del usuario |
+| `name` | string | Nombre del usuario |
 | `last_name` | string | Apellidos del usuario |
 | `email` | string | Correo electrónico único utilizado para autenticación o contacto. |
 | `password` | string | Contraseña cifrada mediante hash seguro. |
