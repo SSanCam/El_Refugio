@@ -13,18 +13,24 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Atributos que son asignables en masa.
      *
      * @var list<string>
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
+        'role',
+        'national_id',
+        'phone',
+        'address',
+        'profile_picture'
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Atributos que deben estar ocultos para la serialización.
      *
      * @var list<string>
      */
@@ -34,7 +40,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Obtener los atributos que deben ser casteados.
      *
      * @return array<string, string>
      */
@@ -42,7 +48,21 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relaciones con otras entidades del sistema.
+    */
+    public function fosters()
+    {
+        return $this->hasMany(Foster::class);
+    }
+    public function adoptions()
+{
+    return $this->hasMany(Adoption::class);
+}
+
 }

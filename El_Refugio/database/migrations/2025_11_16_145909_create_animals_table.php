@@ -28,7 +28,7 @@ return new class extends Migration
             $table->boolean('neutered')->default(false);
             $table->string('microchip')->nullable();
             $table->date('birth_date')->nullable();
-            $table->enum('status', ['unavailable','sheltered','fostered','adopted','deceased'])->default(['unavailable']);
+            $table->enum('status', ['unavailable','sheltered','fostered','adopted','deceased'])->default('unavailable');
             $table->date('entry_date');
             $table->text('description')->nullable();
             $table->text('observations')->nullable(); 
