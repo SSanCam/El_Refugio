@@ -23,11 +23,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('role', ['user', 'admin'])->default('user');
-
             $table->string('national_id')->nullable();
             $table->string('phone')->nullable()->unique();
             $table->string('address')->nullable();
-
+            $table->boolean('is_active')->default(true);
+            
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('last_login_at')->nullable();
 

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Adoption;
 use App\Models\User;
 use App\Models\Animal;
+use App\Enums\AnimalStatus;
+use App\Enums\AnimalAvailability;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -21,6 +23,8 @@ class AdoptionController extends Controller
     /**
      * Listado general de adopciones.
      * Incluye datos del animal y del usuario adoptante.
+     * 
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -33,16 +37,22 @@ class AdoptionController extends Controller
 
     /**
      * Formulario para registrar una nueva adopción.
+     * 
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        $animals = Animal::where('status', 'available')->get();
-
+        $animals = Animal::where('status', AnimalStatus::SHELTERED->value || AnimalStatus::FOSTERED->value)
+                ->where('availability', AnimalAvailability::AVAILABLE->value)
+                ->get();
         return view('admin.adoptions.create', compact('animals'));
     }
 
     /**
      * Guardar una nueva adopción en la base de datos.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -62,6 +72,12 @@ class AdoptionController extends Controller
             'comments'      => ['nullable', 'string'],
         ]);
 
+        // Verificar que el animal sigue siendo adoptable (servidor, no solo en el formulario)
+        $animal = Animal::where('id', $validated['animal_id'])
+            ->where('status', AnimalStatus::SHELTERED->value)
+            ->where('availability', AnimalAvailability::AVAILABLE->value)
+            ->firstOrFail();
+
         // Buscar usuario existente por email o documento
         $user = User::query()
             ->where('email', $validated['email'])
@@ -80,7 +96,7 @@ class AdoptionController extends Controller
                 'address'     => $validated['address'] ?? $user->address,
             ])->save();
         } else {
-            // Crear usuario nuevo con contraseña aleatoria
+            // Crear usuario nuevo con contraseña aleatoria en caso de no estar registrado
             $user = User::create([
                 'name'        => $validated['name'],
                 'last_name'   => $validated['last_name'],
@@ -101,8 +117,11 @@ class AdoptionController extends Controller
             'comments'      => $validated['comments'] ?? null,
         ]);
 
-        // Actualizar el estado del animal a 'adopted'
-        $adoption->animal->update(['status' => 'adopted']);
+        // Actualizar estado y disponibilidad del animal
+        $adoption->animal->update([
+            'status'       => AnimalStatus::ADOPTED->value,
+            'availability' => AnimalAvailability::UNAVAILABLE->value,
+        ]);
 
         return redirect()
             ->route('admin.adoptions.index')
@@ -111,6 +130,9 @@ class AdoptionController extends Controller
 
     /**
      * Muestra los detalles de una adopción específica.
+     * 
+     * @param \App\Models\Adoption $adoption
+     * @return \Illuminate\View\View
      */
     public function show(Adoption $adoption)
     {
@@ -121,6 +143,9 @@ class AdoptionController extends Controller
 
     /**
      * Muestra el formulario para editar una adopción específica.
+     * 
+     * @param \App\Models\Adoption $adoption
+     * @return \Illuminate\View\View
      */
     public function edit(Adoption $adoption)
     {
@@ -132,6 +157,10 @@ class AdoptionController extends Controller
 
     /**
      * Actualiza los datos de una adopción específica.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Adoption $adoption
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Adoption $adoption)
     {
@@ -153,6 +182,9 @@ class AdoptionController extends Controller
     /**
      * Elimina una adopción específica.
      * No cambia el estado del animal: se gestiona desde el panel del propio animal.
+     * 
+     * @param \App\Models\Adoption $adoption
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Adoption $adoption)
     {

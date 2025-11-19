@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\AnimalImage;
 use App\Models\Adoption;
 use App\Models\Foster;
+use app\Enums\AnimalStatus;
+use app\Enums\AnimalAvailability;
+use app\Enums\AnimalSpecies;
+use app\Enums\AnimalSex;
+use app\Enums\AnimalSize;
 
 class Animal extends Model
 {
@@ -27,6 +32,7 @@ class Animal extends Model
         'microchip',
         'birth_date',
         'status',
+        'availability',
         'entry_date',
         'description',
         'observations',
@@ -51,11 +57,17 @@ class Animal extends Model
     protected function casts(): array
     {
         return [
-            'birth_date'   => 'date',
-            'entry_date'   => 'date',
-            'featured_at'  => 'datetime',
-            'neutered'     => 'boolean',
-            'is_featured'  => 'boolean',
+            'birth_date'  => 'date',
+            'entry_date'  => 'date',
+            'featured_at' => 'datetime',
+            'neutered'    => 'boolean',
+            'is_featured' => 'boolean',
+
+            'status'       => AnimalStatus::class,
+            'availability' => AnimalAvailability::class,
+            'species'      => AnimalSpecies::class,
+            'sex'          => AnimalSex::class,
+            'size'         => AnimalSize::class,
         ];
     }
 
