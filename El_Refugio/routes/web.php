@@ -1,20 +1,29 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+/*
+// Rutas públicas con limitación de tasa
+Route::middleware(['throttle:120,1'])->group(function () {
 
-Route::get('/', function () {
-    return view('welcome');
+    // Ruta principal pública
+    Route::get('/', function () {
+        return view('welcome');
+    });
+
+    // Otras rutas públicas
+    require __DIR__.'/public.php';
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
+// Rutas públicas sin logueo, auth está protegida por defecto
 require __DIR__.'/auth.php';
+
+// Rutas de usuario autenticado
+Route::middleware(['auth', 'verified', 'throttle:100,1'])->group(function () {
+    require __DIR__.'/user.php';
+});
+
+// Rutas de administración (solo admin)
+Route::middleware(['auth', 'verified', 'admin', 'throttle:200,1'])->group(function () {
+    require __DIR__.'/admin.php';
+});
+*/
