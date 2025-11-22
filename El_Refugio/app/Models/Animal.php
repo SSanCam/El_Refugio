@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\AnimalImage;
 use App\Models\Adoption;
 use App\Models\Foster;
-use app\Enums\AnimalStatus;
-use app\Enums\AnimalAvailability;
-use app\Enums\AnimalSpecies;
-use app\Enums\AnimalSex;
-use app\Enums\AnimalSize;
+use App\Enums\AnimalStatus;
+use App\Enums\AnimalAvailability;
+use App\Enums\AnimalSpecies;
+use App\Enums\AnimalSex;
+use App\Enums\AnimalSize;
 
 class Animal extends Model
 {

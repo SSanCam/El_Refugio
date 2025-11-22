@@ -1,29 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-/*
-// Rutas públicas con limitación de tasa
+
+// Rutas de autenticación (públicas)
+require __DIR__.'/auth.php';
+
+// Rutas públicas (home, animales, formularios...)
 Route::middleware(['throttle:120,1'])->group(function () {
-
-    // Ruta principal pública
-    Route::get('/', function () {
-        return view('welcome');
-    });
-
-    // Otras rutas públicas
+    Route::get('/', fn() => view('welcome'));
     require __DIR__.'/public.php';
 });
 
-// Rutas públicas sin logueo, auth está protegida por defecto
-require __DIR__.'/auth.php';
-
-// Rutas de usuario autenticado
+// Rutas del usuario autenticado
 Route::middleware(['auth', 'verified', 'throttle:100,1'])->group(function () {
     require __DIR__.'/user.php';
 });
 
-// Rutas de administración (solo admin)
+// Rutas exclusivas de administración
 Route::middleware(['auth', 'verified', 'admin', 'throttle:200,1'])->group(function () {
     require __DIR__.'/admin.php';
 });
-*/

@@ -23,9 +23,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             // Datos de la imagen
-            $table->string('secure_url');
-            $table->string('public_id')->nullable();   // id del recurso en el proveedor (Cloudinary/S3)
-            $table->boolean('profile_pic')->default(false);
+            $table->string('url');
             $table->string('alt_text')->nullable();
             
             $table->timestamps();

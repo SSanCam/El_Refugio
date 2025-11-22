@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Exception;
 
-class FormController extends Controller 
+class PublicFormController extends Controller 
 {
 
     /**

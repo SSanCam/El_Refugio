@@ -16,9 +16,7 @@ class AnimalImage extends Model
      */
     protected $fillable = [
         'animal_id',
-        'secure_url',
-        'public_id',
-        'profile_pic',
+        'url',
         'alt_text',
     ];
 
