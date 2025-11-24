@@ -1,13 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\Animal;
+
+// Landing pública
+Route::get('/', function () {
+    return view('public.home');
+})->name('home');
 
 // Rutas de autenticación (públicas)
 require __DIR__.'/auth.php';
 
 // Rutas públicas (home, animales, formularios...)
 Route::middleware(['throttle:120,1'])->group(function () {
-    Route::get('/', fn() => view('welcome'));
     require __DIR__.'/public.php';
 });
 

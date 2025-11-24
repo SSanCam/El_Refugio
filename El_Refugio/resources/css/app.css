@@ -1,3 +1,101 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Paleta de colores
+primarios
+#556B2F
+#c97b48
+#e8dcc3
+
+secundarios
+#394b59
+#6a8c4e
+#d99a6c
+
+neutros
+#f3efe9
+#6e6e6e
+#2f2f2f
+*/
+/* Fuente general -- quicksand */
+/* Layout general */
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Alturas fijas para poder reservar espacio */
+:root {
+    --header-height: 70px;
+    --footer-height: 60px;
+}
+
+/* Header fijo arriba */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: var(--header-height);
+
+    background-color: #6A8C4E;
+    color: #F3EFE9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 50;
+}
+
+.header-link {
+    background-color: #C97B48;
+    color: #F3EFE9;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold; 
+}
+.header-link:hover {
+    background-color: #D99A6C;
+    color: #F3EFE9;
+}
+
+.btn-logo {
+        height: calc(var(--header-height) - 10px);
+        display: flex;
+        align-items: center;
+    }
+    .btn-logo img {
+    height: 100%;
+    width: auto; 
+    }
+/* Footer fijo abajo */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    height: var(--footer-height);
+
+    background-color: #333;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 50;
+}
+
+/* Contenido central: deja espacio para header y footer */
+main {
+    padding-top: var(--header-height);
+    padding-bottom: var(--footer-height);
+
+    /* opcional, solo para que se vea “caja” separada */
+    background-color: #f3f4f6;
+    min-height: 100vh;
+}
