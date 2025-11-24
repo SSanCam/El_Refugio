@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Exception;
 
-class PublicFormController extends Controller 
+class FormController extends Controller 
 {
 
     /**
@@ -88,13 +88,6 @@ class PublicFormController extends Controller
 
     /**
      * Envía el formulario de acogida.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * 
-     * @return \Illuminate\Http\RedirectResponse
-     * 
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \Exception
      */
     public function sendFosterForm(Request $request)
     {
@@ -115,8 +108,6 @@ class PublicFormController extends Controller
 
     /**
      * Muestra el formulario de contacto.
-     * 
-     * @return \Illuminate\Contracts\View\View
      */
     public function contact()
     {
@@ -125,18 +116,13 @@ class PublicFormController extends Controller
 
     /**
      * Maneja el envío del formulario de contacto.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * 
-     * @return \Illuminate\Http\RedirectResponse
-     * 
      */
     public function sendContact(Request $request)
     {
         return $this->handleFormSubmission(
             $request,
             [
-                'email' => 'required|email|max:255',
+                'email'   => 'required|email|max:255',
                 'message' => 'required|string|min:10|max:1000',
             ],
             'public.forms.contact',
@@ -145,55 +131,8 @@ class PublicFormController extends Controller
         );
     }
 
-    //TODO activar formulario de voluntariado
-    /**
-     * Muestra el formulario de voluntariado.
-     * 
-     * @return \Illuminate\Contracts\View\View
-     */
-    /*
-    public function volunteerForm()
-    {
-        return view('public.forms.volunteerForm');
-    }
-    */
-    /**
-     * Maneja el envío del formulario de voluntariado.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * 
-     * @return \Illuminate\Http\RedirectResponse
-     * 
-     */
-    /*
-    public function sendVolunteerForm(Request $request)
-    {
-        return $this->handleFormSubmission(
-            $request,
-            [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'phone' => 'nullable|string|max:20',
-                'message' => 'required|string|min:10|max:1000',
-            ],
-            'public.forms.volunteerForm',
-            'New Volunteer Form',
-            'elrefugio@example.com'
-        );
-    }
-    */
-
     /**
      * Centraliza el manejo del envío de formularios.
-     *
-     * @param Request $request
-     * @param array $rules
-     * @param string $redirectRoute
-     * @param string $subject
-     * @param string $recipient
-     * @param \Closure|null $customMessageBuilder
-     * 
-     * @return \Illuminate\Http\RedirectResponse
      */
     private function handleFormSubmission(Request $request, array $rules, string $redirectRoute, string $subject, string $recipient, ?\Closure $customMessageBuilder = null)
     {
@@ -220,5 +159,4 @@ class PublicFormController extends Controller
             ])->withInput();
         }
     }
-
 }

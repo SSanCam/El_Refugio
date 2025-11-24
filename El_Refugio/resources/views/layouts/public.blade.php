@@ -1,26 +1,22 @@
-{{-- resources/views/layouts/public.blade.php --}}
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+{{-- resources/views/public/home.blade.php --}}
+@extends('layouts.public')
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <title>@yield('title', config('app.name', 'El Refugio'))</title>
+@section('title', 'Inicio | El Refugio')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="min-h-screen flex flex-col bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18]">
+@section('content')
+    <section class="max-w-5xl mx-auto py-10 px-4">
+        <h1 class="text-3xl font-bold mb-4">
+            Bienvenida a El Refugio
+        </h1>
 
-    {{-- Header global --}}
-    <x-header />
+        <p class="mb-6">
+            Esta es la landing pública de la aplicación. Aquí luego mostraremos
+            animales destacados, llamadas a la acción, etc.
+        </p>
 
-    {{-- Contenido variable de cada página --}}
-    <main class="flex-1">
-        @yield('content')
-    </main>
-
-    {{-- Footer global --}}
-    <x-footer />
-
-</body>
-</html>
+        <p class="text-sm text-gray-600">
+            (Ahora mismo es solo una vista de prueba usando el layout público.)
+        </p>
+    </section>
+@endsection

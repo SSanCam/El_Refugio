@@ -1,13 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Animal;
 
 // Landing pública
 Route::get('/', function () {
-    return view('public.home');
-})->name('home');
-
+    return view('welcome');
+})->name('welcome');
+/*
 // Rutas de autenticación (públicas)
 require __DIR__.'/auth.php';
 
@@ -25,3 +24,4 @@ Route::middleware(['auth', 'verified', 'throttle:100,1'])->group(function () {
 Route::middleware(['auth', 'verified', 'admin', 'throttle:200,1'])->group(function () {
     require __DIR__.'/admin.php';
 });
+*/

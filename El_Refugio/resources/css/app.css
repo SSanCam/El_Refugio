@@ -22,6 +22,8 @@ neutros
 html, body {
     margin: 0;
     padding: 0;
+    font-family: 'quicksand', sans-serif;
+    color: #2f2f2f;
 }
 
 /* Alturas fijas para poder reservar espacio */
@@ -56,9 +58,11 @@ header {
     border-radius: 15px;
     cursor: pointer;
     text-decoration: none;
+    font-family: 'Quicksand', sans-serif;
     font-weight: bold; 
 }
 .header-link:hover {
+    scale: 1.1;
     background-color: #D99A6C;
     color: #F3EFE9;
 }
@@ -68,10 +72,13 @@ header {
         display: flex;
         align-items: center;
     }
-    .btn-logo img {
-    height: 100%;
-    width: auto; 
-    }
+.btn-logo img {
+height: 100%;
+width: auto; 
+}
+.btn-logo:hover {
+    scale: 1.2;
+}
 /* Footer fijo abajo */
 footer {
     position: fixed;
@@ -81,8 +88,8 @@ footer {
 
     height: var(--footer-height);
 
-    background-color: #333;
-    color: white;
+    background-color: #E8DCC3;
+    color: #2f2f2f;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -96,6 +103,6 @@ main {
     padding-bottom: var(--footer-height);
 
     /* opcional, solo para que se vea “caja” separada */
-    background-color: #f3f4f6;
+    background-color: #F3EFE9;
     min-height: 100vh;
 }

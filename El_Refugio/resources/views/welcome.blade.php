@@ -1,7 +1,1 @@
-@extends('layouts.public')
-
-@section('title', 'Inicio | El Refugio')
-
-@section('content')
-    ...
-@endsection
+<h1> landing page </h1>
