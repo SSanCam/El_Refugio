@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-
+    
     <x-header />
 
     <main>
@@ -17,6 +17,5 @@
     </main>
 
     <x-footer />
-    
 </body>
 </html>

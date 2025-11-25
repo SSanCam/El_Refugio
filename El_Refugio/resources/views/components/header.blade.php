@@ -10,6 +10,7 @@
         <nav class="header-nav">
             <a href="/" class="header-link">Inicio</a>
             <a href="/peludos" class="header-link">Peludos</a>
+            <!-- <a href="/" class="header-link">Finales felices</a> -->
             <a href="/" class="header-link">Contacto</a>
             <a href="/" class="header-link">Iniciar Sesión</a>
         </nav>

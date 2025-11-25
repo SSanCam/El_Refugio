@@ -12,6 +12,7 @@ use App\Enums\AnimalAvailability;
 use App\Enums\AnimalSpecies;
 use App\Enums\AnimalSex;
 use App\Enums\AnimalSize;
+use Carbon\Carbon;
 
 class Animal extends Model
 {
@@ -69,6 +70,15 @@ class Animal extends Model
             'sex'          => AnimalSex::class,
             'size'         => AnimalSize::class,
         ];
+    }
+
+    public function getAgeAttribute()
+    {
+        if (!$this->birth_date) {
+            return null;
+        }
+
+        return Carbon::parse($this->birth_date)->age;
     }
 
     public function images()
