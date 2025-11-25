@@ -1,10 +1,15 @@
 <?php
 
-use App\Http\Controllers\Admin\AnimalController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Public\AnimalController;
+use App\Http\Controllers\Public\FormController;
+
+// -----------------------------
+// Animales públicos
+// -----------------------------
 
 Route::get('/peludos', [AnimalController::class, 'index'])
     ->name('public.animals.index');
 
-Route::get('/peludos/{id}', [AnimalController::class, 'show'])
+Route::get('/peludo/{id}', [AnimalController::class, 'show'])
     ->name('public.animals.show');
