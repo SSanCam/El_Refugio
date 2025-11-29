@@ -30,7 +30,7 @@ class AnimalController extends Controller{
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
-    return view('public.animals.peludos', compact('animals'));
+    return view('public.animals.index', compact('animals'));
     }
 
         /**
@@ -52,7 +52,7 @@ class AnimalController extends Controller{
             ->where('availability', AnimalAvailability::AVAILABLE->value)
             ->firstOrFail();
         
-    return view('public.animals.peludo', compact('animal'));
+    return view('public.animals.show', compact('animal'));
     }
 
 }

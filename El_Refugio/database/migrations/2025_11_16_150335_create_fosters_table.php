@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 /**
  * Tabla de Fosters
  * Crea la tabla de acogidas para registrar las acogidas de animales en el refugio.
@@ -27,7 +28,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             // Datos de la acogida
-            $table->date('start_date');
+            $table->date('start_date')->default(DB::raw('CURRENT_DATE'));
             $table->date('end_date')->nullable();
             $table->string('contract_file')->nullable();
             $table->text('comments')->nullable();

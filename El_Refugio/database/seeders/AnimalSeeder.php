@@ -14,9 +14,17 @@ class AnimalSeeder extends Seeder
      */
     public function run(): void
     {
-        // Helper fechas
+        // Animales que NO tienen ninguna imagen asociada
+        $animalsWithoutImages = Animal::doesntHave('images')->get();
+
+        foreach ($animalsWithoutImages as $animal) {
+            AnimalImage::factory()
+                ->forAnimal($animal)   // usa la especie para elegir tipo de imagen
+                ->create();
+        }
+        // Animales con datos completos y sus imágenes asociadas
         $hoy = Carbon::now();
-        
+
         /*
         |--------------------------------------------------------------------------
         | Dama (gata negra con cachorros, NO disponible aún)
@@ -102,7 +110,7 @@ class AnimalSeeder extends Seeder
             'species'      => 'dog',
             'breed'        => 'Podenco maneto',
             'sex'          => 'female',
-            'size'         => 'medium', // como me dijiste
+            'size'         => 'medium', // como tú indicaste
             'weight'       => 12.00,
             'height'       => 40,
             'neutered'     => false,
@@ -206,6 +214,9 @@ class AnimalSeeder extends Seeder
         |--------------------------------------------------------------------------
         | Imágenes asociadas (AnimalImage)
         |--------------------------------------------------------------------------
+        | Para animales futuros sin foto “real”, usaremos el AnimalImageFactory +
+        | MissingAnimalImagesSeeder, así que aquí solo definimos las imágenes
+        | concretas que quieres controlar.
         */
         $images = [
             // Dama
@@ -220,7 +231,7 @@ class AnimalSeeder extends Seeder
                 'alt_text' => 'Dama descansando con sus cachorros, aún no disponibles para adopción.',
             ],
 
-            // Garbanzo (chihuahua senior recuperado)
+            // Garbanzo
             [
                 'animal'   => $garbanzo,
                 'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1764066264/b2697239-33cc-4b01-8b44-e88df9aa3c32_qkl5lw.png',
@@ -237,7 +248,7 @@ class AnimalSeeder extends Seeder
                 'alt_text' => 'Primer plano de Garbanzo, listo para adopción.',
             ],
 
-            // Dana (galga)
+            // Dana
             [
                 'animal'   => $dana,
                 'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1764066256/c246e237-9034-431f-9067-f31510a8913d_lgqwuq.png',
@@ -249,7 +260,7 @@ class AnimalSeeder extends Seeder
                 'alt_text' => 'Dana tumbada, tranquila, lista para adopción.',
             ],
 
-            // Zurrapa
+            // Zurrapa + camada
             [
                 'animal'   => $zurrapa,
                 'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1764066215/696c456c-b764-483e-8d94-871e9acd2ebc_eqws1l.png',
@@ -266,24 +277,28 @@ class AnimalSeeder extends Seeder
                 'alt_text' => 'Camada de cachorros de Zurrapa en el refugio.',
             ],
 
-            // Cachorros de Zurrapa
+            // Manteca
             [
                 'animal'   => $manteca,
                 'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1764066241/00f13251-706e-4e04-9687-cde7da5daeac_nhtfyb.png',
                 'alt_text' => 'Cachorro Manteca, hijo de Zurrapa, listo para adoptar.',
             ],
+
+            // Mechado
             [
                 'animal'   => $mechado,
                 'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1764066243/4e35b9d1-304e-4433-80d7-c27f6a5e982a_scuwbu.png',
                 'alt_text' => 'Cachorro Mechado, hijo de Zurrapa, listo para adoptar.',
             ],
+
+            // Pimentón
             [
                 'animal'   => $pimenton,
                 'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1764066491/4015a36d-d78c-41a9-9a67-4948ea58972d_o9vvtb.png',
                 'alt_text' => 'Cachorro Pimentón, hijo de Zurrapa, listo para adoptar.',
             ],
 
-            // Puchero (antes y después + adopción)
+            // Puchero (historia completa)
             [
                 'animal'   => $puchero,
                 'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1764066210/openart-image_Npg9FEyb_1764060339699_raw_v8hyiv.jpg',
