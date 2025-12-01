@@ -18,14 +18,10 @@
                      style="width: 200px; height: auto; border-radius: 10px;">
             @endif
 
-            {{-- Si tienes accessor getAgeAttribute en el modelo --}}
-            {{-- <p>Edad: {{ $animal->age }} años</p> --}}
-
             <p>Especie: {{ $animal->species }}</p>
             <p>Estado: {{ $animal->status }} / {{ $animal->availability }}</p>
 
-            {{-- En cuanto tengamos la show configurada, este enlace funcionará --}}
-            {{-- <a href="{{ route('public.animals.show', $animal->id) }}">Ver más</a> --}}
+            <a href="{{ route('public.animals.show', $animal->id) }}">Ver más</a>
         </div>
     @endforeach
 

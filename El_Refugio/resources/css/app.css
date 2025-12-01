@@ -1,47 +1,85 @@
-/* Paleta de colores
+/* Paleta de colores base
 primarios
 #556B2F
-#c97b48
-#e8dcc3
+#C97B48
+#E8DCC3
 
 secundarios
-#394b59
-#6a8c4e
-#d99a6c
+#394B59
+#6A8C4E
+#D99A6C
 
 neutros
-#f3efe9
-#6e6e6e
-#2f2f2f
+#F3EFE9
+#6E6E6E
+#2F2F2F
 */
 
-/* 
---------------
-Layout general
---------------
-*/
-html,
-body {
-    margin: 0px;
-    padding: 0px;
-    /*Fuente general*/
-    font-family: 'quicksand', Arial, sans-serif;
-    font-weight: bold;
-    text-decoration: none;
-    color: #2f2f2f;
-    /*Color fondo*/
-    background-color: #F3EFE9;
-}
-
-/* Alturas fijas para poder reservar espacio */
+/* -------------------------
+   Variables de tema (CLARO)
+   ------------------------- */
 :root {
     --header-height: 70px;
     --footer-height: 60px;
+
+    --color-bg: #F3EFE9;
+    --color-text: #2F2F2F;
+
+    --color-primary: #556B2F;
+    --color-secondary: #C97B48;
+    --color-secondary-soft: #D99A6C;
+
+    --color-header-bg: #6A8C4E;
+    --color-footer-bg: #E8DCC3;
+
+    --color-neutral-soft: #E8DCC3;
+
+    --color-divider-strong: #6A8C4E;
+    --color-divider-soft:  #D99A6C;
 }
 
-/*--------------
-    header
-----------------*/
+/* -------------------------
+   Modo OSCURO (override)
+   Se activa con <body class="theme-dark">
+   ------------------------- */
+body.theme-dark {
+    --color-bg: #2F2F2F;
+    --color-text: #F3EFE9;
+
+    --color-primary: #E8DCC3;
+    --color-secondary: #D99A6C;
+    --color-secondary-soft: #C97B48;
+
+    --color-header-bg: #394B59;
+    --color-footer-bg: #394B59;
+
+    --color-neutral-soft: #556B2F;
+
+    --color-divider-strong: #F3EFE9;
+    --color-divider-soft:  #E8DCC3;
+}
+
+/* --------------
+   Layout general
+   --------------*/
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'quicksand', Arial, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+
+a {
+    color: inherit;
+}
+
+/*---------------
+   Header
+   ---------------*/
 .main-header {
     position: fixed;
     top: 0;
@@ -49,22 +87,12 @@ body {
     right: 0;
 
     height: var(--header-height);
-    background-color: #6A8C4E;
-    color: #F3EFE9;
+    background-color: var(--color-header-bg);
+    color: var(--color-bg);
 
     display: flex;
     align-items: center;
     z-index: 50;
-}
-
-.header-link {
-    background-color: #C97B48;
-    color: #F3EFE9;
-    padding: 5px 20px;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    text-decoration: none;
 }
 
 .header-inner {
@@ -79,10 +107,20 @@ body {
     padding: 0 1.5rem;
 }
 
+.header-link {
+    background-color: var(--color-secondary);
+    color: var(--color-bg);
+    padding: 5px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
 .header-link:hover {
     scale: 2.1;
-    background-color: #D99A6C;
-    color: #F3EFE9;
+    background-color: var(--color-secondary-soft);
+    color: var(--color-bg);
 }
 
 .btn-logo {
@@ -101,8 +139,8 @@ body {
 }
 
 /*---------  
-   footer  
-----------*/
+   Footer  
+   ---------*/
 footer {
     position: fixed;
     bottom: 0;
@@ -111,12 +149,12 @@ footer {
 
     height: var(--footer-height);
 
-    background-color: #E8DCC3;
-    color: #2f2f2f;
+    background-color: var(--color-footer-bg);
+    color: var(--color-text);
 
     display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
 
     z-index: 50;
 }
@@ -130,7 +168,7 @@ footer {
 .footer-social {
     display: flex;
     align-items: center;
-    gap: 0.6rem;      
+    gap: 0.6rem;
 }
 
 .footer-social img {
@@ -143,15 +181,126 @@ footer {
     transform: scale(1.15);
 }
 
-
 /*---------------
-Contenido central
----------------*/
+   Contenido central
+   ---------------*/
 main {
     padding-top: var(--header-height);
     padding-bottom: var(--footer-height);
     padding-left: 8vw;
     padding-right: 8vw;
 
-    min-height: 100vh;   
+    min-height: 100vh;
+}
+
+/* ---------------
+   Secciones base
+   --------------- */
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.section-block {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+}
+
+.section-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.section-grid--center {
+    align-items: center;
+}
+
+.info-card {
+    flex: 1 1 260px;
+}
+
+.steps-list {
+    padding-left: 1.1rem;
+}
+
+.steps-list li {
+    margin-bottom: 0.5rem;
+}
+
+/* ---------------------------------------- 
+   Separadores de contenido
+   ----------------------------------------- */
+.section-divider {
+    border: 0;
+    height: 3px;
+    margin: 2rem 0;
+    background-color: var(--color-divider-strong);
+}
+
+.section-divider--light {
+    background-color: var(--color-divider-soft);
+}
+
+/* Grid de tarjetas con separadores verticales entre columnas */
+.section-grid--with-dividers {
+    position: relative;
+}
+
+.section-grid--with-dividers .info-card {
+    position: relative;
+    padding-right: 1.5rem;
+}
+
+.section-grid--with-dividers .info-card:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    background-color: var(--color-divider-soft);
+}
+
+
+/* ---------------------------------------- 
+         Botones de estilo global 
+----------------------------------------- */
+.section-cta {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.btn-cta {
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;
+    border: none;
+    background-color: var(--color-secondary);
+    color: var(--color-bg);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-cta--outline {
+    background-color: transparent;
+    border: 2px solid var(--color-secondary);
+    color: var(--color-secondary);
+}
+
+.btn-cta:hover {
+    background-color: var(--color-secondary-soft);
+    color: var(--color-bg);
 }
