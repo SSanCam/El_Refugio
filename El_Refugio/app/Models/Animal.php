@@ -81,6 +81,17 @@ class Animal extends Model
         return Carbon::parse($this->birth_date)->age;
     }
 
+    public function getDaysAttribute()
+    {
+        if (!$this->entry_date) {
+            return null;
+        }
+
+        return Carbon::parse($this->entry_date)
+            ->startOfDay()
+            ->diffInDays(Carbon::now()->startOfDay());
+    }
+
     public function images()
     {
         return $this->hasMany(AnimalImage::class);

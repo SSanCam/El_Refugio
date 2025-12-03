@@ -1,21 +1,9 @@
-/* Paleta de colores base
-primarios
-#556B2F
-#C97B48
-#E8DCC3
+/* ----------------------------------------
+       Estilos específicos de animales
+       ---------------------------------------- */
+    @import "animals.css";
 
-secundarios
-#394B59
-#6A8C4E
-#D99A6C
-
-neutros
-#F3EFE9
-#6E6E6E
-#2F2F2F
-*/
-
-/* -------------------------
+    /* -------------------------
    Variables de tema (CLARO)
    ------------------------- */
 :root {
@@ -23,6 +11,7 @@ neutros
     --footer-height: 60px;
 
     --color-bg: #F3EFE9;
+    --color-grey: #6E6E6E;
     --color-text: #2F2F2F;
 
     --color-primary: #556B2F;
@@ -44,6 +33,7 @@ neutros
    ------------------------- */
 body.theme-dark {
     --color-bg: #2F2F2F;
+    --color-grey: #6E6E6E;
     --color-text: #F3EFE9;
 
     --color-primary: #E8DCC3;
@@ -77,9 +67,18 @@ a {
     color: inherit;
 }
 
+.section-block a {
+    text-decoration: underline;
+}
+
+.section-block a:hover {
+    text-decoration: none;
+    color: var(--color-primary);
+}
+
 /*---------------
    Header
-   ---------------*/
+---------------*/
 .main-header {
     position: fixed;
     top: 0;
@@ -87,7 +86,7 @@ a {
     right: 0;
 
     height: var(--header-height);
-    background-color: var(--color-header-bg);
+    background-color: var(--color-primary);
     color: var(--color-bg);
 
     display: flex;
@@ -118,7 +117,7 @@ a {
 }
 
 .header-link:hover {
-    scale: 2.1;
+    transform: scale(1.05);
     background-color: var(--color-secondary-soft);
     color: var(--color-bg);
 }
@@ -273,9 +272,8 @@ main {
     background-color: var(--color-divider-soft);
 }
 
-
 /* ---------------------------------------- 
-         Botones de estilo global 
+   Botones de estilo global 
 ----------------------------------------- */
 .section-cta {
     margin-top: 1.5rem;
@@ -284,23 +282,72 @@ main {
     gap: 1rem;
 }
 
-.btn-cta {
+/* Botón relleno */
+.btn-cta--global {
     padding: 0.6rem 1.4rem;
     border-radius: 999px;
-    border: none;
+    border: 2px solid var(--color-secondary);
     background-color: var(--color-secondary);
-    color: var(--color-bg);
+    color: var(--color-bg) !important;
     text-decoration: none;
     font-weight: bold;
 }
 
-.btn-cta--outline {
+/* Botón contorno */
+.btn-cta--global-outline {
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;
+    border: 2px solid var(--color-primary);
     background-color: transparent;
-    border: 2px solid var(--color-secondary);
-    color: var(--color-secondary);
+    color: var(--color-primary) !important;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-.btn-cta:hover {
-    background-color: var(--color-secondary-soft);
-    color: var(--color-bg);
+/* Hover para ambos */
+.btn-cta--global:hover,
+.btn-cta--global-outline:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-bg) !important;
 }
+
+/* ----------------------------------------
+   Hero / banner de portada
+   ---------------------------------------- */
+.hero-banner {
+    margin-top: 1.5rem;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 260px;          
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.hero-banner__img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: 50% 90%;      
+}
+
+/* ----------------------------------------
+   Foto destacada en sección “Sobre nosotros”
+   ---------------------------------------- */
+.about-photo {
+    max-width: 380px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 300px;             
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.about-photo__img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;   
+    object-position: 50% 45%;  
+}
+

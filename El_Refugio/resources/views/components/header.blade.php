@@ -10,7 +10,7 @@
         <nav class="header-nav">
             <a href="{{ route('public.home') }}" class="header-link">Inicio</a>
             <a href="{{ route('public.animals.index') }}" class="header-link">Peludos</a>
-            {{-- <a href="{{ route('home') }}" class="header-link">Finales felices</a> --}}
+            <a href="{{ route('public.animals.happy') }}" class="header-link">Finales felices</a>
             <a href="{{ route('public.forms.contact') }}" class="header-link">Contacto</a>
             <a href="{{ route('login') }}" class="header-link">Iniciar Sesión</a>
         </nav>

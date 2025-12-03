@@ -13,7 +13,7 @@ enum AnimalSex: string
         return match ($this) {
             self::MALE    => 'Macho',
             self::FEMALE  => 'Hembra',
-            self::UNKNOWN => 'Desconocido',
+            self::UNKNOWN => ' ',
         };
     }
 }
