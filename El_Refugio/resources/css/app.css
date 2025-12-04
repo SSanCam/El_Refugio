@@ -1,7 +1,8 @@
 /* ----------------------------------------
-       Estilos específicos de animales
-       ---------------------------------------- */
+    Importación de módulos CSS
+    ---------------------------------------- */
     @import "animals.css";
+    @import "forms.css";
 
     /* -------------------------
    Variables de tema (CLARO)

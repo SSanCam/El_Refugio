@@ -5,8 +5,9 @@ Estilos de las tarjetas de animales (index)
 /* Grid de animales */
 .animals-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
     gap: 2rem;
+    justify-content: flex-start;
 }
 
 /* Tarjeta de animal */
@@ -265,22 +266,24 @@ Estilos de las tarjetas de animales (index)
 /* ----------------------------------------------------
         Estilo de los botones de filtrado 
 ---------------------------------------------------- */
-/* Filtros de especie en /peludos */
+
+/* Contenedores de filtros */
 .animals-filters {
     margin-top: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;   
+    gap: 0.5rem;
 }
 
-.animals-filters animals-filters--sub{
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;  
+/* Subgrupos */
+.animals-filters--sub {
+    margin-top: 0.25rem;
 }
-.animals-filters animals-filters--sub :hover{
-    transform: scale(00.35rem);
+
+/* Estado ACTIVO solo para botones dentro de filtros */
+.animals-filters .btn-cta--global.is-active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-bg) !important;
 }

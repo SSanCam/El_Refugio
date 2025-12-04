@@ -80,6 +80,7 @@ class AnimalController extends Controller{
                 'sex',
                 'size',
                 'birth_date',
+                'availability',
                 'description',
                 'entry_date'
             ])
