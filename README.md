@@ -70,6 +70,8 @@ De esta forma, se garantiza la **escalabilidad del sistema** y la **continuidad 
 
 # 📂 Documentación
 
+A continuación se enlazan los documentos de las distintas fases del desarrollo del proyecto, donde se detallan desde el análisis inicial hasta las pruebas finales:
+
 - [Fase 1 - Planificación y análisis](Documentacion/Fases_del_Proyecto/Fase_1_Planificacion_Analisis.md)  
 - [Fase 2 - Diseño Técnico y estructura del sistema](Documentacion/Fases_del_Proyecto/Fase2_DisenioTecnico_EstructuraSistema.md)  
 - [Fase 3 - Desarrollo de funcionalidades](Documentacion/Fases_del_Proyecto/Fase3_DesarrolloFuncionalidades.md)  
