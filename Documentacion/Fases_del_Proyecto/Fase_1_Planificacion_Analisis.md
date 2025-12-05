@@ -150,6 +150,7 @@ Estos datos ampliados serán privados y accesibles solo para el personal adminis
 | `address` | string/null | Dirección postal. Campo reservado para registro administrativo. |
 | `email_verified_at` | timestamp/null | Fecha en la que el correo fue verificado. |
 | `last_login_at` | timestamp/null | Último acceso registrado del usuario. |
+| `is_active` | bool | Indica si la cuenta del usuario está activa para acceso web. Puede ser `false` en adopciones formalizadas sin acceso web o usuarios dados de baja. |
 | `profile_picture` | string/null | Ruta de la imagen de perfil. |
 | `created_at` | timestamp | Fecha de creación del registro. |
 | `updated_at` | timestamp | Fecha de última modificación. |

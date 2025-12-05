@@ -34,7 +34,7 @@ Se aplican restricciones como `nullable`, `default` o `unique` según correspond
 
 ### CRUD completo con Livewire
 
-Se ha implementado un componente Livewire que permite realizar todas las operaciones CRUD —crear, leer, actualizar y eliminar— sobre los registros de animales directamente desde el panel de administración.
+Se ha implementado un componente Livewire que permite realizar operaciones CRUD —crear, leer, actualizar y eliminar— sobre los registros de animales directamente desde el panel de administración.
 
 El listado se presenta en una tabla dinámica con paginación y filtros, lo que facilita la gestión y búsqueda de registros.
 Las acciones de edición y eliminación se ejecutan sin necesidad de recargar la página, aprovechando el comportamiento reactivo de Livewire, y están protegidas mediante confirmaciones y validaciones que garantizan la integridad de los datos.
@@ -58,9 +58,6 @@ La vista pública de animales incorpora un buscador interactivo junto con filtro
 Estos filtros permiten a los usuarios explorar fácilmente el catálogo de animales según sus preferencias.
 
 La lógica de filtrado se implementa con Livewire, lo que permite actualizar los resultados dinámicamente sin necesidad de recargar la página.
-
-
-> Estas funcionalidades están previstas para su implementación siguiendo la estructura técnica definida en las fases anteriores.
 
 ---
 
@@ -88,7 +85,7 @@ Los formularios de solicitud de adopción, acogida o contacto están disponibles
 
 ### Gestión del perfil
 
-Cada usuario registrado dispone de un área personal desde donde puede actualizar su información básica: nombre, alias, teléfono, dirección o preferencias de colaboración (por ejemplo, si desea acoger o recibir información sobre futuras campañas). Estos campos se corresponden con los atributos definidos en la entidad `User`, incluyendo el campo `status`.
+Cada usuario registrado dispone de un área personal desde donde puede consultar y actualizar parte de la información almacenada en su perfil (por ejemplo, nombre, apellidos y datos de contacto básicos definidos en la entidad `User`). Estos campos se corresponden con los atributos realmente existentes en la tabla `users`, incluyendo el indicador `is_active`, que permite desactivar cuentas sin eliminar el registro.
 
 En caso de modificar su dirección de correo electrónico, el sistema reactivará el proceso de verificación para garantizar que la nueva dirección es válida.
 

@@ -86,3 +86,118 @@ Para acceder a la previsualización:
 Este modo de visualización permite al tribunal recorrer la interfaz de la aplicación tal como se ha concebido en el diseño, facilitando la evaluación del flujo de usuario, la coherencia visual y la usabilidad general del sistema.
 
 > **Nota:** La navegación interactiva puede requerir unos segundos de carga dependiendo del dispositivo o navegador utilizado.
+
+## 6. Implementación de la interfaz en Laravel (Blade + CSS)
+
+El diseño definido en Figma se ha trasladado a la aplicación mediante una estructura de vistas Blade organizada y una hoja de estilos principal.
+
+### 6.1. Layouts principales
+
+La interfaz se apoya en una jerarquía de layouts Blade:
+
+- `resources/views/layouts/app.blade.php`  
+  Layout base con la estructura HTML común: `<head>`, inclusión de fuentes, hoja de estilos principal, scripts globales y contenedor general.
+
+- `resources/views/layouts/public.blade.php`  
+  Extiende del layout base y define la estructura de la parte pública: cabecera general, navegación principal, contenedor central de contenido y pie de página.
+
+- `resources/views/layouts/admin.blade.php`  
+  Layout específico para el panel de administración: incluye cabecera reducida, barra lateral con navegación para módulos internos, contenedor principal y zona de mensajes de estado.
+
+Las vistas de cada sección (pública y privada) extienden el layout correspondiente mediante `@extends` y definen su contenido con `@section('content')`.
+
+### 6.2. Componentes de interfaz reutilizables
+
+Los elementos visuales definidos en la guía de estilos se han implementado como componentes Blade:
+
+- `resources/views/components/header.blade.php`  
+  Cabecera común con logo, menú principal y acceso al login.
+
+- `resources/views/components/footer.blade.php`  
+  Pie de página con datos de contacto y enlaces relevantes.
+
+- `resources/views/components/animal-card.blade.php`  
+  Tarjeta de animal con imagen principal, nombre, estado y etiquetas de especie/tamaño.
+
+- `resources/views/components/button.blade.php`  
+  Botón genérico con variantes (primario, secundario, texto).
+
+- `resources/views/components/alert.blade.php`  
+  Mensajes de éxito, error o aviso.
+
+- `resources/views/components/form-field.blade.php`  
+  Estructura para campos de formulario (label, input, mensaje de error).
+
+---
+
+## 7. Organización de estilos y aplicación de la guía visual
+
+### 7.1. Hoja de estilos principal
+
+La hoja de estilos se centraliza en:
+
+- `resources/css/app.css`  
+
+En ella se definen:
+
+- Variables CSS para la paleta cromática (colores principales, secundarios, fondos, bordes y estados).
+- Estilos globales de tipografía (familia Quicksand, tamaños básicos y jerarquía de títulos).
+- Estilos de elementos base (`body`, encabezados, párrafos, enlaces, listas).
+- Clases utilitarias básicas para márgenes, paddings, alineaciones y contenedores.
+
+La hoja de estilos se compila e incluye en los layouts mediante `@vite`.
+
+### 7.2. Estilos específicos por secciones
+
+Además de los estilos globales, se utilizan clases específicas:
+
+- Parte pública: `.public-layout`, `.hero`, `.animal-list`, `.animal-filters`.
+- Panel de administración: `.admin-layout`, `.admin-sidebar`, `.admin-table`, `.admin-card`.
+- Formularios: `.form-section`, `.form-group`, `.form-actions`.
+
+### 7.3. Paleta de colores y estados visuales
+
+Los colores definidos en Figma se han trasladado a variables CSS (por ejemplo: `--color-primary`, `--color-secondary`, `--color-accent`, `--color-bg`, `--color-text`), utilizadas en:
+
+- Botones primarios y secundarios.
+- Tarjetas de animales y tarjetas del panel.
+- Fondos de secciones y barras de navegación.
+- Estados de interacción (`:hover`, `:focus`, `:disabled`) y mensajes de alerta.
+
+### 7.4. Modo claro / oscuro
+
+El diseño contempla variantes claro y oscuro resueltas mediante clases de tema:
+
+- `.theme-light` para fondos claros y textos oscuros.
+- `.theme-dark` para fondos oscuros y textos claros.
+
+El layout raíz aplica una de estas clases al `<body>` y los componentes utilizan variables de color compatibles con ambos temas.
+
+---
+
+## 8. Accesibilidad, maquetación y coherencia visual
+
+### 8.1. Accesibilidad básica
+
+En la implementación se aplican criterios básicos:
+
+- Uso de `alt` descriptivo en las imágenes de animales, alineado con el campo `alt_text` de `AnimalImage`.
+- Contraste suficiente entre texto y fondo en botones, enlaces y tarjetas.
+- Indicadores visibles de foco (`:focus`) en enlaces y controles interactivos.
+- Uso coherente de encabezados (`<h1>`, `<h2>`, `<h3>`) para estructurar la información.
+
+### 8.2. Maquetación y responsive
+
+La maquetación se basa en:
+
+- Un contenedor principal con ancho máximo definido.
+- Rejillas y flexbox para listados de animales, tarjetas y tablas de administración.
+- Ajustes responsive para pantallas pequeñas: reordenación de bloques, apilado de tarjetas y simplificación de menús.
+
+### 8.3. Consistencia entre diseño y código
+
+Las decisiones visuales de la guía de estilos se reflejan en:
+
+- Uso de la misma jerarquía tipográfica en encabezados y textos de todas las vistas.
+- Reutilización de componentes (tarjetas, botones, alertas) en lugar de copias aisladas.
+- Correspondencia entre las pantallas diseñadas en Figma (pública y panel admin) y sus vistas Blade.
