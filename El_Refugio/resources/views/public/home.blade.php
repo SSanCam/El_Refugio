@@ -1,7 +1,9 @@
 {{-- resources/views/public/home.blade.php --}}
 @extends('layouts.public')
-
 @section('title', 'Inicio | El Refugio')
+
+@section('meta_description', 'El Refugio es una plataforma para gestionar refugios de animales, adopciones y acogidas.')
+@section('meta_keywords', 'el refugio, gestión refugios, adopción online, acogida animales')
 
 @section('content')
 <section class="page-container">

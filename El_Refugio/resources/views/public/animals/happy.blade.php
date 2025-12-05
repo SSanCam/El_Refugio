@@ -1,6 +1,10 @@
 {{-- resources/views/public/animals/happy.blade.php --}}
 @extends('layouts.public')
+
 @section('title', 'Finales felices | El Refugio')
+
+@section('meta_description', 'Descubre los finales felices de los animales de El Refugio que ya han sido adoptados y viven con sus nuevas familias.')
+@section('meta_keywords', 'finales felices, adopciones realizadas, perros adoptados, gatos adoptados, refugio de animales')
 
 @section('content')
 <section class="page-container">

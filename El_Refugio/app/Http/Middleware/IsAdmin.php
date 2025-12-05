@@ -18,7 +18,7 @@ class IsAdmin
         $user = Auth::user();
 
         // Si no hay usuario autenticado o no es admin → bloquear
-        if (!$user || auth()->$user->role !== 'admin') {
+        if (!$user || $user->role !== 'admin') {
             return redirect('/')
                 ->with('error', 'No tienes permisos para acceder a esta sección.');
         }

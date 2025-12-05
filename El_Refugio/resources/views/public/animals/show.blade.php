@@ -1,8 +1,13 @@
-{{-- resources/views/public/animals/show.blade.php --}}@extends('layouts.public')
+{{-- resources/views/public/animals/show.blade.php --}}
+@extends('layouts.public')
 
 @section('title', 'Conoce a ' . $animal->name . ' | El Refugio')
 
+@section('meta_description', 'Conoce a ' . $animal->name . ', uno de los peludos en adopción de El Refugio. Consulta su ficha, características y cómo iniciar una solicitud.')
+@section('meta_keywords', 'conoce a ' . $animal->name . ', ficha animal, adopción, acogida, refugio de animales')
+
 @section('content')
+
 <section class="page-container">
 
     <header class="section-block">

@@ -1,67 +1,97 @@
+{{-- resources/views/auth/login.blade.php --}}
 @extends('layouts.public')
 
 @section('title', 'Iniciar sesión | El Refugio')
+@section('meta_robots', 'noindex,follow')
 
 @section('content')
-    <main class="py-12" style="max-width: 480px; margin: 0 auto;">
+<section class="page-container">
 
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')" />
+    <header class="section-block">
+        <h1 class="section-title">Iniciar sesión</h1>
+        <p>
+            Accede con tu cuenta para gestionar solicitudes, adopciones y datos del refugio.
+        </p>
+    </header>
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+    <section class="section-block">
+        <div class="contact-form-card">
 
-            <!-- Email Address -->
-            <div>
-                <x-input-label for="email" :value="__('Email')" />
-                <x-text-input id="email" class="block mt-1 w-full"
-                              type="email" name="email"
-                              :value="old('email')" required autofocus autocomplete="username" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
+            {{-- Mensaje de estado (por ejemplo, “se ha enviado el enlace de contraseña”) --}}
+            @if (session('status'))
+                <p class="form-alert form-alert--success">
+                    {{ session('status') }}
+                </p>
+            @endif
 
-            <!-- Password -->
-            <div class="mt-4">
-                <x-input-label for="password" :value="__('Password')" />
+            <form method="POST" action="{{ route('login') }}" class="contact-form">
+                @csrf
 
-                <x-text-input id="password" class="block mt-1 w-full"
-                              type="password"
-                              name="password"
-                              required autocomplete="current-password" />
+                {{-- Email --}}
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        Correo electrónico
+                    </label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value="{{ old('email') }}"
+                        required
+                        autocomplete="username"
+                        autofocus
+                        class="form-input @error('email') is-invalid @enderror"
+                    >
+                    @error('email')
+                        <p class="form-error">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-            </div>
+                {{-- Contraseña --}}
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        Contraseña
+                    </label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        autocomplete="current-password"
+                        class="form-input @error('password') is-invalid @enderror"
+                    >
+                    @error('password')
+                        <p class="form-error">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            <!-- Remember Me -->
-            <div class="block mt-4">
-                <label for="remember_me" class="inline-flex items-center">
-                    <input id="remember_me" type="checkbox"
-                           class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
-                           name="remember">
-                    <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-                </label>
-            </div>
+                {{-- Recordarme --}}
+                <div class="form-group" style="flex-direction: row; align-items: center; gap: .4rem;">
+                    <input id="remember_me" type="checkbox" name="remember">
+                    <label for="remember_me" class="form-label" style="font-weight: normal;">
+                        Recordarme
+                    </label>
+                </div>
 
-            <div class="flex items-center justify-between mt-4">
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md
-                              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                       href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
-                @endif
+                <div class="contact-form__actions" style="justify-content: space-between; gap:.75rem;">
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}">
+                            ¿Has olvidado tu contraseña?
+                        </a>
+                    @endif
 
-                <x-primary-button class="ms-3">
-                    {{ __('Log in') }}
-                </x-primary-button>
-            </div>
+                    <button type="submit" class="btn-cta--global">
+                        Iniciar sesión
+                    </button>
+                </div>
 
-            <div class="mt-4 text-sm text-gray-600">
-                ¿No tienes cuenta?
-                <a href="{{ route('register') }}" class="underline hover:text-gray-900">
-                    Regístrate
-                </a>
-            </div>
-        </form>
-    </main>
+                <p class="form-label__hint" style="margin-top: 1rem;">
+                    ¿Aún no tienes cuenta?
+                    <a href="{{ route('register') }}">Regístrate</a>
+                </p>
+            </form>
+        </div>
+    </section>
+
+</section>
 @endsection

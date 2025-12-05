@@ -12,7 +12,27 @@
             <a href="{{ route('public.animals.index') }}" class="header-link">Peludos</a>
             <a href="{{ route('public.animals.happy') }}" class="header-link">Finales felices</a>
             <a href="{{ route('public.forms.contact') }}" class="header-link">Contacto</a>
-            <a href="{{ route('login') }}" class="header-link">Iniciar Sesión</a>
+
+            @guest
+            <a href="{{ route('login') }}" class="header-link">Iniciar sesión</a>
+            @endguest
+
+            @auth
+            @if (auth()->user()->role === 'admin')
+            <a href="{{ route('admin.dashboard') }}" class="header-link">Panel admin</a>
+            @else
+            <a href="{{ route('profile.edit') }}" class="header-link">Mi área</a>
+            @endif
+
+            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="header-link--profile">
+                    <img src="https://res.cloudinary.com/dkfvic2ks/image/upload/v1764920697/download-removebg-preview_bqpge7.png"
+                        alt="Cerrar sesión">
+                </button>
+            </form>
+            @endauth
+            
         </nav>
 
     </div>

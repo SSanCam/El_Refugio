@@ -1,6 +1,11 @@
 {{-- resources/views/public/animals/index.blade.php --}}
 @extends('layouts.public')
+
 @section('title', 'Peludos | El Refugio')
+@section('meta_description', 'Consulta los animales que actualmente están disponibles en el refugio para adopción o acogida.')
+@section('meta_keywords', )
+
+@endsection
 
 @section('content')
 <section class="page-container">

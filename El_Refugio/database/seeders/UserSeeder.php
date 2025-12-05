@@ -55,17 +55,7 @@ class UserSeeder extends Seeder
         //  USUARIOS NORMALES (CON REGISTRO WEB)
         // ─────────────────────────────────────
 
-        // 1) Solo registro web (sin adopciones ni acogidas)
-        User::factory()->create([
-            'name'              => 'Lucía',
-            'last_name'         => 'Visitante',
-            'email'             => 'lucia.visitante@ejemplo.test',
-            'role'              => 'user',
-            'is_active'         => true,
-            'email_verified_at' => now(),
-        ]);
-
-        // 2) Registro web + ADOPCIÓN
+        // 1) Registro web + ADOPCIÓN
         User::factory()->create([
             'name'              => 'Carlos',
             'last_name'         => 'Adoptante',
@@ -75,7 +65,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // 3) Registro web + ADOPCIÓN + ACOGIDA
+        // 2) Registro web + ADOPCIÓN + ACOGIDA
         User::factory()->create([
             'name'              => 'Marta',
             'last_name'         => 'Acogida',

@@ -12,6 +12,8 @@ class FormController extends Controller
 {
     /**
      * Muestra el formulario de contacto.
+     * 
+     * @return \Illuminate\Contracts\View\View
      */
     public function contact()
     {
@@ -20,6 +22,9 @@ class FormController extends Controller
 
     /**
      * Maneja el envío del formulario de contacto.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendContact(Request $request)
     {
@@ -43,6 +48,9 @@ class FormController extends Controller
 
     /**
      * Muestra el formulario de solicitud de adopción o acogida.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
      */
     public function request(Request $request)
     {
@@ -59,6 +67,7 @@ class FormController extends Controller
 
     /**
      * Maneja el envío de formulario acogida/adopcion
+     * 
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -105,6 +114,14 @@ class FormController extends Controller
 
     /**
      * Centraliza el manejo del envío de formularios.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @param array $rules
+     * @param string $redirectRoute
+     * @param string $subject
+     * @param string $recipient
+     * @param \Closure|null $customMessageBuilder
+     * @return \Illuminate\Http\RedirectResponse
      */
     private function handleFormSubmission(Request $request, array $rules, string $redirectRoute, string $subject, string $recipient, ?\Closure $customMessageBuilder = null)
     {
@@ -118,15 +135,20 @@ class FormController extends Controller
             Mail::raw($messageContent, function ($message) use ($validated, $subject, $recipient) {
                 $message->to($recipient)
                     ->subject($subject)
-                    ->from($validated['email']);
+                    ->from('no-reply@elrefugio.test', 'El Refugio')
+                    ->replyTo($validated['email']);
             });
 
-            return redirect()->back()->with('success', 'Formulario enviado correctamente.');
+            return redirect()
+                ->route($redirectRoute)
+                ->with('success', 'Formulario enviado correctamente.');
 
         } catch (Exception $e) {
             Log::error("Error sending form ($subject): " . $e->getMessage());
 
-            return back()->withErrors([
+            return redirect()
+                ->route($redirectRoute)
+                ->withErrors([
                 'email' => 'Error inesperado en el envio del formulario. Inténtalo de nuevo.',
             ])->withInput();
         }

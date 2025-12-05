@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Animal;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * Controlador administrativo para la gestión de animales.
@@ -42,17 +43,17 @@ class AnimalController extends Controller
     {
          $validated = $request->validate([
             'name'         => ['required', 'string', 'max:255'],
-            'species'      => ['required', 'string'],
+            'species'      => ['required', Rule::in(['dog', 'cat', 'other'])],
             'breed'        => ['nullable', 'string', 'max:255'],
-            'sex'          => ['nullable', 'string'],
-            'size'         => ['nullable', 'string'],
+            'sex'          => ['nullable', Rule::in(['male', 'female', 'unknown'])],
+            'size'         => ['nullable', Rule::in(['small', 'medium', 'large'])],
             'weight'       => ['nullable', 'numeric'],
             'height'       => ['nullable', 'numeric'],
             'neutered'     => ['boolean'],
             'microchip'    => ['nullable', 'string', 'max:255'],
             'birth_date'   => ['nullable', 'date'],
-            'status'       => ['required', 'string'],
-            'availability' => ['required', 'string'],
+            'status'       => ['required', Rule::in(['sheltered', 'adopted', 'fostered', 'deceased'])],
+            'availability' => ['required', Rule::in(['available', 'unavailable'])],
             'entry_date'   => ['required', 'date'],
             'description'  => ['nullable', 'string'],
             'observations' => ['nullable', 'string'],
@@ -99,17 +100,17 @@ class AnimalController extends Controller
     {
         $validated = $request->validate([
                     'name'         => ['required', 'string', 'max:255'],
-                    'species'      => ['required', 'string'],
+                    'species' => ['required', Rule::in(['dog', 'cat', 'other'])],
                     'breed'        => ['nullable', 'string', 'max:255'],
-                    'sex'          => ['nullable', 'string'],
-                    'size'         => ['nullable', 'string'],
+                    'sex'          => ['nullable', Rule::in(['male', 'female', 'unknown'])],
+                    'size'         => ['nullable', Rule::in(['small', 'medium', 'large'])],
                     'weight'       => ['nullable', 'numeric'],
                     'height'       => ['nullable', 'numeric'],
                     'neutered'     => ['boolean'],
                     'microchip'    => ['nullable', 'string', 'max:255'],
                     'birth_date'   => ['nullable', 'date'],
-                    'status'       => ['required', 'string'],
-                    'availability' => ['required', 'string'],
+                    'status'       => ['required', Rule::in(['sheltered', 'adopted', 'fostered', 'deceased'])],
+                    'availability' => ['required', Rule::in(['available', 'unavailable'])],
                     'entry_date'   => ['required', 'date'],
                     'description'  => ['nullable', 'string'],
                     'observations' => ['nullable', 'string'],

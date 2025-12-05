@@ -67,7 +67,7 @@ class AnimalSeeder extends Seeder
             'microchip'    => 'CHIHU-0001',
             'birth_date'   => $hoy->copy()->subYears(10)->toDateString(),
             'status'       => 'sheltered',
-            'availability' => 'available',
+            'availability' => 'unavailable',
             'entry_date'   => $hoy->copy()->subMonths(3)->toDateString(),
             'description'  => 'Chihuahua senior recuperado, tranquilo y cariñoso, listo para adopción.',
             'observations' => 'Apto para hogar calmado; revisiones veterinarias periódicas.',
@@ -201,13 +201,38 @@ class AnimalSeeder extends Seeder
             'neutered'     => true,
             'microchip'    => 'BRETON-0001',
             'birth_date'   => $hoy->copy()->subYears(5)->toDateString(),
-            'status'       => 'adopted',
+            'status'       => 'sheltered',
             'availability' => 'unavailable',
             'entry_date'   => $hoy->copy()->subMonths(4)->toDateString(),
             'description'  => 'Mestizo de Bretón rescatado de la carretera. Sociable y juguetón.',
-            'observations' => 'Caso de éxito: actualmente adoptado.',
+            'observations' => 'En cuidados veterinarios.',
             'is_featured'  => true,
             'featured_at'  => $hoy->copy()->subWeeks(2)->toDateTimeString(),
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ciri (mestiza, ya adoptada)
+        |--------------------------------------------------------------------------
+        */
+        $ciri = Animal::create([
+            'name'         => 'Ciri',
+            'species'      => 'dog',
+            'breed'        => 'Mestiza',
+            'sex'          => 'female',
+            'size'         => 'medium',
+            'weight'       => 16.50,
+            'height'       => 48,
+            'neutered'     => true,
+            'microchip'    => 'MEST-0002',
+            'birth_date'   => $hoy->copy()->subYears(3)->toDateString(),
+            'status'       => 'adopted',
+            'availability' => 'unavailable',
+            'entry_date'   => $hoy->copy()->subMonths(6)->toDateString(),
+            'description'  => 'Perra mestiza ya adoptada, ejemplo de historia de éxito del refugio.',
+            'observations' => null,
+            'is_featured'  => false,
+            'featured_at'  => null,
         ]);
 
         /*
@@ -315,9 +340,9 @@ class AnimalSeeder extends Seeder
                 'alt_text' => 'Puchero jugando con otro perro en el refugio.',
             ],
             [
-                'animal'   => $puchero,
-                'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1764066208/39b22f4b-3d02-4394-b7b1-a522d6a0df46_io4cly.png',
-                'alt_text' => 'Puchero siendo adoptado por su nueva familia.',
+                'animal'   => $ciri,
+                'url'      => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1763755307/perro1_adop_0p1_ueihi7.png',
+                'alt_text' => 'Ciri en el refugio ya adoptada.',
             ],
         ];
 

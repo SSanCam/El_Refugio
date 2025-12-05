@@ -7,21 +7,25 @@ use App\Http\Controllers\Admin\AdoptionController;
 use App\Http\Controllers\Admin\FosterController;
 use App\Http\Controllers\Admin\UserController;
 
-Route::prefix('admin')->name('admin.')->group(function () {
-
+Route::middleware(['auth', 'verified', 'is_admin'])
+->prefix('admin')
+->name('admin.')
+->group(function () {
+    
     // Panel principal de administración
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
-
+    
     // Gestión de animales
     Route::resource('animals', AnimalController::class);
-
+    
     // Gestión de adopciones
     Route::resource('adoptions', AdoptionController::class);
-
+    
     // Gestión de acogidas
     Route::resource('fosters', FosterController::class);
-
+    
     // Gestión de usuarios (desde administración)
     Route::resource('users', UserController::class);
-});
+ 
+    });

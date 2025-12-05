@@ -1,6 +1,11 @@
 {{-- resources/views/public/forms/request.blade.php --}}
 @extends('layouts.public')
+
 @section('title', 'Solicitud de adopción o acogida | El Refugio')
+
+@section('meta_description', 'Inicia tu solicitud de adopción o acogida en El Refugio para que el equipo valore tu caso y se ponga en contacto contigo.')
+@section('meta_keywords', 'solicitud adopción, solicitud acogida, formulario adopción, formulario acogida, refugio de animales')
+
 
 @section('content')
 <section class="page-container">

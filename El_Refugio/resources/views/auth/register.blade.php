@@ -1,65 +1,120 @@
+{{-- resources/views/auth/register.blade.php --}}
 @extends('layouts.public')
 
-@section('title', 'Registro | El Refugio')
+@section('title', 'Crear cuenta | El Refugio')
+@section('meta_robots', 'noindex,follow')
 
 @section('content')
-    <main class="py-12" style="max-width: 480px; margin: 0 auto;">
+<section class="page-container">
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
+    <header class="section-block">
+        <h1 class="section-title">Crear una cuenta</h1>
+        <p class="form-page__intro">
+            Crea tu cuenta para poder gestionar solicitudes y datos del refugio, o para seguir
+            el estado de tus adopciones y acogidas.
+        </p>
+    </header>
 
-            <!-- Nombre -->
-            <div>
-                <x-input-label for="name" value="Nombre" />
-                <x-text-input id="name" class="block mt-1 w-full"
-                              type="text" name="name"
-                              :value="old('name')" required autofocus autocomplete="name" />
-                <x-input-error :messages="$errors->get('name')" class="mt-2" />
-            </div>
+    <section class="section-block">
+        <div class="contact-form-card">
 
-            <!-- Correo electrónico -->
-            <div class="mt-4">
-                <x-input-label for="email" value="Correo electrónico" />
-                <x-text-input id="email" class="block mt-1 w-full"
-                              type="email" name="email"
-                              :value="old('email')" required autocomplete="username" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
+            {{-- Errores de validación globales --}}
+            @if ($errors->any())
+                <div class="form-alert form-alert--error">
+                    <p><strong>Ha habido algunos errores:</strong></p>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-            <!-- Contraseña -->
-            <div class="mt-4">
-                <x-input-label for="password" value="Contraseña" />
+            <form method="POST" action="{{ route('register') }}" class="contact-form">
+                @csrf
 
-                <x-text-input id="password" class="block mt-1 w-full"
-                              type="password"
-                              name="password"
-                              required autocomplete="new-password" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-            </div>
+                {{-- Nombre --}}
+                <div class="form-group">
+                    <label for="name" class="form-label">
+                        Nombre
+                    </label>
+                    <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value="{{ old('name') }}"
+                        required
+                        autofocus
+                        class="form-input @error('name') is-invalid @enderror"
+                    >
+                    @error('name')
+                        <p class="form-error">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            <!-- Confirmar contraseña -->
-            <div class="mt-4">
-                <x-input-label for="password_confirmation" value="Repite la contraseña" />
+                {{-- Email --}}
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        Correo electrónico
+                    </label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value="{{ old('email') }}"
+                        required
+                        autocomplete="email"
+                        class="form-input @error('email') is-invalid @enderror"
+                    >
+                    @error('email')
+                        <p class="form-error">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                              type="password"
-                              name="password_confirmation"
-                              required autocomplete="new-password" />
-                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-            </div>
+                {{-- Contraseña --}}
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        Contraseña
+                    </label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        autocomplete="new-password"
+                        class="form-input @error('password') is-invalid @enderror"
+                    >
+                    @error('password')
+                        <p class="form-error">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            <div class="flex items-center justify-between mt-4">
-                <p class="text-sm text-gray-700">¿Ya tienes cuenta?</p>
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md
-                          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                   href="{{ route('login') }}">
-                    Inicia sesión
-                </a>
+                {{-- Confirmación de contraseña --}}
+                <div class="form-group">
+                    <label for="password_confirmation" class="form-label">
+                        Repite la contraseña
+                    </label>
+                    <input
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        type="password"
+                        required
+                        autocomplete="new-password"
+                        class="form-input"
+                    >
+                </div>
 
-                <x-primary-button class="ms-4">
-                    Registrarme
-                </x-primary-button>
-            </div>
-        </form>
-    </main>
+                <div class="contact-form__actions" style="justify-content: space-between; gap:.75rem;">
+                    <a href="{{ route('login') }}">
+                        ¿Ya tienes cuenta? Inicia sesión
+                    </a>
+                    <button type="submit" class="btn-cta--global">
+                        Registrarme
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+</section>
 @endsection

@@ -3,6 +3,9 @@
 
 @section('title', 'Contacto | El Refugio')
 
+@section('meta_description', 'Formulario de contacto de El Refugio para resolver dudas sobre adopciones, acogidas y la gestión del refugio.')
+@section('meta_keywords', 'contacto refugio de animales, dudas adopción, formulario de contacto, acogida perros gatos')
+
 @section('content')
 <section class="page-container">
 

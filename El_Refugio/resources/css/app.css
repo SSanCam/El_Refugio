@@ -95,6 +95,24 @@ a {
     z-index: 50;
 }
 
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; 
+}
+
+.header-link {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--color-secondary);
+    color: var(--color-bg);
+    padding: 5px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    text-decoration: none;
+}
+/* Contenedor para los botones */
 .header-inner {
     width: 100%;
     max-width: 1200px;
@@ -137,6 +155,24 @@ a {
 .btn-logo:hover {
     scale: 1.2;
 }
+
+/* Boton cerrar sesion con imagen*/
+.header-link--profile {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-left: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.header-link--profile img {
+    height: 50px;  
+    width: auto;
+    display: block;
+}
+
 
 /*---------  
    Footer  

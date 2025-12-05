@@ -52,9 +52,13 @@ class UserController extends Controller
             'national_id' => ['nullable', 'string', 'max:255'],
             'phone'       => ['nullable', 'string', 'max:255'],
             'address'     => ['nullable', 'string', 'max:255'],
-            'password'    => ['nullable', 'string', 'min:8'], // si no se indica, se genera aleatoria
+            'password'    => ['nullable', 'string', 'min:8'], 
         ]);
 
+        // Si el telefono está vacío o ya existe en la base de datos, asignar null
+        if (empty($validated['phone']) || User::where('phone', $validated['phone'])->exists()) {
+            $validated['phone'] = null;
+        }
         // Si no se proporciona contraseña, generar una aleatoria
         $validated['password'] = $validated['password'] ?? Str::random(16);
 
@@ -106,9 +110,26 @@ class UserController extends Controller
             'national_id' => ['nullable', 'string', 'max:255'],
             'phone'       => ['nullable', 'string', 'max:255'],
             'address'     => ['nullable', 'string', 'max:255'],
-            'password'    => ['nullable', 'string', 'min:8'], // si se indica, se actualiza
+            'password'    => ['nullable', 'string', 'min:8'], 
         ]);
 
+        // Normalizar teléfono: vacío => null
+        if (empty($validated['phone'])) {
+            $validated['phone'] = null;
+        } else {
+            // Comprobar que no esté usado por otro usuario
+            $phoneExists = User::where('phone', $validated['phone'])
+                ->where('id', '!=', $user->id)
+                ->exists();
+
+            if ($phoneExists) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['phone' => 'Ya existe otro usuario con este teléfono.']);
+            }
+        }
+        
+        // Si la contraseña está vacía, no actualizarla
         if (empty($validated['password'])) {
             unset($validated['password']);
         }
@@ -129,23 +150,26 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Evitar que un admin se elimine a sí mismo
         $authUser = Auth::user();
-
+        
+        // Evitar que un admin se elimine a sí mismo
         if ($authUser->id === $user->id) {
             return redirect()
                 ->route('admin.users.index')
                 ->with('error', 'No puedes eliminar tu propio usuario.');
         }
 
-        // Evitar eliminar usuarios con historial de adopciones o acogidas, en su lugar desactivarlos
-        if ($user->adoptions()->exists() || $user->fosters()->exists()) {
+    // Si tiene historial, desactivar en lugar de eliminar
+            if ($user->adoptions()->exists() || $user->fosters()->exists()) {
+                $user->update(['is_active' => false]);
+
             return redirect()
                 ->route('admin.users.index')
-                ->with('error', 'No se puede eliminar un usuario con adopciones o acogidas registradas.');
+                ->with('success', 'Usuario desactivado correctamente. Se conserva su historial.');
         }
 
-        $user->update(['is_active' => false]);
+        // Si no tiene registro de adopciones o acogidas, eliminar físicamente
+        $user->delete();
 
         return redirect()
             ->route('admin.users.index')

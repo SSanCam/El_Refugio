@@ -11,8 +11,12 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+   
     /**
-     * Display the user's profile form.
+     * Muestra el formulario del perfil del usuario.
+     * 
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
     public function edit(Request $request): View
     {
@@ -22,23 +26,37 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile information.
+     * Actualiza el perfil del usuario.
+     * 
+     * @param \App\Http\Requests\ProfileUpdateRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
+{
+    $data = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    // Normalizar teléfono: vacío => null
+    if (empty($data['phone'] ?? null)) {
+        $data['phone'] = null;
     }
 
+    $user = $request->user();
+    $user->fill($data);
+
+    if ($user->isDirty('email')) {
+        $user->email_verified_at = null;
+    }
+
+    $user->save();
+
+    return Redirect::route('profile.edit')->with('status', 'profile-updated');
+}
+
     /**
-     * Delete the user's account.
+     * Elimina la cuenta del usuario.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -50,8 +68,17 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        $user->delete();
-
+        //Si tiene historial, desactivar en lugar de eliminar
+        if ($user->adoptions()->exists() || $user->fosters()->exists()) {
+            $user->update(['is_active' => false]);
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return Redirect::to('/')->with('success', 'Usuario desactivado correctamente. Se conserva su historial.');
+        } else {
+            // En caso de no haber historiales registrados, eliminamos el usuario físicamente
+            $user->delete();
+        }
+        
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

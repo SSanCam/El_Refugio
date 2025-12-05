@@ -42,6 +42,7 @@ class FosterController extends Controller
     public function create()
     {
         $animals= Animal::where('status', AnimalStatus::SHELTERED->value)
+                ->orderBy('id')
                 ->get();
 
         return view('admin.fosters.create', compact('animals'));
@@ -164,9 +165,7 @@ class FosterController extends Controller
                       ->orWhere('id', $foster->animal_id);
             })->get();
 
-        $users = User::all();
-
-        return view('admin.fosters.edit', compact('foster', 'animals', 'users'));
+        return view('admin.fosters.edit', compact('foster', 'animals'));
     }
 
     /**

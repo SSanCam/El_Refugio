@@ -10,11 +10,14 @@ use App\Enums\AnimalStatus;
  * Controlador público para la visualización de animales.
  * Permite listar y ver detalles de los animales disponibles para adopción.
  */
+
 class AnimalController extends Controller{
 
   
     /**
      * listado público de animales disponibles para adopción
+     * 
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Contracts\View\View
      */
     public function index(Request $request){
@@ -24,7 +27,7 @@ class AnimalController extends Controller{
         $currentSex = $request->query('sex');
         $currentBreed = $request->query('breed');
 
-        $query = Animal::where('availability', AnimalAvailability::AVAILABLE);
+        $query = Animal::where('availability', AnimalAvailability::AVAILABLE->value);
 
         if ($currentSpecies && in_array($currentSpecies, ['dog', 'cat', 'other'], true)) {
             $query->where('species', $currentSpecies);
@@ -51,7 +54,6 @@ class AnimalController extends Controller{
             'description',
             'entry_date'
             ])
-            ->where('availability', AnimalAvailability::AVAILABLE->value)
             ->orderBy('created_at', 'desc')
             ->paginate(15)
             ->withQueryString();
@@ -67,10 +69,11 @@ class AnimalController extends Controller{
 
         /**
          * Muestra la información de un animal concreto 
+         * 
          * @param mixed $id
          * @return \Illuminate\Contracts\View\View
          */
-        public function show($id)
+        public function show(int $id)
     {
         $animal = Animal::select([
                 'id',
@@ -93,15 +96,11 @@ class AnimalController extends Controller{
 
     public function happyEndings()
     {
-        $animals = Animal::where('status', AnimalStatus::ADOPTED)
+        $animals = Animal::where('status', AnimalStatus::ADOPTED->value)
             ->orderBy('updated_at', 'desc')
             ->select([
                 'id',
-                'species',
-                'name',
-                'sex',
-                'size',
-                'birth_date',
+                'name'
             ])
             ->paginate(15);
 

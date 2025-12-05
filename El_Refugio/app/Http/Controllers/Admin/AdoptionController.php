@@ -42,8 +42,8 @@ class AdoptionController extends Controller
      */
     public function create()
     {
-        $animals = Animal::where('status', AnimalStatus::SHELTERED->value || AnimalStatus::FOSTERED->value)
-                ->where('availability', AnimalAvailability::AVAILABLE->value)
+        $animals = Animal::where('availability', AnimalAvailability::AVAILABLE->value)
+                ->orderBy('id')
                 ->get();
         return view('admin.adoptions.create', compact('animals'));
     }
@@ -74,7 +74,6 @@ class AdoptionController extends Controller
 
         // Verificar que el animal sigue siendo adoptable (servidor, no solo en el formulario)
         $animal = Animal::where('id', $validated['animal_id'])
-            ->where('status', AnimalStatus::SHELTERED->value)
             ->where('availability', AnimalAvailability::AVAILABLE->value)
             ->firstOrFail();
 
@@ -165,8 +164,6 @@ class AdoptionController extends Controller
     public function update(Request $request, Adoption $adoption)
     {
         $validated = $request->validate([
-            'animal_id' => ['required', 'exists:animals,id'],
-            'user_id' => ['required', 'exists:users,id'],
             'adoption_date' => ['required', 'date'],
             'contract_file' => ['nullable', 'string'],
             'comments' => ['nullable', 'string'],
