@@ -76,28 +76,26 @@ public function update(ProfileUpdateRequest $request): RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
+    
         $user = $request->user();
 
-        Auth::logout();
-
+        if (! $user){
+            return redirect()->route('public.home');
+        }
         //Si tiene historial, desactivar en lugar de eliminar
         if ($user->adoptions()->exists() || $user->fosters()->exists()) {
             $user->update(['is_active' => false]);
+            Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-            return Redirect::to('/')->with('success', 'Usuario desactivado correctamente. Se conserva su historial.');
+            return Redirect()
+                ->route('public.home')
+                ->with('success', 'Usuario desactivado correctamente');
         } else {
             // En caso de no haber historiales registrados, eliminamos el usuario físicamente
             $user->delete();
         }
-        
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return Redirect()->route('public.home');
     }
 }

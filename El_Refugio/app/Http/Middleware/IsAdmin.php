@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth;
 class IsAdmin
 {
     /**
@@ -15,11 +14,11 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user();
+        $user = $request->user();
 
         // Si no hay usuario autenticado o no es admin → bloquear
         if (!$user || $user->role !== 'admin') {
-            return redirect('/')
+            return redirect()->route('public.home')
                 ->with('error', 'No tienes permisos para acceder a esta sección.');
         }
 

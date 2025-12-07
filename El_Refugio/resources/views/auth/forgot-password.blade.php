@@ -1,4 +1,4 @@
-{{-- resources/views/auth/forgot-password-confirm.blade.php (por ejemplo) --}}
+{{-- resources/views/auth/forgot-password.blade.php --}}
 @extends('layouts.public')
 @section('title', 'Recuperar contraseña | El Refugio')
 
@@ -13,10 +13,16 @@
     {{-- Tarjeta de mensaje --}}
     <section class="section-block">
         <div class="contact-form-card">
-            <p>
-                Se ha enviado una clave de acceso temporal a tu correo electrónico.
+            @if (session('status'))
+            <p class="form-alert form-alert--success" style="margin-top: 1rem;">
+                {{ session('status') }}
             </p>
-            <div class="contact-form__actions" style="margin-top: 1.5rem;">
+            @endif
+
+            <p>
+                Se ha enviado un enlace de reestablecimiento de contraseña a tu correo electrónico.
+            </p>
+            <div class="contact-form__actions">
                 <a href="{{ route('login') }}" class="btn-cta--global">
                     Volver a iniciar sesión
                 </a>

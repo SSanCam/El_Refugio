@@ -40,7 +40,18 @@ d{{-- resources/views/profile/show.blade.php --}}
                     Editar mis datos
                 </button>
             </div>
+            {{-- Botón para eliminar / desactivar cuenta --}}
+            <div class="contact-form__actions" style="margin-top: 2rem;">
+                <form method="POST" action="{{ route('profile.destroy') }}">
+                    @csrf
+                    @method('DELETE')
 
+                    <button type="submit" class="btn-cta--global"
+                        onclick="return confirm('¿Seguro que quieres eliminar tu cuenta?')">
+                        Eliminar mi cuenta
+                    </button>
+                </form>
+            </div>
             {{-- Contenedor de edición de perfil --}}
             <div id="profile-edit-form" class="profile-edit-container" data-profile-edit-container hidden>
                 <form method="POST" action="{{ route('profile.update') }}" class="contact-form">
@@ -51,8 +62,7 @@ d{{-- resources/views/profile/show.blade.php --}}
                     <div class="form-group">
                         <label for="name" class="form-label">Nombre</label>
                         <input id="name" name="name" type="text" class="form-input @error('name') is-invalid @enderror"
-                            value="{{ old('name', Auth::user()->name) }}"
-                            placeholder="Tu nuevo nombre">
+                            value="{{ old('name', Auth::user()->name) }}" placeholder="Tu nuevo nombre">
                         @error('name')
                         <p class="form-error"> {{ $message }} </p>
                         @enderror
@@ -62,8 +72,7 @@ d{{-- resources/views/profile/show.blade.php --}}
                         <label for="email" class="form-label">Correo electrónico</label>
                         <input id="email" name="email" type="email" required
                             class="form-input @error('email') is-invalid @enderror"
-                            value="{{ old('email', Auth::user()->email) }}"
-                            placeholder="ejemplo@correo.es">
+                            value="{{ old('email', Auth::user()->email) }}" placeholder="ejemplo@correo.es">
                         @error('email')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -73,10 +82,7 @@ d{{-- resources/views/profile/show.blade.php --}}
                         <label for="profile-picture" class="form-label">
                             Imagen de perfil (URL)
                         </label>
-                        <input
-                            id="profile_picture"
-                            name="profile_picture"
-                            type="url"
+                        <input id="profile_picture" name="profile_picture" type="url"
                             class="form-input @error('profile_picture') is-invalid @enderror"
                             value="{{ old('profile_picture', Auth::user()->profile_picture) }}"
                             placeholder="https://...">
@@ -85,12 +91,8 @@ d{{-- resources/views/profile/show.blade.php --}}
                     {{-- Cambiar clave --}}
                     <div class="form-group">
                         <label for="password" class="form-label">Contraseña</label>
-                        <input
-                            id="password"
-                            name="password"
-                            type="text"
-                            class="form-input @error('password') is-invalid @enderror"
-                            placeholder="Nueva contraseña">
+                        <input id="password" name="password" type="text"
+                            class="form-input @error('password') is-invalid @enderror" placeholder="Nueva contraseña">
                     </div>
 
                     <div class="contact-form__actions">
@@ -100,6 +102,7 @@ d{{-- resources/views/profile/show.blade.php --}}
                     </div>
 
                 </form>
+
             </div>
 
         </div>
