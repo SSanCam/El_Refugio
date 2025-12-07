@@ -32,7 +32,7 @@
 .form-label__hint {
     font-weight: normal;
     font-size: 0.85rem;
-    color: var(--color-neutral-soft);
+    color: var(--color-primary);
 }
 
 .form-input,

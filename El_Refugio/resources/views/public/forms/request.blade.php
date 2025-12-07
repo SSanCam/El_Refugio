@@ -11,7 +11,7 @@
 <section class="page-container">
 
     <header class="section-block">
-        <h1 class="section-title">Solicitud de adopción o acogida</h1>
+        <h1 class="section-title">!Tu amigo peludo te está esperando!</h1>
         <p class="form-page__intro">
             Rellena este formulario para iniciar una solicitud de adopción o acogida.
             El equipo del refugio revisará tu solicitud y se pondrá en contacto contigo

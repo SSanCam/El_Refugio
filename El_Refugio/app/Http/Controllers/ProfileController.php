@@ -8,10 +8,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
    
+    /**
+     * Muestra el perfil del usuario autenticado.
+     * 
+     * @return \Illuminate\View\View
+     */
+    public function show(): View
+    {
+        $user = Auth::user();
+        return view('profile.show', compact('user'));
+    }
+
     /**
      * Muestra el formulario del perfil del usuario.
      * 
@@ -31,25 +43,29 @@ class ProfileController extends Controller
      * @param \App\Http\Requests\ProfileUpdateRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+public function update(ProfileUpdateRequest $request): RedirectResponse
 {
     $data = $request->validated();
 
-    // Normalizar teléfono: vacío => null
     if (empty($data['phone'] ?? null)) {
         $data['phone'] = null;
     }
 
-    $user = $request->user();
+    $user = Auth::user();
+
+    if (! $user instanceof User) {
+        abort(401, 'Usuario no autenticado');
+    }
+
     $user->fill($data);
 
-    if ($user->isDirty('email')) {
+    if (array_key_exists('email', $data) && $user->isDirty('email')) {
         $user->email_verified_at = null;
     }
 
     $user->save();
 
-    return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    return Redirect::route('profile.show')->with('status', 'profile-updated');
 }
 
     /**

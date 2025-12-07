@@ -13,6 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -27,10 +28,16 @@
                 </header>
             @endisset
 
+            <!-- Header -->
+            <x-header/>
+
             <!-- Page Content -->
             <main>
                 {{ $slot }}
             </main>
+
+            <!-- Footer -->
+            <x-footer/>
         </div>
     </body>
 </html>

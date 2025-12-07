@@ -21,7 +21,7 @@
             @if (auth()->user()->role === 'admin')
             <a href="{{ route('admin.dashboard') }}" class="header-link">Panel admin</a>
             @else
-            <a href="{{ route('profile.edit') }}" class="header-link">Mi área</a>
+            <a href="{{ route('profile.show') }}" class="header-link">Mi área</a>
             @endif
 
             <form action="{{ route('logout') }}" method="POST" style="display:inline;">

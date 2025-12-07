@@ -1,25 +1,28 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+{{-- resources/views/auth/forgot-password-confirm.blade.php (por ejemplo) --}}
+@extends('layouts.public')
+@section('title', 'Recuperar contraseña | El Refugio')
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@section('content')
+<section class="page-container">
 
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
+    {{-- Cabecera --}}
+    <header class="section-block">
+        <h1 class="section-title">Revisa tu correo</h1>
+    </header>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    {{-- Tarjeta de mensaje --}}
+    <section class="section-block">
+        <div class="contact-form-card">
+            <p>
+                Se ha enviado una clave de acceso temporal a tu correo electrónico.
+            </p>
+            <div class="contact-form__actions" style="margin-top: 1.5rem;">
+                <a href="{{ route('login') }}" class="btn-cta--global">
+                    Volver a iniciar sesión
+                </a>
+            </div>
         </div>
+    </section>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</section>
+@endsection
