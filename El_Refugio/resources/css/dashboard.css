@@ -1,0 +1,53 @@
+/* ======== CONTENEDOR DE LISTADOS ADMIN ======== */
+.admin-table-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--color-bg-light);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ======== TABLAS ======== */
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.table-admin {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table-admin thead {
+    background: var(--color-primary);
+    color: white;
+}
+
+.table-admin th,
+.table-admin td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+.table-admin tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.table-admin tbody tr:nth-child(even) {
+    background: #f5f5f5;
+}
+
+/* ======== BOTONES PEQUEÑOS ======== */
+.btn-sm {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.80rem !important;
+    border-radius: 8px !important;
+}
+
+.btn-danger {
+    background: #b74a4a !important;
+    color: #fff;
+}

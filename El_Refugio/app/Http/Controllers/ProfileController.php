@@ -51,6 +51,12 @@ public function update(ProfileUpdateRequest $request): RedirectResponse
         $data['phone'] = null;
     }
 
+    if (empty($data['password'])) {
+        unset($data['password']);
+    } else {
+        $data['password'] = bcrypt($data['password']);
+    }
+    
     $user = Auth::user();
 
     if (! $user instanceof User) {

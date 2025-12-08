@@ -34,9 +34,11 @@ d{{-- resources/views/profile/show.blade.php --}}
 
             {{-- Mostrar/ocultar edición --}}
             <div class="contact-form__actions" style="margin-top: 1.5rem;">
-                <button class="btn-cta--global" type="button" data-profile-edit-toggle
-                    data-label-open="Editar mis datos" data-label-close="Cerrar edición" aria-expanded="false"
-                    aria-controls="profile-edit-form">
+                <button class="btn-cta--global"
+                        type="button"
+                        data-toggle="profile-edit"
+                        data-label-open="Editar mis datos"
+                        data-label-close="Cerrar edición">
                     Editar mis datos
                 </button>
             </div>
@@ -53,7 +55,10 @@ d{{-- resources/views/profile/show.blade.php --}}
                 </form>
             </div>
             {{-- Contenedor de edición de perfil --}}
-            <div id="profile-edit-form" class="profile-edit-container" data-profile-edit-container hidden>
+            <div class="profile-edit-container"
+                data-target="profile-edit"
+                hidden>
+
                 <form method="POST" action="{{ route('profile.update') }}" class="contact-form">
                     @csrf
                     @method('PATCH')

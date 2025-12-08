@@ -3,6 +3,7 @@
     ---------------------------------------- */
     @import "animals.css";
     @import "forms.css";
+    @import "dashboard.css";
 
     /* -------------------------
    Variables de tema (CLARO)
@@ -233,7 +234,7 @@ main {
    Secciones base
    --------------- */
 .page-container {
-    max-width: 1200px;
+    width: 90%;
     margin: 0 auto;
     padding: 2rem 1.5rem;
 }

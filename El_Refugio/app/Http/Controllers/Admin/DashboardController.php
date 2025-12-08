@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 /**
  * Controlador del panel de administración
@@ -20,4 +19,5 @@ class DashboardController extends Controller
     {
         return view('admin.dashboard');
     }
+
 }

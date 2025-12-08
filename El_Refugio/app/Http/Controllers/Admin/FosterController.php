@@ -22,14 +22,29 @@ class FosterController extends Controller
      * 
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $fosters = Foster::with(['animal', 'user'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $search = $request->input('search');
 
-        return view('admin.fosters.index', compact('fosters'));
+        $fosters = Foster::with(['animal', 'user'])
+            ->when($search, function ($query) use ($search) {
+                $query
+                    ->whereHas('animal', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                    });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->appends(['search' => $search]);
+
+        return view('admin.fosters.index', compact('fosters', 'search'));
     }
+
 
     /**
      * Formulario para crear una nueva acogida.

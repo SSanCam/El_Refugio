@@ -19,7 +19,8 @@
 
             @auth
             @if (auth()->user()->role === 'admin')
-            <a href="{{ route('admin.dashboard') }}" class="header-link">Panel admin</a>
+            <a href="{{ route('profile.show') }}" class="header-link">Mi área</a>
+            <a href="{{ route('admin.dashboard') }}" class="header-link">Administración</a>
             @else
             <a href="{{ route('profile.show') }}" class="header-link">Mi área</a>
             @endif
@@ -32,7 +33,7 @@
                 </button>
             </form>
             @endauth
-            
+
         </nav>
 
     </div>

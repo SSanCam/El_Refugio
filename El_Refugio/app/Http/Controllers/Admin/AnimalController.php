@@ -18,19 +18,32 @@ class AnimalController extends Controller
      * 
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $animals = Animal::orderBy('created_at', 'desc')->paginate(20);
+        $search = $request->input('search');
 
-        return view('admin.animals.index', compact('animals'));
+        $animals = Animal::query()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('breed', 'like', "%{$search}%")
+                    ->orWhere('microchip', 'like', "%{$search}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->appends(['search' => $search]);
+
+        return view('admin.animals.index', compact('animals', 'search'));
     }
+
 
     /**
      * Mostrar el formulario para crear un nuevo animal.
+     * 
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function create()
     {
-        return view('admin.animals.create');
+        return redirect()->route('admin.animals.index');
     }
 
     /**
@@ -60,7 +73,14 @@ class AnimalController extends Controller
             'is_featured'  => ['boolean'],
         ]);
 
-        Animal::create($validated);
+        $animal = Animal::create($validated);
+
+        if ($request->photo_url) {
+            $animal->images()->create([
+                'url' => $request->photo_url,
+                'alt_text' => $request->photo_alt,
+            ]);
+        }
 
         return redirect()
             ->route('admin.animals.index')
@@ -82,11 +102,11 @@ class AnimalController extends Controller
      * Mostrar el formulario para editar un animal específico.
      * 
      * @param \App\Models\Animal $animal
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function edit(Animal $animal)
     {
-        return view('admin.animals.edit', compact('animal'));
+         return redirect()->route('admin.animals.index')->with('edit_animal_id', $animal->id);
     }
 
     /**
@@ -119,6 +139,14 @@ class AnimalController extends Controller
 
                 $animal->update($validated);
 
+                if ($request->photo_url) {
+                    $animal->images()->create([
+                        'url' => $request->photo_url,
+                        'alt_text' => $request->photo_alt,
+                    ]);
+                }
+
+
                 return redirect()
                     ->route('admin.animals.index')
                     ->with('success', 'Información del animal actualizada correctamente.');
@@ -138,4 +166,29 @@ class AnimalController extends Controller
             ->route('admin.animals.index')
             ->with('success', 'Animal eliminado correctamente.');
     }
+
+    /**
+     * Metodo para agregar una fotografia a un animal concreto
+     * 
+     * @param Animal $animal
+     * @param string $photo URL de la imagen 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addPhoto(Request $request, Animal $animal)
+    {
+        $validated = $request->validate([
+            'photo_url' => ['required', 'url'],
+            'photo_alt' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $animal->photos()->create([
+            'url' => $validated['photo_url'],
+            'alt_text' => $validated['photo_alt'],
+        ]);
+
+        return redirect()
+            ->route('admin.animals.index')
+            ->with('success', 'Fotografía agregada correctamente.');
+    }
+
 }

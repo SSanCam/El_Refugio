@@ -234,7 +234,47 @@ class AnimalSeeder extends Seeder
             'is_featured'  => false,
             'featured_at'  => null,
         ]);
-
+        
+        // Prueba perro sin imagen 
+        $pruebaperro = Animal::create([
+            'name'         => 'sinfoto',
+            'species'      => 'dog',
+            'breed'        => 'Mestiza',
+            'sex'          => 'male',
+            'size'         => 'medium',
+            'weight'       => 16.50,
+            'height'       => 48,
+            'neutered'     => true,
+            'microchip'    => 'MEST-1234',
+            'birth_date'   => $hoy->copy()->subYears(3)->toDateString(),
+            'status'       => 'sheltered',
+            'availability' => 'available',
+            'entry_date'   => $hoy->copy()->subMonths(6)->toDateString(),
+            'description'  => 'Perra mestiza ya adoptada, ejemplo de historia de éxito del refugio.',
+            'observations' => null,
+            'is_featured'  => false,
+            'featured_at'  => null,
+        ]);
+        // Prueba gato sin imagen 
+        $pruebagato = Animal::create([
+            'name'         => 'gato sin foto',
+            'species'      => 'cat',
+            'breed'        => 'small',
+            'sex'          => 'male',
+            'size'         => 'medium',
+            'weight'       => 16.50,
+            'height'       => 48,
+            'neutered'     => true,
+            'microchip'    => 'cat-1234',
+            'birth_date'   => $hoy->copy()->subYears(3)->toDateString(),
+            'status'       => 'sheltered',
+            'availability' => 'available',
+            'entry_date'   => $hoy->copy()->subMonths(6)->toDateString(),
+            'description'  => '---',
+            'observations' => null,
+            'is_featured'  => false,
+            'featured_at'  => null,
+        ]);
         /*
         |--------------------------------------------------------------------------
         | Imágenes asociadas (AnimalImage)

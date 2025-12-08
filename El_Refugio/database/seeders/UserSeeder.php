@@ -74,5 +74,15 @@ class UserSeeder extends Seeder
             'is_active'         => true,
             'email_verified_at' => now(),
         ]);
+
+        User::factory()->create([
+            'name'              => 'prueba',
+            'last_name'         => 'user',
+            'email'             => 'pruebasweb@refugio.test',
+            'password'          => Hash::make('password'),
+            'role'              => 'user',
+            'is_active'         => true,
+            'email_verified_at' => now(),
+        ]);
     }
 }

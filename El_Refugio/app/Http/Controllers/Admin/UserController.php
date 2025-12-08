@@ -19,21 +19,34 @@ class UserController extends Controller
      * 
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::orderBy('created_at', 'desc')->paginate(20);
+        $search = $request->input('search');
 
-        return view('admin.users.index', compact('users'));
+        $users = User::query()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%"); // ← AÑADIDO
+            })
+            ->orderBy('id')
+            ->paginate(20)
+            ->appends(['search' => $search]);
+
+        return view('admin.users.index', compact('users', 'search'));
     }
+
+
 
     /**
      * Muestra el formulario para crear un nuevo usuario.
      * 
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function create()
     {
-        return view('admin.users.create');
+        return redirect()->route('admin.users.index');
     }
 
     /**
@@ -86,11 +99,12 @@ class UserController extends Controller
      * Muestra el formulario para editar un usuario concreto.
      * 
      * @param \App\Models\User $user
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+        return redirect()->route('admin.users.index')
+                        ->with('edit_user_id', $user->id);
     }
 
     /**

@@ -7,6 +7,6 @@ window.Alpine = Alpine;
 
 Alpine.start();
 
-import './editProfile';
+import './globals';
 import './adminDashboard';
 import './animals';

@@ -26,14 +26,29 @@ class AdoptionController extends Controller
      * 
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $adoptions = Adoption::with(['animal', 'user'])
-            ->orderBy('adoption_date', 'desc')
-            ->paginate(20);
+        $search = $request->input('search');
 
-        return view('admin.adoptions.index', compact('adoptions'));
+        $adoptions = Adoption::with(['animal', 'user'])
+            ->when($search, function ($query) use ($search) {
+                $query
+                    ->whereHas('animal', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                    });
+            })
+            ->orderBy('adoption_date', 'desc')
+            ->paginate(20)
+            ->appends(['search' => $search]);
+
+        return view('admin.adoptions.index', compact('adoptions', 'search'));
     }
+
 
     /**
      * Formulario para registrar una nueva adopción.
