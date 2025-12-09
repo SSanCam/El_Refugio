@@ -10,42 +10,24 @@ use Carbon\Carbon;
 
 class FosterSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $marta = User::where('email', 'marta.acogida@ejemplo.test')->first();
+        $animals = Animal::where('status', 'fostered')->get();
+        $users   = User::all();
 
-        $dama    = Animal::where('name', 'Dama')->first();
-        $zurrapa = Animal::where('name', 'Zurrapa')->first();
+        foreach ($animals as $animal) {
+            $tutor = $users->random();
 
-        $hoy = Carbon::now();
-
-        /*
-        |--------------------------------------------------------------------------
-        | 1) Dama – acogida ACTIVA con Marta
-        |--------------------------------------------------------------------------
-        | Dama no está disponible para adopción, pero sí en acogida.
-        */
-        if ($marta && $dama) {
             Foster::factory()->create([
-                'user_id'   => $marta->id,
-                'animal_id' => $dama->id,
-                'comments'  => 'Acogida temporal para que Dama críe a sus cachorros en un entorno tranquilo.',
-            ]);
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | 2) Zurrapa – acogida FINALIZADA (histórico, mismo usuario)
-        |--------------------------------------------------------------------------
-        */
-        if ($marta && $zurrapa) {
-            Foster::factory()->create([
-                'user_id'   => $marta->id,
-                'animal_id' => $zurrapa->id,
-                'comments'  => 'Acogida finalizada; Zurrapa vuelve al refugio para difusión de adopción.',
+                'animal_id'     => $animal->id,
+                'user_id'       => $tutor->id,
+                'start_date'    => Carbon::now()
+                    ->subDays(rand(10, 200))
+                    ->toDateString(),
+                'end_date'      => rand(0, 1)
+                    ? Carbon::now()->subDays(rand(1, 9))->toDateString()
+                    : null,
+                'contract_file' => 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1765296417/contr_fostered_q9royr.png',
             ]);
         }
     }

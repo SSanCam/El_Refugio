@@ -10,16 +10,8 @@
         <h1 class="section-title">Gestión de Animales</h1>
         <hr class="section-divider">
 
-        <div class="dashboard-actions">
-            <a href="{{ route('admin.users.index') }}" class="btn-cta--global">Gestionar usuarios</a>
-            <a href="{{ route('admin.animals.index') }}" class="btn-cta--global">Gestionar animales</a>
-            <a href="{{ route('admin.adoptions.index') }}" class="btn-cta--global">Ver adopciones</a>
-            <a href="{{ route('admin.fosters.index') }}" class="btn-cta--global">Ver acogidas</a>
-        </div>
+        <x-admin-nav />
     </header>
-
-    <a href="{{ route('admin.dashboard') }}">⬅️ Volver al panel</a>
-    <hr class="section-divider">
 
     {{-- Barra de filtros --}}
     <section class="filter-bar">
@@ -278,8 +270,10 @@
                 </tbody>
             </table>
 
+            {{-- Paginacion de la tabla --}}
             <div style="margin-top: 1rem;">
-                {{ $animals->links() }}
+                <x-pagination :currentPage="$animals->currentPage()" :lastPage="$animals->lastPage()"
+                    :prevPageUrl="$animals->previousPageUrl()" :nextPageUrl="$animals->nextPageUrl()" />
             </div>
 
             @else

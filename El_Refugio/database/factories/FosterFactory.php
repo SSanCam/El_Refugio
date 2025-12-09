@@ -23,4 +23,16 @@ class FosterFactory extends Factory
             'comments'  => $this->faker->optional()->sentence(),
         ];
     }
+
+    /**
+     * Estado con contrato adjunto
+     */
+    public function withContract(): static
+    {
+        return $this->state(fn () => [
+            'contract_file' =>
+                'https://res.cloudinary.com/dkfvic2ks/image/upload/v1765296417/contr_fostered_q9royr.png',
+        ]);
+    }
+
 }

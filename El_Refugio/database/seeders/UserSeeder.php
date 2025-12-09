@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -13,76 +13,41 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // ─────────────────────────────────────
-        //  ADMINISTRADORES (con acceso web)
-        // ─────────────────────────────────────
-
-        User::factory()->create([
-            'name'              => 'Admin',
-            'last_name'         => 'Principal',
-            'email'             => 'admin@refugio.test',
-            'password'          => Hash::make('password'),
-            'role'              => 'admin',
-            'is_active'         => true,
-            'email_verified_at' => now(),
+        // ---------------------------------------------------------
+        // 1) USUARIO ADMIN PRINCIPAL
+        // ---------------------------------------------------------
+        User::create([
+            'name'        => 'Admin',
+            'last_name'   => 'Principal',
+            'email'       => 'admin@refugio.test',
+            'password'    => Hash::make('password'),
+            'role'        => 'admin',
+            'national_id' => null,
+            'phone'       => null,
+            'address'     => 'Refugio Central',
+            'is_active'   => true,
+            'profile_picture' => null,
         ]);
 
-        User::factory()->create([
-            'name'              => 'Admin',
-            'last_name'         => 'Adopciones',
-            'email'             => 'adopciones@refugio.test',
-            'password'          => Hash::make('password'),
-            'role'              => 'admin',
-            'is_active'         => true,
-            'email_verified_at' => now(),
+        // ---------------------------------------------------------
+        // 2) USUARIO NORMAL DE PRUEBA
+        // ---------------------------------------------------------
+        User::create([
+            'name'        => 'Usuario',
+            'last_name'   => 'Demo',
+            'email'       => 'usuario@refugio.test',
+            'password'    => Hash::make('password'),
+            'role'        => 'user',
+            'national_id' => null,
+            'phone'       => null,
+            'address'     => 'Calle Ejemplo 123',
+            'is_active'   => true,
+            'profile_picture' => null,
         ]);
 
-        // ─────────────────────────────────────
-        //  USUARIO SIN REGISTRO WEB (adopción en oficina)
-        // ─────────────────────────────────────
-        // Persona que ha adoptado pero NO tiene cuenta activa en la web.
-        // is_active = false simula "sin acceso web (de momento)".
-        User::factory()->create([
-            'name'              => 'Ana',
-            'last_name'         => 'Oficina',
-            'email'             => 'adoptante.oficina@ejemplo.test',
-            'role'              => 'user',
-            'is_active'         => false,
-            'email_verified_at' => null,
-        ]);
-
-        // ─────────────────────────────────────
-        //  USUARIOS NORMALES (CON REGISTRO WEB)
-        // ─────────────────────────────────────
-
-        // 1) Registro web + ADOPCIÓN
-        User::factory()->create([
-            'name'              => 'Carlos',
-            'last_name'         => 'Adoptante',
-            'email'             => 'carlos.adoptante@ejemplo.test',
-            'role'              => 'user',
-            'is_active'         => true,
-            'email_verified_at' => now(),
-        ]);
-
-        // 2) Registro web + ADOPCIÓN + ACOGIDA
-        User::factory()->create([
-            'name'              => 'Marta',
-            'last_name'         => 'Acogida',
-            'email'             => 'marta.acogida@ejemplo.test',
-            'role'              => 'user',
-            'is_active'         => true,
-            'email_verified_at' => now(),
-        ]);
-
-        User::factory()->create([
-            'name'              => 'prueba',
-            'last_name'         => 'user',
-            'email'             => 'pruebasweb@refugio.test',
-            'password'          => Hash::make('password'),
-            'role'              => 'user',
-            'is_active'         => true,
-            'email_verified_at' => now(),
-        ]);
+        // ---------------------------------------------------------
+        // 3) 18 USUARIOS FAKER
+        // ---------------------------------------------------------
+        User::factory(18)->create();
     }
 }

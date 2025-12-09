@@ -33,6 +33,10 @@
                 </button>
             </form>
             @endauth
+            <button id="themeToggle" class="theme-toggle">
+                <img src="https://res.cloudinary.com/dkfvic2ks/image/upload/v1765317293/image-removebg-preview_7_plif06.png"
+                    alt="Cambiar tema">
+            </button>
 
         </nav>
 

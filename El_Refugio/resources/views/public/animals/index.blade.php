@@ -2,7 +2,8 @@
 @extends('layouts.public')
 
 @section('title', 'Peludos | El Refugio')
-@section('meta_description', 'Consulta los animales que actualmente están disponibles en el refugio para adopción o acogida.')
+@section('meta_description', 'Consulta los animales que actualmente están disponibles en el refugio para adopción o
+acogida.')
 @section('meta_keywords', )
 
 @endsection
@@ -18,88 +19,44 @@
             iniciar una solicitud de adopción o acogida.
         </p>
 
-        {{-- Filtros principales por especie --}}
-        <nav class="animals-filters">
-            <a href="{{ route('public.animals.index') }}"
-                class="btn-cta--global {{ empty($currentSpecies) ? 'is-active' : '' }}">
-                Todos
-            </a>
+        {{-- Barra de filtros públicos --}}
+        <section class="animals-filters-bar">
+            <form method="GET" action="{{ route('public.animals.index') }}" class="animals-filters-bar__form">
+                {{-- Ver todos --}}
+                <a href={{ '/peludos' }}>Ver todos</a>
+                {{-- Especie --}}
+                <select name="species" class="animals-filter-select">
+                    <option value="">Especie</option>
+                    <option value="dog" {{ ($species ?? '') === 'dog' ? 'selected' : '' }}>Perros</option>
+                    <option value="cat" {{ ($species ?? '') === 'cat' ? 'selected' : '' }}>Gatos</option>
+                </select>
 
-            <a href="{{ route('public.animals.index', ['species' => 'dog']) }}"
-                class="btn-cta--global {{ $currentSpecies === 'dog' ? 'is-active' : '' }}">
-                Perros
-            </a>
+                {{-- Tamaño --}}
+                <select name="size" class="animals-filter-select">
+                    <option value="">Tamaño</option>
+                    <option value="small" {{ ($size ?? '') === 'small' ? 'selected' : '' }}>Pequeños</option>
+                    <option value="medium" {{ ($size ?? '') === 'medium' ? 'selected' : '' }}>Medianos</option>
+                    <option value="large" {{ ($size ?? '') === 'large' ? 'selected' : '' }}>Grandes</option>
+                </select>
 
-            <a href="{{ route('public.animals.index', ['species' => 'cat']) }}"
-                class="btn-cta--global {{ $currentSpecies === 'cat' ? 'is-active' : '' }}">
-                Gatos
-            </a>
-        </nav>
+                {{-- Sexo --}}
+                <select name="sex" class="animals-filter-select">
+                    <option value="">Sexo</option>
+                    <option value="female" {{ ($sex ?? '') === 'female' ? 'selected' : '' }}>Hembra</option>
+                    <option value="male" {{ ($sex ?? '') === 'male' ? 'selected' : '' }}>Macho</option>
+                </select>
 
-        {{-- Filtros secundarios: solo si hay especie seleccionada --}}
-        @if (in_array($currentSpecies, ['dog', 'cat'], true))
+                <button type="submit" class="btn-cta--global">
+                    Filtrar
+                </button>
 
-        {{-- Tamaño --}}
-        <nav class="animals-filters animals-filters--sub">
-            <a href="{{ route('public.animals.index', array_filter([
-                'species' => $currentSpecies,
-                'sex'     => $currentSex,
-            ])) }}" class="btn-cta--global {{ empty($currentSize) ? 'is-active' : '' }}">
-                Todos los tamaños
-            </a>
-
-            <a href="{{ route('public.animals.index', array_filter([
-                'species' => $currentSpecies,
-                'sex'     => $currentSex,
-                'size'    => 'small',
-            ])) }}" class="btn-cta--global {{ $currentSize === 'small' ? 'is-active' : '' }}">
-                Pequeños
-            </a>
-
-            <a href="{{ route('public.animals.index', array_filter([
-                'species' => $currentSpecies,
-                'sex'     => $currentSex,
-                'size'    => 'medium',
-            ])) }}" class="btn-cta--global {{ $currentSize === 'medium' ? 'is-active' : '' }}">
-                Medianos
-            </a>
-
-            <a href="{{ route('public.animals.index', array_filter([
-                'species' => $currentSpecies,
-                'sex'     => $currentSex,
-                'size'    => 'large',
-            ])) }}" class="btn-cta--global {{ $currentSize === 'large' ? 'is-active' : '' }}">
-                Grandes
-            </a>
-        </nav>
-
-        {{-- Sexo --}}
-        <nav class="animals-filters animals-filters--sub">
-            <a href="{{ route('public.animals.index', array_filter([
-                'species' => $currentSpecies,
-                'size'    => $currentSize,
-            ])) }}" class="btn-cta--global {{ empty($currentSex) ? 'is-active' : '' }}">
-                Cualquier sexo
-            </a>
-
-            <a href="{{ route('public.animals.index', array_filter([
-                'species' => $currentSpecies,
-                'size'    => $currentSize,
-                'sex'     => 'female',
-            ])) }}" class="btn-cta--global {{ $currentSex === 'female' ? 'is-active' : '' }}">
-                Hembra
-            </a>
-
-            <a href="{{ route('public.animals.index', array_filter([
-                'species' => $currentSpecies,
-                'size'    => $currentSize,
-                'sex'     => 'male',
-            ])) }}" class="btn-cta--global {{ $currentSex === 'male' ? 'is-active' : '' }}">
-                Macho
-            </a>
-        </nav>
-
-        @endif
+                @if(request()->anyFilled(['search','species','size','sex']))
+                <a href="{{ route('public.animals.index') }}" class="btn-cta--global-outline">
+                    Limpiar
+                </a>
+                @endif
+            </form>
+        </section>
 
     </header>
 
@@ -114,9 +71,12 @@
         @endforeach
     </section>
 
-    <section class="section-block">
-        {{ $animals->links() }}
+    {{-- Paginacion --}}
+    <section class="section-block" style="margin-top: 1rem;">
+        <x-pagination :currentPage="$animals->currentPage()" :lastPage="$animals->lastPage()"
+            :prevPageUrl="$animals->previousPageUrl()" :nextPageUrl="$animals->nextPageUrl()" />
     </section>
+
     @endif
 
 </section>

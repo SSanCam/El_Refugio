@@ -94,16 +94,27 @@ class AnimalController extends Controller{
     return view('public.animals.show', compact('animal'));
     }
 
-    public function happyEndings()
+   /**
+    * Muestra los animales que ya han sido adoptados
+    *    
+    * @return \Illuminate\Contracts\View\View
+    */
+   public function happyEndings()
     {
         $animals = Animal::where('status', AnimalStatus::ADOPTED->value)
-            ->orderBy('updated_at', 'desc')
+            ->orderBy('created_at', 'desc')
             ->select([
                 'id',
-                'name'
+                'species',
+                'name',
+                'sex',
+                'size',
+                'birth_date',
+                'entry_date',
             ])
             ->paginate(15);
 
         return view('public.animals.happy', compact('animals'));
     }
+
 }

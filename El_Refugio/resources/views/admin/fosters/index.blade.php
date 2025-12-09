@@ -10,28 +10,15 @@
         <h1 class="section-title">Gestión de Acogidas</h1>
         <hr class="section-divider">
 
-        <div class="dashboard-actions">
-            <a href="{{ route('admin.users.index') }}" class="btn-cta--global">Gestionar usuarios</a>
-            <a href="{{ route('admin.animals.index') }}" class="btn-cta--global">Gestionar animales</a>
-            <a href="{{ route('admin.adoptions.index') }}" class="btn-cta--global">Ver adopciones</a>
-            <a href="{{ route('admin.fosters.index') }}" class="btn-cta--global">Ver acogidas</a>
-        </div>
+        <x-admin-nav />
     </header>
-
-    <a href="{{ route('admin.dashboard') }}">⬅️ Volver al panel</a>
-    <hr class="section-divider">
 
     {{-- Barra de filtros --}}
     <section class="filter-bar">
         <form method="GET" action="{{ route('admin.fosters.index') }}" class="filter-bar__form">
 
-            <input 
-                type="text"
-                name="search"
-                class="filter-input"
-                placeholder="Buscar por animal o tutor..."
-                value="{{ $search ?? '' }}"
-            >
+            <input type="text" name="search" class="filter-input" placeholder="Buscar por animal o tutor..."
+                value="{{ $search ?? '' }}">
 
             <button type="submit" class="filter-btn">
                 Buscar
@@ -77,9 +64,9 @@
                         {{-- ENLACE A CONTRATO --}}
                         <td>
                             @if ($foster->contract_file)
-                                <a href="{{ $foster->contract_file }}" target="_blank">Ver contrato</a>
+                            <a href="{{ $foster->contract_file }}" target="_blank">Ver contrato</a>
                             @else
-                                No disponible
+                            No disponible
                             @endif
                         </td>
 
@@ -87,17 +74,14 @@
                             <div class="table-actions">
 
                                 {{-- EDITAR --}}
-                                <button
-                                    class="btn-cta--global btn-sm"
-                                    data-toggle="edit-foster-{{ $foster->id }}"
-                                    data-label-open="Editar"
-                                    data-label-close="Cerrar edición">
+                                <button class="btn-cta--global btn-sm" data-toggle="edit-foster-{{ $foster->id }}"
+                                    data-label-open="Editar" data-label-close="Cerrar edición">
                                     Editar
                                 </button>
 
                                 {{-- ELIMINAR --}}
                                 <form action="{{ route('admin.fosters.destroy', $foster) }}" method="POST"
-                                      onsubmit="return confirm('¿Eliminar esta acogida?');">
+                                    onsubmit="return confirm('¿Eliminar esta acogida?');">
                                     @csrf
                                     @method('DELETE')
 
@@ -117,9 +101,8 @@
                             <div class="contact-form-card" style="margin-top: 1rem;">
                                 <h3 class="section-subtitle">Editar acogida</h3>
 
-                                <form method="POST"
-                                      action="{{ route('admin.fosters.update', $foster) }}"
-                                      class="contact-form">
+                                <form method="POST" action="{{ route('admin.fosters.update', $foster) }}"
+                                    class="contact-form">
                                     @csrf
                                     @method('PUT')
 
@@ -127,11 +110,13 @@
                                     <div class="form-group">
                                         <label class="form-label">Animal *</label>
                                         <select name="animal_id" class="form-input" required>
-                                            @foreach ($animals = App\Models\Animal::where('status','sheltered')->orWhere('id',$foster->animal_id)->get() as $animal)
-                                                <option value="{{ $animal->id }}"
-                                                    {{ $animal->id == $foster->animal_id ? 'selected' : '' }}>
-                                                    {{ $animal->name }} ({{ ($animal->species) }})
-                                                </option>
+                                            @foreach ($animals =
+                                            App\Models\Animal::where('status','sheltered')->orWhere('id',$foster->animal_id)->get()
+                                            as $animal)
+                                            <option value="{{ $animal->id }}"
+                                                {{ $animal->id == $foster->animal_id ? 'selected' : '' }}>
+                                                {{ $animal->name }} ({{ ($animal->species) }})
+                                            </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -140,13 +125,13 @@
                                     <div class="form-group">
                                         <label class="form-label">Fecha inicio *</label>
                                         <input type="date" name="start_date" class="form-input"
-                                               value="{{ old('start_date', $foster->start_date) }}" required>
+                                            value="{{ old('start_date', $foster->start_date) }}" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label">Fecha fin</label>
                                         <input type="date" name="end_date" class="form-input"
-                                               value="{{ old('end_date', $foster->end_date) }}">
+                                            value="{{ old('end_date', $foster->end_date) }}">
                                     </div>
 
                                     <hr class="section-divider">
@@ -156,49 +141,50 @@
                                     <div class="form-group">
                                         <label class="form-label">Nombre *</label>
                                         <input type="text" name="name" class="form-input"
-                                               value="{{ old('name', $foster->user->name) }}" required>
+                                            value="{{ old('name', $foster->user->name) }}" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label">Apellidos *</label>
                                         <input type="text" name="last_name" class="form-input"
-                                               value="{{ old('last_name', $foster->user->last_name) }}" required>
+                                            value="{{ old('last_name', $foster->user->last_name) }}" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label">Email *</label>
                                         <input type="email" name="email" class="form-input"
-                                               value="{{ old('email', $foster->user->email) }}" required>
+                                            value="{{ old('email', $foster->user->email) }}" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label">DNI / NIE</label>
                                         <input type="text" name="national_id" class="form-input"
-                                               value="{{ old('national_id', $foster->user->national_id) }}">
+                                            value="{{ old('national_id', $foster->user->national_id) }}">
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label">Teléfono</label>
                                         <input type="text" name="phone" class="form-input"
-                                               value="{{ old('phone', $foster->user->phone) }}">
+                                            value="{{ old('phone', $foster->user->phone) }}">
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label">Dirección</label>
                                         <input type="text" name="address" class="form-input"
-                                               value="{{ old('address', $foster->user->address) }}">
+                                            value="{{ old('address', $foster->user->address) }}">
                                     </div>
 
                                     {{-- Datos del refugio --}}
                                     <div class="form-group">
                                         <label class="form-label">Contrato (URL o identificador)</label>
                                         <input type="text" name="contract_file" class="form-input"
-                                               value="{{ old('contract_file', $foster->contract_file) }}">
+                                            value="{{ old('contract_file', $foster->contract_file) }}">
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label">Comentarios</label>
-                                        <textarea name="comments" class="form-input">{{ old('comments', $foster->comments) }}</textarea>
+                                        <textarea name="comments"
+                                            class="form-input">{{ old('comments', $foster->comments) }}</textarea>
                                     </div>
 
                                     <button type="submit" class="btn-cta--global">
@@ -216,9 +202,12 @@
 
             </table>
 
+            {{-- Paginacion --}}
             <div style="margin-top: 1rem;">
-                {{ $fosters->links() }}
+                <x-pagination :currentPage="$fosters->currentPage()" :lastPage="$fosters->lastPage()"
+                    :prevPageUrl="$fosters->previousPageUrl()" :nextPageUrl="$fosters->nextPageUrl()" />
             </div>
+
 
             @else
             <p>No hay acogidas registradas todavía.</p>
@@ -229,10 +218,8 @@
 
     {{-- Crear adopción --}}
     <div class="section-block" style="text-align:center; margin-top:2rem;">
-        <button class="btn-cta--global"
-                data-toggle="create-foster"
-                data-label-open="Registrar nueva acogida"
-                data-label-close="Cerrar formulario">
+        <button class="btn-cta--global" data-toggle="create-foster" data-label-open="Registrar nueva acogida"
+            data-label-close="Cerrar formulario">
             Crear nueva acogida
         </button>
     </div>
@@ -250,9 +237,9 @@
                     <label class="form-label">Animal *</label>
                     <select name="animal_id" class="form-input" required>
                         @foreach (App\Models\Animal::where('status','sheltered')->get() as $animal)
-                            <option value="{{ $animal->id }}">
-                                {{ $animal->name }} ({{ ($animal->species) }})
-                            </option>
+                        <option value="{{ $animal->id }}">
+                            {{ $animal->name }} ({{ ($animal->species) }})
+                        </option>
                         @endforeach
                     </select>
                 </div>

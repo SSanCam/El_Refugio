@@ -389,3 +389,60 @@ main {
     object-position: 50% 45%;  
 }
 
+/*---------------------------
+Paginacion
+-------------------*/
+.pagination-wrapper {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-list {
+    display: flex;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination-item {
+    
+}
+
+.pagination-link {
+    display: inline-block;
+    padding: 0.4rem 0.75rem;
+    border: 2px solid var(--color-primary);
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.pagination-item.active .pagination-link {
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+}
+
+.pagination-item.disabled .pagination-link {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+
+/*---------------
+Boton cambio tema 
+-----------------*/
+.theme-toggle {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.theme-toggle img {
+    width: 60px;
+    height: 60px;
+    transform: rotate(0deg);
+}
+

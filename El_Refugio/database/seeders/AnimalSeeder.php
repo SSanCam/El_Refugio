@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Animal;
 use App\Models\AnimalImage;
 use Carbon\Carbon;
+use SebastianBergmann\Type\TrueType;
 
 class AnimalSeeder extends Seeder
 {
@@ -181,7 +182,7 @@ class AnimalSeeder extends Seeder
             'entry_date'   => $hoy->copy()->subMonths(1)->toDateString(),
             'description'  => 'Cachorro de Zurrapa, muy cariñoso.',
             'observations' => null,
-            'is_featured'  => false,
+            'is_featured'  => True,
             'featured_at'  => null,
         ]);
 
@@ -393,5 +394,49 @@ class AnimalSeeder extends Seeder
                 'alt_text'  => $img['alt_text'],
             ]);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Perros faker adicionales (25 unidades)
+        |--------------------------------------------------------------------------
+        */
+        $fakerDogs = Animal::factory()
+        ->count(25)
+        ->state(function () {
+            $entry = now()
+                ->subYears(2)
+                ->addDays(rand(0, 730)); 
+
+            return [
+                'species'     => 'dog',
+                'entry_date'  => $entry->toDateString(),
+                'created_at'  => $entry->copy()->setTime(rand(0,23), rand(0,59), rand(0,59)),
+                'updated_at'  => now(),
+            ];
+        })
+        ->create();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Gatos faker adicionales (25 unidades)
+        |--------------------------------------------------------------------------
+        */
+        $fakerCats = Animal::factory()
+        ->count(25)
+        ->state(function () {
+            $entry = now()
+                ->subYears(2)
+                ->addDays(rand(0, 730));
+
+            return [
+                'species'     => 'cat',
+                'entry_date'  => $entry->toDateString(),
+                'created_at'  => $entry->copy()->setTime(rand(0,23), rand(0,59), rand(0,59)),
+                'updated_at'  => now(),
+            ];
+        })
+        ->create();
+
     }
+    
 }

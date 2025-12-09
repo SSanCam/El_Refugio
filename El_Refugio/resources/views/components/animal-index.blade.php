@@ -10,13 +10,12 @@
         <img src="{{ $animal->images->first()->url }}"
             alt="{{ $animal->images->first()->alt_text ?? 'Foto de ' . $animal->name }}" class="animal-card__image">
         @else
-        <img src="{{ $animal->species === 'cat' 
-                    ? 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1765144900/image-removebg-preview_5_y1jx6s.png' 
-                    : 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1765144900/image-removebg-preview_6_pgkr4k.png' }}"
+        <img src="{{ $animal->species->value === 'cat' 
+                    ? 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1765306711/caragato_d2jc4q.png' 
+                    : 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1765306711/caraperro_g1ebeh.png' }}"
             alt="Imagen por defecto de {{ $animal->species }}" class="animal-card__image">
         @endif
     </figure>
-
 
     <div class="animal-card__body">
         <h2 class="animal-card__name">{{ $animal->name }}</h2>

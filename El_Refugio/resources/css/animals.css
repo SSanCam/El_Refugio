@@ -287,3 +287,70 @@ Estilos de las tarjetas de animales (index)
     border-color: var(--color-primary);
     color: var(--color-bg) !important;
 }
+
+/*-----------------------------------
+Estilos para filtros de animal-index
+------------------------------------*/
+/* Barra de filtros (contenedor) */
+.animals-filters-bar {
+    margin: 1.5rem 0 2rem;
+    padding: 1rem 1.25rem;
+
+    background-color: var(--color-neutral-soft);
+    border-radius: 16px;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Formulario interno - usamos flex fluido */
+.animals-filters-bar__form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Inputs de texto */
+.animals-filter-input {
+    flex: 1 1 200px;
+    padding: 0.6rem 0.9rem;
+
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-primary);
+    border-radius: 12px;
+
+    font-size: 0.95rem;
+    color: var(--color-text);
+
+    transition: 0.2s;
+}
+
+.animals-filter-input:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 2px rgba(201,123,72,0.25);
+}
+
+/* Selects */
+.animals-filter-select {
+    flex: 0 0 160px;
+    padding: 0.6rem 0.9rem;
+
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-primary);
+    border-radius: 12px;
+
+    font-size: 0.95rem;
+    color: var(--color-text);
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.animals-filter-select:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 2px rgba(201,123,72,0.25);
+}
+
+
