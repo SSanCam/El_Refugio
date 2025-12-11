@@ -1,5 +1,6 @@
 FROM php:8.2-apache
 
+
 # Extensiones del sistema
 RUN apt-get update && apt-get install -y \
     git \
@@ -32,7 +33,7 @@ WORKDIR /var/www/html
 # Copiar proyecto
 COPY . .
 
-# ⚠️ Crear archivo .env dentro del contenedor (OBLIGATORIO)
+#  Crear archivo .env dentro del contenedor (OBLIGATORIO)
 RUN cp .env.example .env
 
 # Dependencias PHP
