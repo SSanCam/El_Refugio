@@ -37,7 +37,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Instalar dependencias PHP
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-ansi
+RUN composer install --optimize-autoloader --no-interaction --no-ansi
 
 # Instalar dependencias JS y construir Vite
 RUN npm install && npm run build
