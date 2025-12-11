@@ -1,22 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
     const body = document.body;
-    const toggle = document.getElementById("themeToggle");
+    const themeButtons = document.querySelectorAll("[data-theme-toggle]");
 
-    if (!toggle) return; // seguridad por si alguna vista no tiene el botón
+    if (!themeButtons.length) return;
 
-    // Leer preferencia guardada
-    if (localStorage.getItem("theme") === "dark") {
-        body.classList.add("theme-dark");
+    // Cargar preferencia guardada
+    if (localStorage.getItem("theme") === "light") {
+        body.classList.add("theme-ligth");
     }
 
-    // Alternar tema
-    toggle.addEventListener("click", () => {
-        body.classList.toggle("theme-dark");
+    themeButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            body.classList.toggle("theme-dark");
 
-        if (body.classList.contains("theme-dark")) {
-            localStorage.setItem("theme", "dark");
-        } else {
-            localStorage.setItem("theme", "light");
-        }
+            localStorage.setItem("theme",
+                body.classList.contains("theme-dark") ? "dark" : "light"
+            );
+        });
     });
 });

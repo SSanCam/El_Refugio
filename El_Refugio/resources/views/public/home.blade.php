@@ -26,8 +26,6 @@
             y mejorar la comunicación con las personas interesadas en adoptar o acoger.
         </p>
     </header>
-
-
     {{-- Explicación del flujo --}}
     <section class="section-block">
         <h2 class="section-subtitle">¿Cómo funciona El Refugio?</h2>
@@ -121,7 +119,7 @@
                 Ver animales en adopción
             </a>
             <a href="{{ route('login') }}" class="btn-cta--global">
-                Acceso para refugios
+                Acceso al refugio
             </a>
         </div>
     </section>

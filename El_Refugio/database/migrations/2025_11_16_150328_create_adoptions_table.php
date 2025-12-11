@@ -28,7 +28,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             // Datos de la adopción
-            $table->date('adoption_date')->default(DB::raw('CURRENT_DATE'));
+            $table->timestamp('adoption_date')->useCurrent();
             $table->string('contract_file')->nullable();
             $table->text('comments')->nullable();
 

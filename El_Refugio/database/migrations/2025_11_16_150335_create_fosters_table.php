@@ -28,7 +28,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             // Datos de la acogida
-            $table->date('start_date')->default(DB::raw('CURRENT_DATE'));
+            $table->timestamp('start_date')->useCurrent();
             $table->date('end_date')->nullable();
             $table->string('contract_file')->nullable();
             $table->text('comments')->nullable();
