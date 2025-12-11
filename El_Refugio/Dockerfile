@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
+    pkg-config \
     && docker-php-ext-install zip gd pdo_pgsql
 
 # Habilitar mod_rewrite de Apache
