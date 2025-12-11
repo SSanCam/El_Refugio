@@ -1,14 +1,8 @@
 #!/bin/bash
 set -e
 
-# Iniciar MySQL
-service mariadb start
+echo "🔧 Ejecutando migraciones y seeders..."
+php artisan migrate --force --seed || true
 
-# Crear base de datos si no existe
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS el_refugio CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# Aplicar migraciones y seeders automáticamente
-php artisan migrate --force --seed
-
-# Iniciar Apache
-apache2-foreground
+echo "🚀 Arrancando Apache..."
+exec apache2-foreground

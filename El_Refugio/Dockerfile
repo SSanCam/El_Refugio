@@ -33,11 +33,11 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 # Directorio de trabajo
 WORKDIR /var/www/html
 
-# Copiar proyecto
+# Copiar proyecto (sin .env)
 COPY . .
 
 # Instalar dependencias PHP
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-ansi
 
 # Instalar dependencias JS y construir Vite
 RUN npm install && npm run build
@@ -50,8 +50,13 @@ RUN php artisan config:cache && \
 # Permisos
 RUN chown -R www-data:www-data storage bootstrap/cache
 
+# Copiar start script
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
+
 # Exponer puerto HTTP
 EXPOSE 80
 
-# Iniciar Apache
+# Arranque del contenedor
+ENTRYPOINT ["/start.sh"]
 CMD ["apache2-foreground"]
