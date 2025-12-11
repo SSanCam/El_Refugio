@@ -10,13 +10,12 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    mariadb-server \
-    && docker-php-ext-install pdo_mysql zip gd
+    && docker-php-ext-install zip gd pdo_pgsql
 
 # Habilitar mod_rewrite de Apache
 RUN a2enmod rewrite
 
-# Copiar configuración de Apache
+# Copiar configuración de Apache (DocumentRoot → public)
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 # Instalar Composer
@@ -28,27 +27,19 @@ WORKDIR /var/www/html
 # Copiar proyecto
 COPY . .
 
-# Instalar dependencias de Laravel
+# Instalar dependencias PHP para producción
 RUN composer install --no-dev --optimize-autoloader
 
-# Generar key de Laravel
-RUN php artisan key:generate --force
+# Cache de Laravel (optimización)
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-# Compilar assets
-RUN npm install && npm run build
-
-# Optimizar Laravel para producción
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
-
-# Dar permisos
+# Dar permisos necesarios a Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# -----------------------------
-# INICIAR MYSQL + APACHE
-# -----------------------------
-COPY docker/start.sh /start.sh
-RUN chmod +x /start.sh
-
+# Exponer puerto HTTP
 EXPOSE 80
 
-CMD ["/start.sh"]
+# Arranque del servidor Apache
+CMD ["apache2-foreground"]
