@@ -33,7 +33,7 @@ WORKDIR /var/www/html
 COPY . .
 
 #Crea archivo .env 
-RUN cp .env.example .env
+#RUN cp .env.example .env
 
 # Dependencias PHP
 RUN composer install --optimize-autoloader --no-interaction --no-ansi
