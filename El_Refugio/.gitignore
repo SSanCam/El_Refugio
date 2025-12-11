@@ -28,3 +28,8 @@ yarn-error.log*
 # Homestead
 Homestead.json
 Homestead.yaml
+
+# Docker
+/docker/*.log
+.env.production
+.env.backup
