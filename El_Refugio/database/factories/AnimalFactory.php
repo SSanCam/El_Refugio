@@ -13,7 +13,7 @@ class AnimalFactory extends Factory
     public function definition(): array
     {
         // Especies
-        $species = $this->faker->randomElement(['dog', 'cat']);
+        $species = fake()->randomElement(['dog', 'cat']);
 
         // Razas realistas + mestizos
         $dogBreeds = [
@@ -26,15 +26,15 @@ class AnimalFactory extends Factory
         ];
 
         // Sexo
-        $sex = $this->faker->randomElement(['male', 'female']);
+        $sex = fake()->randomElement(['male', 'female']);
 
         // Tamaño (para perros todos; gatos solo small/medium)
         $size = $species === 'dog'
-            ? $this->faker->randomElement(['small', 'medium', 'large'])
-            : $this->faker->randomElement(['small', 'medium']);
+            ? fake()->randomElement(['small', 'medium', 'large'])
+            : fake()->randomElement(['small', 'medium']);
 
         // Estado + disponibilidad lógica
-        $status = $this->faker->randomElement([
+        $status = fake()->randomElement([
             'sheltered',
             'fostered',
             'adopted'
@@ -45,22 +45,22 @@ class AnimalFactory extends Factory
             $availability = 'unavailable';
         } elseif ($status === 'fostered') {
             // si está acogido, puede estar adoptable o no
-            $availability = $this->faker->boolean(60) ? 'available' : 'unavailable';
+            $availability = fake()->boolean(60) ? 'available' : 'unavailable';
         } else {
             // sheltered → puede estar en tratamiento
-            $availability = $this->faker->boolean(80) ? 'available' : 'unavailable';
+            $availability = fake()->boolean(80) ? 'available' : 'unavailable';
         }
 
         // Birthdate: animales realistas entre 3 meses y 12 años
-        $birthDate = $this->faker->dateTimeBetween('-12 years', '-3 months')->format('Y-m-d');
+        $birthDate = fake()->dateTimeBetween('-12 years', '-3 months')->format('Y-m-d');
 
         // Entry date siempre posterior al nacimiento
-        $entryDate = $this->faker->dateTimeBetween($birthDate, 'now')->format('Y-m-d');
+        $entryDate = fake()->dateTimeBetween($birthDate, 'now')->format('Y-m-d');
 
         // Observaciones si unavailable
         $observations = null;
         if ($availability === 'unavailable') {
-            $observations = $this->faker->randomElement([
+            $observations = fake()->randomElement([
                 'En recuperación veterinaria.',
                 'Bajo tratamiento veterinario.',
                 'En cuarentena preventiva.',
@@ -69,24 +69,24 @@ class AnimalFactory extends Factory
         }
 
         return [
-            'name'          => ucfirst($this->faker->unique()->firstName()),
+            'name'          => ucfirst(fake()->unique()->firstName()),
             'species'       => $species,
             'breed'         => $species === 'dog'
-                                ? $this->faker->randomElement($dogBreeds)
-                                : $this->faker->randomElement($catBreeds),
+                                ? fake()->randomElement($dogBreeds)
+                                : fake()->randomElement($catBreeds),
             'sex'           => $sex,
             'size'          => $size,
-            'weight'        => $this->faker->optional()->randomFloat(2, 2.0, 35.0),
-            'height'        => $this->faker->optional()->randomFloat(2, 15.0, 70.0),
-            'neutered'      => $this->faker->boolean(60),
-            'microchip'     => $this->faker->optional()->numerify('################'),
+            'weight'        => fake()->optional()->randomFloat(2, 2.0, 35.0),
+            'height'        => fake()->optional()->randomFloat(2, 15.0, 70.0),
+            'neutered'      => fake()->boolean(60),
+            'microchip'     => fake()->optional()->numerify('################'),
             'birth_date'    => $birthDate,
             'status'        => $status,
             'availability'  => $availability,
             'entry_date'    => $entryDate,
             'description'   => $availability === 'unavailable'
                                 ? 'Actualmente no disponible para adopción debido a tratamiento veterinario.'
-                                : $this->faker->sentence(12),
+                                : fake()->sentence(12),
             'observations'  => $observations,
             'is_featured'   => false,
             'featured_at'   => null,

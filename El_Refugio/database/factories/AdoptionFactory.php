@@ -18,9 +18,9 @@ class AdoptionFactory extends Factory
             'animal_id'     => Animal::factory(),
             'user_id'       => User::factory(),
 
-            'adoption_date' => $this->faker->dateTimeBetween('-2 years', 'now'),
+            'adoption_date' => fake()->dateTimeBetween('-2 years', 'now'),
             'contract_file' => null, // Muchos refugios no adjuntan archivo, se añade a mano
-            'comments'      => $this->faker->optional()->sentence(10),
+            'comments'      => fake()->optional()->sentence(10),
         ];
     }
 

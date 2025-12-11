@@ -20,7 +20,7 @@ class FosterFactory extends Factory
         return [
             'user_id'   => null,
             'animal_id' => null,
-            'comments'  => $this->faker->optional()->sentence(),
+            'comments'  =>fake()->optional()->sentence(),
         ];
     }
 
