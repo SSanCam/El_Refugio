@@ -32,11 +32,6 @@ COPY . .
 # Instalar dependencias PHP para producción
 RUN composer install --no-dev --optimize-autoloader
 
-# Cache de Laravel (optimización)
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
 # Dar permisos necesarios a Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache
 
