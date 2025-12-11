@@ -12,31 +12,46 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libpq-dev \
     pkg-config \
-    && docker-php-ext-install zip gd pdo_pgsql
+    curl
 
-# Habilitar mod_rewrite de Apache
+# Extensiones PHP
+RUN docker-php-ext-install zip gd pdo_pgsql
+
+# Habilitar mod_rewrite
 RUN a2enmod rewrite
 
-# Copiar configuración de Apache (DocumentRoot → public)
+# Copiar configuración de Apache
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 # Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Establecer directorio de trabajo
+# Instalar Node (para Vite)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Directorio de trabajo
 WORKDIR /var/www/html
 
 # Copiar proyecto
 COPY . .
 
-# Instalar dependencias PHP para producción
+# Instalar dependencias PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# Dar permisos necesarios a Laravel
+# Instalar dependencias JS y construir Vite
+RUN npm install && npm run build
+
+# Optimizar Laravel
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
+
+# Permisos
 RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Exponer puerto HTTP
 EXPOSE 80
 
-# Arranque del servidor Apache
+# Iniciar Apache
 CMD ["apache2-foreground"]
