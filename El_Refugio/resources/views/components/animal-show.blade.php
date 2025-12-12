@@ -51,22 +51,21 @@ use App\Enums\AnimalAvailability;
             @endif
 
             @if ($animal->size)
-                {{ $animal->size->label() }}
+            {{ $sexLabel && trim($sexLabel) !== '' ? ' · ' : '' }}
+            {{ $animal->size?->label() }}
             @endif
+
 
         </p>
 
         <dl class="animal-detail__data">
             <div class="animal-detail__row">
                 <dd>
-                    @if ($animal->breed)
-                    {{ $animal->breed }}
-                    @else
-                    Sin datos
-                    @endif
+                    {{ $animal->breed ?? 'Sin datos' }}
                 </dd>
             </div>
         </dl>
+
         <dl class="animal-detail__data">
             <div class="animal-detail__row">
                 <dd>
@@ -91,14 +90,16 @@ use App\Enums\AnimalAvailability;
         @if ($animal->entry_date)
         @php $days = $animal->days; @endphp
         <section>
-            <h3 class="animal-detail__subtitle">{{ $animal->name }} lleva en el refugio:</h3>
+            <h3 class="animal-detail__subtitle">
+                {{ $animal->name }} lleva en el refugio:
+            </h3>
             <p class="animal-detail__text">
                 @if (is_null($days))
                 Sin datos.
                 @elseif ($days === 1)
                 Recién llegado.
                 @else
-                {{ ($days) }} días.
+                {{ $days }} días.
                 @endif
             </p>
         </section>
@@ -106,17 +107,18 @@ use App\Enums\AnimalAvailability;
 
         @if ($animal->availability === AnimalAvailability::AVAILABLE)
         <div class="section-cta animal-detail__cta">
-
-            <a href="{{ route('public.forms.request', 
-                ['animal'=> $animal->id,
-                'type'=> 'adoption']) }}" class="btn-card">
+            <a href="{{ route('public.forms.request', [
+                    'animal' => $animal->id,
+                    'type' => 'adoption'
+                ]) }}" class="btn-card">
                 Adopta
             </a>
 
-            <a href="{{ route('public.forms.request',[ 'animal'=> $animal->id, ]) }}" class="btn-card">
+            <a href="{{ route('public.forms.request', [
+                    'animal' => $animal->id
+                ]) }}" class="btn-card">
                 Acoge
             </a>
-
         </div>
         @endif
     </div>
