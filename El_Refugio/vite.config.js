@@ -8,13 +8,12 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
             ],
-            refresh: false, // en producción no hace falta hot reload
+            refresh: false,
         }),
     ],
-
     build: {
         outDir: 'public/build',
         manifest: true,
-        emptyOutDir: true, // limpia builds anteriores
+        emptyOutDir: true,
     },
 });
