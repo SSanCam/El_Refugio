@@ -20,7 +20,7 @@ RUN docker-php-ext-install zip gd pdo_pgsql pgsql
 # Apache
 RUN a2enmod rewrite
 
-# 👉 Render usa la variable PORT
+# Render usa la variable PORT
 ENV PORT=10000
 
 # Apache debe escuchar en $PORT
@@ -59,7 +59,7 @@ RUN mkdir -p bootstrap/cache \
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
-# 👉 Exponer el puerto de Render
+# Exponer el puerto de Render
 EXPOSE 10000
 
 ENTRYPOINT ["/start.sh"]
