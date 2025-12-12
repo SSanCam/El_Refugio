@@ -128,6 +128,8 @@ Los elementos visuales definidos en la guía de estilos se han implementado como
 - `resources/views/components/form-field.blade.php`  
   Estructura para campos de formulario (label, input, mensaje de error).
 
+> Algunos componentes visuales se encuentran en proceso de ajuste o evolución, priorizando la coherencia visual y la reutilización efectiva frente a una abstracción excesiva en fases tempranas del desarrollo.
+
 ---
 
 ## 7. Organización de estilos y aplicación de la guía visual
@@ -166,7 +168,8 @@ Los colores definidos en Figma se han trasladado a variables CSS (por ejemplo: `
 
 ### 7.4. Modo claro / oscuro
 
-El diseño contempla variantes claro y oscuro resueltas mediante clases de tema:
+El diseño contempla variantes claro y oscuro implementadas mediante clases de tema (`.theme-light`, `.theme-dark`) aplicadas dinámicamente al elemento `<body>`.
+El cambio de tema se gestiona mediante JavaScript, almacenando la preferencia del usuario en `localStorage` para mantenerla entre sesiones.
 
 - `.theme-light` para fondos claros y textos oscuros.
 - `.theme-dark` para fondos oscuros y textos claros.
@@ -185,6 +188,7 @@ En la implementación se aplican criterios básicos:
 - Contraste suficiente entre texto y fondo en botones, enlaces y tarjetas.
 - Indicadores visibles de foco (`:focus`) en enlaces y controles interactivos.
 - Uso coherente de encabezados (`<h1>`, `<h2>`, `<h3>`) para estructurar la información.
+- Uso de atributos ARIA (`aria-expanded`) gestionados dinámicamente mediante JavaScript para mejorar la accesibilidad en elementos desplegables.
 
 ### 8.2. Maquetación y responsive
 
@@ -193,6 +197,10 @@ La maquetación se basa en:
 - Un contenedor principal con ancho máximo definido.
 - Rejillas y flexbox para listados de animales, tarjetas y tablas de administración.
 - Ajustes responsive para pantallas pequeñas: reordenación de bloques, apilado de tarjetas y simplificación de menús.
+
+En determinados elementos de navegación, la adaptación responsive se apoya en JavaScript para gestionar la visibilidad dinámica de menús y overlays, mejorando la experiencia de uso en dispositivos móviles sin recargar la página.
+
+En dispositivos móviles, la navegación prioriza la visibilidad directa de las acciones principales mediante botones accesibles bajo la cabecera, evitando menús ocultos innecesarios.
 
 ### 8.3. Consistencia entre diseño y código
 
