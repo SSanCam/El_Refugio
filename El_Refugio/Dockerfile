@@ -38,11 +38,12 @@ RUN composer install --optimize-autoloader --no-interaction --no-ansi
 # Build Vite
 RUN npm install && npm run build
 
-# 🔥 Crear carpetas necesarias y dar permisos ANTES del cache
+# Crear carpetas necesarias y dar permisos ANTES del cache
 RUN mkdir -p bootstrap/cache && \
     mkdir -p storage/framework/cache && \
     mkdir -p storage/framework/sessions && \
     mkdir -p storage/framework/views && \
+    chown -R www-data:www-data storage bootstrap && \
     chmod -R 775 storage bootstrap/cache
 
 # Cache de Laravel
