@@ -21,9 +21,6 @@ Route::middleware(['auth', 'verified', 'is_admin'])
 
         // CRUD animales
         Route::resource('animals', AnimalController::class);
-            //Agrega una nueva imagen a,l animal
-        Route::post('animals/{animal}/photos', [AnimalController::class, 'storePhoto'])
-            ->name('animals.addPhoto');
 
         // CRUD adopciones
         Route::resource('adoptions', AdoptionController::class);

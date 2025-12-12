@@ -17,11 +17,7 @@ use Illuminate\Support\Str;
  */
 class FosterController extends Controller
 {
-    /**
-     * Listar todas las acogidas.
-     * 
-     * @return \Illuminate\View\View
-     */
+
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -63,12 +59,6 @@ class FosterController extends Controller
         return view('admin.fosters.create', compact('animals'));
     }
 
-    /**
-     * Crear una nueva acogida en la base de datos.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -156,23 +146,11 @@ class FosterController extends Controller
             ->with('success', 'Acogida registrada correctamente.');
     }
     
-    /**
-     * Muestra los detalles de una acogida específica.
-     * 
-     * @param \App\Models\Foster $foster
-     * @return \Illuminate\View\View
-     */
     public function show(Foster $foster)
     {
         return view('admin.fosters.show', compact('foster'));
     }
 
-    /**
-     * Mostrar el formulario para editar una acogida específica. 
-     * 
-     * @param \App\Models\Foster $foster
-     * @return \Illuminate\View\View
-     */
     public function edit(Foster $foster)
     {
         $animals= Animal::where(function($query) use ($foster) {
@@ -183,13 +161,6 @@ class FosterController extends Controller
         return view('admin.fosters.edit', compact('foster', 'animals'));
     }
 
-    /**
-     * Actualiza los datos de una acogida específica.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Foster $foster
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(Request $request, Foster $foster)
     {
         $validated = $request->validate([
@@ -252,9 +223,6 @@ class FosterController extends Controller
             ->with('success', 'Acogida actualizada correctamente.');
     }
 
-    /**
-     * Eliminar una acogida específica de la base de datos.
-     */
     public function destroy(Foster $foster)
     {
         $foster->delete();

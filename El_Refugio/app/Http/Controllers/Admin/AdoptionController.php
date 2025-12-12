@@ -20,12 +20,7 @@ use Illuminate\Support\Str;
 
 class AdoptionController extends Controller
 {
-    /**
-     * Listado general de adopciones.
-     * Incluye datos del animal y del usuario adoptante.
-     * 
-     * @return \Illuminate\View\View
-     */
+
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -49,12 +44,6 @@ class AdoptionController extends Controller
         return view('admin.adoptions.index', compact('adoptions', 'search'));
     }
 
-
-    /**
-     * Formulario para registrar una nueva adopción.
-     * 
-     * @return \Illuminate\View\View
-     */
     public function create()
     {
         $animals = Animal::where('availability', AnimalAvailability::AVAILABLE->value)
@@ -63,12 +52,6 @@ class AdoptionController extends Controller
         return view('admin.adoptions.create', compact('animals'));
     }
 
-    /**
-     * Guardar una nueva adopción en la base de datos.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -142,12 +125,6 @@ class AdoptionController extends Controller
             ->with('success', 'Adopción registrada correctamente.');
     }
 
-    /**
-     * Muestra los detalles de una adopción específica.
-     * 
-     * @param \App\Models\Adoption $adoption
-     * @return \Illuminate\View\View
-     */
     public function show(Adoption $adoption)
     {
         $adoption->load(['animal', 'user']);
@@ -155,12 +132,6 @@ class AdoptionController extends Controller
         return view('admin.adoptions.show', compact('adoption'));
     }
 
-    /**
-     * Muestra el formulario para editar una adopción específica.
-     * 
-     * @param \App\Models\Adoption $adoption
-     * @return \Illuminate\View\View
-     */
     public function edit(Adoption $adoption)
     {
         $animals = Animal::all();
@@ -169,13 +140,6 @@ class AdoptionController extends Controller
         return view('admin.adoptions.edit', compact('adoption', 'animals', 'users'));
     }
 
-    /**
-     * Actualiza los datos de una adopción específica.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Adoption $adoption
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(Request $request, Adoption $adoption)
     {
         $validated = $request->validate([

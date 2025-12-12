@@ -14,11 +14,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class UserController extends Controller
 {
-    /**
-     * Listado de usuarios.
-     * 
-     * @return \Illuminate\View\View
-     */
+
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -37,24 +33,11 @@ class UserController extends Controller
         return view('admin.users.index', compact('users', 'search'));
     }
 
-
-
-    /**
-     * Muestra el formulario para crear un nuevo usuario.
-     * 
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function create()
     {
         return redirect()->route('admin.users.index');
     }
 
-    /**
-     * Almacena un nuevo usuario en la base de datos.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -82,12 +65,6 @@ class UserController extends Controller
             ->with('success', 'Usuario creado correctamente.');
     }
 
-    /**
-     * Muestra los detalles de un usuario concreto.
-     * 
-     * @param \App\Models\User $user
-     * @return \Illuminate\View\View
-     */
     public function show(User $user)
     {
         $user->load(['adoptions.animal', 'fosters.animal']);
@@ -95,25 +72,12 @@ class UserController extends Controller
         return view('admin.users.show', compact('user'));
     }
 
-    /**
-     * Muestra el formulario para editar un usuario concreto.
-     * 
-     * @param \App\Models\User $user
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function edit(User $user)
     {
         return redirect()->route('admin.users.index')
                         ->with('edit_user_id', $user->id);
     }
 
-    /**
-     * Actualiza el recurso especificado en el almacenamiento.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\User $user
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
@@ -173,13 +137,13 @@ class UserController extends Controller
                 ->with('error', 'No puedes eliminar tu propio usuario.');
         }
 
-    // Si tiene historial, desactivar en lugar de eliminar
-            if ($user->adoptions()->exists() || $user->fosters()->exists()) {
-                $user->update(['is_active' => false]);
+        // Si tiene historial, desactivar en lugar de eliminar
+        if ($user->adoptions()->exists() || $user->fosters()->exists()) {
+            $user->update(['is_active' => false]);
 
-            return redirect()
-                ->route('admin.users.index')
-                ->with('success', 'Usuario desactivado correctamente. Se conserva su historial.');
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', 'Usuario desactivado correctamente. Se conserva su historial.');
         }
 
         // Si no tiene registro de adopciones o acogidas, eliminar físicamente

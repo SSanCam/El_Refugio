@@ -8,24 +8,17 @@ use App\Models\Animal;
 use Illuminate\Http\Request;
 use Exception;
 
+/**
+ * Controlador público para el envío de formularios por email
+ */
 class FormController extends Controller
 {
-    /**
-     * Muestra el formulario de contacto.
-     * 
-     * @return \Illuminate\Contracts\View\View
-     */
+
     public function contact()
     {
         return view('public.forms.contact');
     }
 
-    /**
-     * Maneja el envío del formulario de contacto.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function sendContact(Request $request)
     {
         return $this->handleFormSubmission(
@@ -46,12 +39,6 @@ class FormController extends Controller
         );
     }
 
-    /**
-     * Muestra el formulario de solicitud de adopción o acogida.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
-     */
     public function request(Request $request)
     {
         $animalId = $request->query('animal');
@@ -65,12 +52,6 @@ class FormController extends Controller
         ]);
     }
 
-    /**
-     * Maneja el envío de formulario acogida/adopcion
-     * 
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function sendRequest(Request $request)
     {
         return $this->handleFormSubmission(
@@ -111,18 +92,6 @@ class FormController extends Controller
         );
     }
 
-
-    /**
-     * Centraliza el manejo del envío de formularios.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @param array $rules
-     * @param string $redirectRoute
-     * @param string $subject
-     * @param string $recipient
-     * @param \Closure|null $customMessageBuilder
-     * @return \Illuminate\Http\RedirectResponse
-     */
     private function handleFormSubmission(Request $request, array $rules, string $redirectRoute, string $subject, string $recipient, ?\Closure $customMessageBuilder = null)
     {
         $validated = $request->validate($rules);
@@ -153,106 +122,5 @@ class FormController extends Controller
             ])->withInput();
         }
     }
-
-    // TODO de momento los formularios de ADOPCIÓN y APADRINAMIENTO están unifiacados en uno único (REQUEST)
-    /**
-     * Formulario de adopción
-     * @return \Illuminate\Contracts\View\View
-     */
-    /*
-    public function adoptionForm()
-    {
-        return view('public.forms.adoptionForm');
-    }
-    */
-    /**
-     * Envía el formulario 
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    /*
-    public function sendAdoptionForm(Request $request)
-    {
-        return $this->handleFormSubmission(
-            $request,
-            [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'phone' => 'nullable|string|max:20',
-                'address' => 'required|string|max:500',
-                'message' => 'nullable|string|max:1000',
-            ],
-            'public.forms.adoptionForm',
-            'New Adoption Form',
-            'elrefugio@example.com'
-        );
-    }
-    */
-    /**
-     * Muestra para acogidas
-     * @return \Illuminate\Contracts\View\View
-     */
-    /*
-    public function fosterForm()
-    {
-        return view('public.forms.fosterForm');
-    }
-    */
-    /**
-     * Envía el formulario de acogida.
-     */
-    /*
-    public function sendFosterForm(Request $request)
-    {
-        return $this->handleFormSubmission(
-            $request,
-            [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'phone' => 'nullable|string|max:20',
-                'address' => 'required|string|max:500',
-                'message' => 'nullable|string|max:1000',
-            ],
-            'public.animal.fosterForm',
-            'New Foster Form',
-            'elrefugio@example.com'
-        );
-    }
-    */
-    //TODO activar formulario de apadrinamiento
-    /**
-     * Formulario de apadrinamiento
-     * @return \Illuminate\Contracts\View\View
-     */
-    /*
-    public function sponsorshipForm()
-    {
-        try {
-            return view('public.forms.sponsorshipForm');
-        } catch (Exception $e) {
-            Log::error("Error al cargar el formulario: " . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Error loading sponsorship form.']);
-        }
-
-    }
-
-    public function sendSponsorshipForm(Request $request)
-    {
-        return $this->handleFormSubmission(
-            $request,
-            [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
-                'amount' => 'required|numeric|min:1',
-                'phone' => 'nullable|string|max:20',
-                'address' => 'nullable|string|max:500',
-                'message' => 'nullable|string|max:1000',
-            ],
-            'public.forms.sponsorshipForm',  
-            'New Sponsorship Form',           
-            'elrefugio@example.com'           
-        );
-    }
-    */
 
 }

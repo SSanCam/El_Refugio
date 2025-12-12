@@ -10,11 +10,7 @@ use App\Http\Controllers\Controller;
  */
 class DashboardController extends Controller
 {
-    /**
-     * Muestra el panel de administración.
-     *
-     * @return \Illuminate\View\View
-     */
+
     public function index()
     {
         return view('admin.dashboard');

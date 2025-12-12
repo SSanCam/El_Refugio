@@ -10,26 +10,19 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\User;
 
+/**
+ * Controlador que gestiona el perfil del usuario.
+ * 
+ */
 class ProfileController extends Controller
 {
    
-    /**
-     * Muestra el perfil del usuario autenticado.
-     * 
-     * @return \Illuminate\View\View
-     */
     public function show(): View
     {
         $user = Auth::user();
         return view('profile.show', compact('user'));
     }
 
-    /**
-     * Muestra el formulario del perfil del usuario.
-     * 
-     * @param Request $request
-     * @return \Illuminate\View\View
-     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -37,45 +30,40 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Actualiza el perfil del usuario.
-     * 
-     * @param \App\Http\Requests\ProfileUpdateRequest $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-public function update(ProfileUpdateRequest $request): RedirectResponse
-{
-    $data = $request->validated();
+    public function update(ProfileUpdateRequest $request): RedirectResponse
+    {
+        $data = $request->validated();
 
-    if (empty($data['phone'] ?? null)) {
-        $data['phone'] = null;
+        if (empty($data['phone'] ?? null)) {
+            $data['phone'] = null;
+        }
+
+        if (empty($data['password'])) {
+            unset($data['password']);
+        } else {
+            $data['password'] = bcrypt($data['password']);
+        }
+        
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            abort(401, 'Usuario no autenticado');
+        }
+
+        $user->fill($data);
+
+        if (array_key_exists('email', $data) && $user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return Redirect::route('profile.show')->with('status', 'profile-updated');
     }
-
-    if (empty($data['password'])) {
-        unset($data['password']);
-    } else {
-        $data['password'] = bcrypt($data['password']);
-    }
-    
-    $user = Auth::user();
-
-    if (! $user instanceof User) {
-        abort(401, 'Usuario no autenticado');
-    }
-
-    $user->fill($data);
-
-    if (array_key_exists('email', $data) && $user->isDirty('email')) {
-        $user->email_verified_at = null;
-    }
-
-    $user->save();
-
-    return Redirect::route('profile.show')->with('status', 'profile-updated');
-}
 
     /**
      * Elimina la cuenta del usuario.
+     * Si el usuario tiene registros asociados en Adoption o Foster, se queda inhabilitado en lugar de eliminarse.
      * 
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse

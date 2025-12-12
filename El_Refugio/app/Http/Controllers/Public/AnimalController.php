@@ -14,12 +14,6 @@ use App\Enums\AnimalStatus;
 class AnimalController extends Controller{
 
   
-    /**
-     * listado público de animales disponibles para adopción
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\View\View
-     */
     public function index(Request $request){
         
         $currentSpecies = $request->query('species');
@@ -67,12 +61,6 @@ class AnimalController extends Controller{
             ));
     }
 
-        /**
-         * Muestra la información de un animal concreto 
-         * 
-         * @param mixed $id
-         * @return \Illuminate\Contracts\View\View
-         */
         public function show(int $id)
     {
         $animal = Animal::select([
@@ -94,11 +82,6 @@ class AnimalController extends Controller{
     return view('public.animals.show', compact('animal'));
     }
 
-   /**
-    * Muestra los animales que ya han sido adoptados
-    *    
-    * @return \Illuminate\Contracts\View\View
-    */
    public function happyEndings()
     {
         $animals = Animal::where('status', AnimalStatus::ADOPTED->value)
