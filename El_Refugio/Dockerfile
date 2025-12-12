@@ -19,6 +19,13 @@ RUN docker-php-ext-install zip gd pdo_pgsql pgsql
 
 # Apache
 RUN a2enmod rewrite
+
+# 👉 Render usa la variable PORT
+ENV PORT=10000
+
+# Apache debe escuchar en $PORT
+RUN sed -i 's/Listen 80/Listen ${PORT}/' /etc/apache2/ports.conf
+
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 # Composer
@@ -39,7 +46,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Build frontend
 RUN npm install && npm run build
 
-# Permisos
+# Permisos Laravel
 RUN mkdir -p bootstrap/cache \
     storage/framework/cache \
     storage/framework/sessions \
@@ -51,7 +58,8 @@ RUN mkdir -p bootstrap/cache \
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 80
+# 👉 Exponer el puerto de Render
+EXPOSE 10000
 
 ENTRYPOINT ["/start.sh"]
 CMD ["apache2-foreground"]
