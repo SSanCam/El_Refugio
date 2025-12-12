@@ -32,22 +32,23 @@ WORKDIR /var/www/html
 # Copiar proyecto
 COPY . .
 
-#Crea archivo .env 
-#RUN cp .env.example .env
-
 # Dependencias PHP
 RUN composer install --optimize-autoloader --no-interaction --no-ansi
 
 # Build Vite
 RUN npm install && npm run build
 
+# 🔥 Crear carpetas necesarias y dar permisos ANTES del cache
+RUN mkdir -p bootstrap/cache && \
+    mkdir -p storage/framework/cache && \
+    mkdir -p storage/framework/sessions && \
+    mkdir -p storage/framework/views && \
+    chmod -R 775 storage bootstrap/cache
+
 # Cache de Laravel
 RUN php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache
-
-# Permisos
-RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Start script
 COPY docker/start.sh /start.sh
