@@ -18,10 +18,5 @@ php artisan cache:clear
 echo "Ejecutando migraciones de base de datos"
 php artisan migrate --force
 
-echo "Generando caches optimizados"
-# php artisan config:cache
-# php artisan route:cache
-# php artisan view:cache
-
 echo "Arrancando servidor Apache"
 exec apache2-foreground
