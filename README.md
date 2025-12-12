@@ -1,6 +1,6 @@
 # El_Refugio
 
-## 🌐 Propuesta de Modelo de Proyecto
+## 🌐 Descripción y alcance del sistema
 
 Proyecto de fin de grado orientado a la gestión integral de un refugio de animales. La aplicación es una **web desarrollada con Laravel (patrón MVC)** que cubre los procesos esenciales como adopciones, acogidas y gestión interna de animales, mediante una parte pública y un panel de administración.
 
@@ -14,9 +14,9 @@ Los refugios suelen carecer de herramientas digitales unificadas, operando con h
 
 El proyecto busca ofrecer una solución funcional, escalable y de bajo mantenimiento que optimice el trabajo administrativo, reduzca la carga de gestión y mejore la visibilidad pública de los animales que necesitan ayuda, permitiendo que el tiempo y los recursos se destinen prioritariamente al cuidado directo de los mismos.
 
-# 🧩 ¿Para qué?
+Todo ello se apoya en una arquitectura web moderna basada en Laravel, con separación clara de responsabilidades, uso de migraciones y control de acceso por roles.
 
-## Funcionalidad principal
+# 🧩 Funcionalidad y uso de la aplicación
 
 El proyecto tiene como finalidad desarrollar una **aplicación web con panel de administración** que permita a un refugio gestionar de forma centralizada la información de los animales y las solicitudes de adopción o acogida.
 
@@ -36,7 +36,9 @@ ejemplo, de “borrador” a “publicado” o “reservado”).
 
 ---
 
-## Escalabilidad y evolución del proyecto
+# Escalabilidad y evolución del proyecto
+
+Las siguientes funcionalidades no forman parte de la versión actual, pero se contemplan como líneas de evolución del proyecto.
 
 El desarrollo se plantea con una visión a largo plazo. La arquitectura y la documentación 
 estarán diseñadas para permitir la incorporación progresiva de nuevas funcionalidades, 
@@ -53,13 +55,16 @@ De esta forma, se garantiza la **escalabilidad del sistema** y la **continuidad 
 - **Framework backend:** Laravel (patrón MVC)  
 - **Frontend dinámico:** Blade + Livewire + Alpine.js  
 - **JavaScript ES6+:** validaciones, eventos, manipulación del DOM y comunicación asíncrona  
-- **Base de datos:** MySQL (migraciones, seeders, relaciones)  
+- **Base de datos:** PostgreSQL (producción) / MySQL (entorno local)  
 - **Servidor web:** Nginx (producción) / Apache (entorno local)  
 - **Contenerización:** Docker + Docker Compose (app, web, db, mail)  
 - **Gestión de dependencias:** Composer (PHP) y npm (JS/CSS)  
 - **Control de versiones:** Git + GitHub  
 - **IDE principal:** Visual Studio Code  
-- **Pruebas:** PHPUnit / Pest (pruebas de funcionalidades clave y flujos críticos de la aplicación web)
+- **Pruebas:**  
+  - Pruebas funcionales manuales mediante Laravel Tinker para validar relaciones, estados y lógica de negocio.  
+  - Pruebas de endpoints y formularios mediante Insomnia para verificar validaciones, flujos HTTP y respuestas del servidor.  
+  - Verificación visual y funcional de los flujos completos de adopción, acogida y gestión administrativa.
 
 - **Servicios externos:**  
   - Mailtrap (pruebas de correo)  
@@ -78,12 +83,6 @@ A continuación se enlazan los documentos de las distintas fases del desarrollo 
 - [Fase 4 - Implementación de interfaz y diseño visual](Documentacion/Fases_del_Proyecto/Fase4_ImplementacionInterfazDiseñoVisual.md)
 - [Fase 5 - Pruebas, evaluación y depuración](Documentacion/Fases_del_Proyecto/Fase5_PruebasEvaluacionDepuracion.md)
 
-
-
-
-
-
-
 --- 
 
 # Autoría
@@ -92,10 +91,6 @@ Sara Sánchez Camilleri
 
 I.E.S. Rafael Alberti – Ciclo Formativo DAW  
 
-Tutor:  
-
 Email: sarasanchezcamilleri@gmail.com
 
 Repositorio del proyecto: [GitHub](https://github.com/SSanCam/El_Refugio.git) 
-
-Versión actual : v1.0

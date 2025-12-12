@@ -16,6 +16,7 @@ El flujo de trabajo para cada funcionalidad será el siguiente:
 
 Este enfoque busca mantener una estructura clara, coherente y fácilmente escalable a medida que evolucione el proyecto.
 
+> Livewire se utiliza tanto en funcionalidades ya implementadas como en componentes planificados, cuya inclusión final depende del alcance definitivo del proyecto y del tiempo disponible durante el desarrollo.
 
 ---
 
@@ -54,10 +55,8 @@ Cada ficha de animal cuenta con una galería multimedia que permite mostrar vari
 
 ### Búsqueda y filtros
 
-La vista pública de animales incorpora un buscador interactivo junto con filtros por especie, edad, sexo, estado, tamaño o nombre.
-Estos filtros permiten a los usuarios explorar fácilmente el catálogo de animales según sus preferencias.
-
-La lógica de filtrado se implementa con Livewire, lo que permite actualizar los resultados dinámicamente sin necesidad de recargar la página.
+La lógica de filtrado se implementa en el backend mediante parámetros de consulta (`GET`) gestionados por el controlador público, permitiendo filtrar los resultados sin necesidad de recargar lógica compleja en frontend.
+Esta solución prioriza simplicidad, rendimiento y facilidad de mantenimiento.
 
 ---
 
@@ -238,7 +237,7 @@ El Panel de Administración es el espacio central de gestión reservado exclusiv
 **1. Gestión de animales (`Animal`)**
 - Crear nuevos registros de animales o nuevos usuarios, si fuera necesario.
 - Editar la información de los animales o usuarios.
-- Eliminar registros de animales, o usuarios, si fuera necesario.
+- Eliminar registros de animales cuando proceda, o bien marcarlos como no disponibles (`status = deceased` o `unavailable`), manteniendo la trazabilidad histórica de los datos.
 - Subir y gestionar imágenes y galerías multimedia de cada animal.
 - Registrar observaciones y tratamientos generales (`observations`) asociados a cada animal.
 

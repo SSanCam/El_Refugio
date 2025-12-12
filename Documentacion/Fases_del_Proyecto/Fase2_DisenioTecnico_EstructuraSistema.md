@@ -29,45 +29,56 @@ El proyecto seguirá la estructura de carpetas estándar de Laravel, organizando
 
 - #### Estructura de Carpetas del Proyecto
 
+##### App/
 ```plaintext
 📁 app/
-├── Enums/              # Enumeraciones personalizadas (si usas constantes de estados, roles, etc.)
-├── Exceptions/         # Clases de manejo de excepciones
+├── Enums/              # Enumeraciones del dominio (estados, tamaños, roles, especies)
+│
 ├── Http/
-│   ├── Controllers/    # Controladores del sistema (por entidad)
-│   ├── Livewire/       # Componentes Livewire interactivos
-│   └── Middleware/     # Middleware para rutas, autenticación, etc.
-├── Mail/               # Clases para envío de correos (si se implementa)
-├── Models/             # Entidades del sistema (User, Animal, etc.)
-├── Observers/          # Observadores de modelos (si usas eventos tipo updated/deleted)
-├── Providers/          # Configuración de servicios y bindings de Laravel
-├── Services/           # Lógica de negocio reutilizable (si se separa del controlador)
+│   ├── Controllers/    # Controladores de la aplicación (patrón MVC)
+│   │   ├── Admin/      # Controladores del panel administrativo
+│   │   ├── Auth/       # Controladores de autenticación (Laravel nativo)
+│   │   └── Public/     # Controladores de la parte pública
+│   │
+│   ├── Mail/           # Lógica de envío de correos
+│   ├── Middleware/     # Middlewares personalizados (control de acceso)
+│   └── Requests/       # Validaciones (Form Requests)
+│
+├── Models/             # Modelos Eloquent (User, Animal, Adoption, Foster)
+│
+├── Providers/          # Proveedores de servicios de Laravel
+│
+└── View/
+    └── Components/     # Componentes PHP de Blade (layouts, paginación)
+```
 
-📁 bootstrap/            # Configuración de arranque del framework
-📁 config/               # Archivos de configuración del sistema (app.php, database.php, etc.)
+> El directorio app/View/Components contiene únicamente la lógica PHP asociada a componentes Blade.
+> Las vistas completas de la aplicación se encuentran en resources/views.
 
-📁 database/
-├── factories/          # Factories para testeo con datos ficticios
-├── migrations/         # Archivos de migración (estructura de las tablas)
-├── seeders/            # Datos de ejemplo para inicializar la base de datos
-
-📁 public/               # Archivos públicos accesibles desde el navegador (index.php, imágenes, etc.)
-
-📁 resources/
-├── css/                # Archivos de estilos (Tailwind o personalizados)
-├── js/                 # Scripts de Alpine.js o JS personalizado
-└── views/              # Vistas Blade (.blade.php)
-    ├── components/     # Componentes Blade reutilizables (botones, formularios, layout)
-    ├── livewire/       # Vistas asociadas a componentes Livewire
-    ├── animals/        # Vistas relacionadas con los animales
-    ├── users/          # Vistas del perfil o gestión de usuario
-    ├── admin/          # Panel de administración
-
-📁 routes/
-├── web.php             # Rutas web (frontend)
-├── api.php             # Rutas de API (si se expone alguna)
+##### resources/views
+```plaintext
+📁 resources/views/
+├── admin/              # Vistas del panel de administración
+│   ├── animals/
+│   ├── adoptions/
+│   ├── fosters/
+│   ├── users/
+│   └── dashboard.blade.php
+│
+├── auth/               # Vistas de autenticación (login, registro, recuperación)
+│
+├── components/         # Componentes Blade reutilizables (tarjetas, formularios, navegación)
+│
+├── layouts/            # Plantillas base (layout público, estructura general)
+│
+├── profile/            # Área privada del usuario autenticado
+│
+└── public/             # Vistas públicas accesibles sin autenticación
+    ├── animals/
+    └── forms/
 
 ```
+
    > **nota:** Si el entorno de desarrollo o despliegue se dockeriza, los archivos **Dockerfile** y **docker-compose.yml** se ubicarán en el directorio raíz del proyecto. Estos contendrán la configuración de los servicios necesarios (contenedor PHP/Laravel, servidor web y base de datos MySQL) para facilitar la instalación, despliegue y replicación del entorno en diferentes sistemas.
 
 - #### Convenciones de nombres

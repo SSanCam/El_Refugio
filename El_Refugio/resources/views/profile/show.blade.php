@@ -96,7 +96,7 @@ d{{-- resources/views/profile/show.blade.php --}}
                     {{-- Cambiar clave --}}
                     <div class="form-group">
                         <label for="password" class="form-label">Contraseña</label>
-                        <input id="password" name="password" type="text"
+                        <input id="password" name="password" type="password"
                             class="form-input @error('password') is-invalid @enderror" placeholder="Nueva contraseña">
                     </div>
 

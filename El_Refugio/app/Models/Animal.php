@@ -72,6 +72,7 @@ class Animal extends Model
         ];
     }
 
+
     public function getAgeAttribute()
     {
         if (!$this->birth_date) {
@@ -96,18 +97,7 @@ class Animal extends Model
     {
         return $this->hasMany(AnimalImage::class);
     }
-    /*    
-    public function getMainImageAttribute()
-    {
-           if ($this->images->isNotEmpty()) {
-            return $this->images->first()->url;
-        }
 
-        return $this->species === 'cat'
-            ? 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1765144900/image-removebg-preview_5_y1jx6s.png'
-            : 'https://res.cloudinary.com/dkfvic2ks/image/upload/v1765144900/image-removebg-preview_6_pgkr4k.png';     
-    }
-     */
     public function adoptions()
     {
         return $this->hasMany(Adoption::class);

@@ -6,7 +6,7 @@ Los resultados de esta fase servirán como base para el diseño técnico y el de
 
 ## Convenciones de Nombres
 
-En este proyecto se ha optado por utilizar una **nomenclatura en inglés** para todos los nombres de campos, tablas y variables en el código. Esta decisión tiene como objetivo hacer el proyecto más **accesible, escalable y compatible** con las mejores prácticas de desarrollo y facilitar la integración con herramientas y bibliotecas externas que comúnmente están en inglés. 
+En este proyecto se ha optado por utilizar una **nomenclatura en inglés** para todos los nombres de campos, tablas y variables en el código. De este modo se hace el proyecto más **accesible, escalable y compatible** con las mejores prácticas de desarrollo y facilitar la integración con herramientas y bibliotecas externas que comúnmente están en inglés. 
 
 - **Nombres de campos y variables**: Se utilizará inglés para asegurar consistencia y facilitar la comprensión en entornos internacionales.
 - **Descripción y comentarios**: Aunque los nombres de los campos y variables están en inglés, las **descripciones** y **comentarios** se mantendrán en **español** para adecuarse al contexto del proyecto, que se desarrollará y presentará en España.
@@ -34,7 +34,7 @@ Además de los usuarios registrados, la aplicación contempla un uso parcial sin
 - Leer información general sobre el refugio.
 - Enviar formularios de contacto.
 
-Estas interacciones no requieren un registro en el sistema, ya que no implican una gestión interna de datos personales persistentes ni el acceso a funcionalidades protegidas. Esta decisión busca facilitar la interacción y colaboración con el refugio sin imponer barreras innecesarias a usuarios puntuales.
+Estas interacciones no requieren un registro en el sistema, ya que no implican una gestión interna de datos personales persistentes ni el acceso a funcionalidades protegidas. Esta decisión busca facilitar la interacción y colaboración con el refugio sin imponer barreras innecesarias a usuarios puntuales ya que no implican almacenamiento persistente de datos personales ni acceso a funcionalidades protegidas.
 
 ---
 
@@ -45,7 +45,9 @@ En esta sección se detallan las funcionalidades que debe ofrecer la aplicación
 ### 🔓 Funcionalidades públicas (sin necesidad de registro)
 
 - **Consultar animales disponibles:** cualquier persona puede visualizar el listado de animales que se encuentran en adopción o acogida, filtrando por especie, edad, raza o estado.
-    >Se consideran disponibles aquellos con status = sheltered o fostered
+
+    > Se consideran disponibles aquellos animales cuyo estado sea `sheltered` o `fostered` y cuya disponibilidad esté marcada como `available`.
+
 - **Ver detalles de un animal:** se podrá acceder a la ficha individual de cada animal con información más específica como comportamiento, salud, fotos o historia.
 - **Formulario de contacto:** permite a los usuarios enviar mensajes o consultas generales al refugio sin necesidad de registrarse.
 - **Información general del refugio:** acceso a secciones estáticas como misión, historia, ubicación, redes sociales o formas de colaborar.
@@ -59,11 +61,11 @@ En esta sección se detallan las funcionalidades que debe ofrecer la aplicación
 - **Registrarse e iniciar sesión**: Sistema de autenticación para acceder a funcionalidades personalizadas.
 - **Actualizar su perfil**: Los usuarios podrán modificar sus datos personales y preferencias.
 
-```
-Todas las solicitudes se envían por correo, para que el refugio las gestione manualmente.
-Las adopciones o acogidas se cierran presencialmente en el refugio, donde se realiza la firma del contrato y la entrega oficial del animal.
-Este procedimiento sigue las prácticas habituales del sector y garantiza que la documentación se complete correctamente antes del cierre del expediente.
-``` 
+
+> Todas las solicitudes se envían por correo, para que el refugio las gestione manualmente.
+> Las adopciones o acogidas se cierran presencialmente en el refugio, donde se realiza la firma del contrato y la entrega oficial del animal.
+> Este procedimiento sigue las prácticas habituales del sector y garantiza que la documentación se complete correctamente antes del cierre del expediente.
+
 #### Para administradores (rol: admin)
 
 - **Gestión de animales (CRUD)**: Crear, editar, eliminar o actualizar fichas de animales en la base de datos.
@@ -116,6 +118,8 @@ A continuación se presentan los diagramas que representan las interacciones y f
 ## 3. Modelo de Datos 
 
 El modelo está diseñado para una base de datos **relacional MySQL**, gestionada mediante **migraciones de Laravel**, y sigue las **convenciones de nomenclatura en inglés** definidas previamente.
+
+> Aunque el diseño inicial parte de MySQL, el modelo es compatible con PostgreSQL en entornos de producción
 
 A continuación se muestra el modelo conceptual de datos, donde se representan las principales entidades del sistema y las relaciones entre ellas.
 

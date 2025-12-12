@@ -51,8 +51,9 @@ use App\Enums\AnimalAvailability;
             @endif
 
             @if ($animal->size)
-            {{ $sexLabel && trim($sexLabel) !== '' ? ' · ' : '' }}{{ $animal->size->label() }}
+                {{ $animal->size->label() }}
             @endif
+
         </p>
 
         <dl class="animal-detail__data">
