@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Extensiones del sistema
+# Dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     libpq5 \
     libpq-dev \
     pkg-config \
-    curl
+    curl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Extensiones PHP
 RUN docker-php-ext-install zip gd pdo_pgsql pgsql
@@ -33,25 +34,20 @@ WORKDIR /var/www/html
 COPY . .
 
 # Dependencias PHP
-RUN composer install --optimize-autoloader --no-interaction --no-ansi
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Build Vite
+# Build frontend
 RUN npm install && npm run build
 
-# Crear carpetas necesarias y dar permisos ANTES del cache
-RUN mkdir -p bootstrap/cache && \
-    mkdir -p storage/framework/cache && \
-    mkdir -p storage/framework/sessions && \
-    mkdir -p storage/framework/views && \
+# Permisos
+RUN mkdir -p bootstrap/cache \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views && \
     chown -R www-data:www-data storage bootstrap && \
     chmod -R 775 storage bootstrap/cache
 
-# Cache de Laravel
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
-
-# Start script
+# Script de arranque
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
