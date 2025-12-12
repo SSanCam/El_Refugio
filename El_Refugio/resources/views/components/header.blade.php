@@ -42,4 +42,4 @@
             <img src="{{ asset('images/sol.png') }}" alt="Cambiar tema">
         </button>
     </div>
-</header>
+</header> 
