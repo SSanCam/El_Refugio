@@ -30,18 +30,6 @@ class AnimalImage extends Model
     ];
 
     /**
-     * Obtener los atributos que deben ser casteados.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'profile_pic' => 'boolean',
-        ];
-    }
-
-    /**
      * Relaciones con otras entidades del sistema.
      */
     public function animal()

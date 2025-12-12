@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Tabla de User 
  * Crea la tabla de usuarios con campos esenciales para autenticación y perfil completo.
- * Al usuario registrado, terminará de completar sus datos el personal administrativo si se finaliza con éxito formularios de adopción o acogida.
- * Esto permite un equilibrio entre la facilidad de registro y la necesidad de información detallada para la gestión del refugio.
  */
 return new class extends Migration
 {
@@ -24,7 +22,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['user', 'admin'])->default('user');
             $table->string('national_id')->nullable();
-            $table->string('phone')->nullable()->unique();
+            $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->boolean('is_active')->default(true);
             
