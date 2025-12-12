@@ -4,9 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{--   @vite(['resources/css/app.css', 'resources/js/app.js'])   --}}
-    <link rel="stylesheet" href="{{ asset('build/assets/app.css') }}">
-    <script src="{{ asset('build/assets/app.js') }}" defer></script>
 
     <title>@yield('title', 'El Refugio | Adopción y acogida de animales')</title>
 
