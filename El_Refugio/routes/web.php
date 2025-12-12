@@ -11,7 +11,9 @@ Route::get('/', function () {
 
 
 // Carga de archivos de rutas adicionales
+/*
 require __DIR__.'/public.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/user.php';
+*/
