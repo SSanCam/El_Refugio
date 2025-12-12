@@ -11,6 +11,5 @@ import './globals';
 import './adminDashboard';
 import './animals';
 import '../js/theme.js';
-import '../js/responsive.js'
 
 

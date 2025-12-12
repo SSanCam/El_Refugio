@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Cargar preferencia guardada
     if (localStorage.getItem("theme") === "light") {
-        body.classList.add("theme-ligth");
+        body.classList.add("theme-light");
     }
 
     themeButtons.forEach(btn => {

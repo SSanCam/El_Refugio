@@ -7,16 +7,6 @@
                 alt="El Refugio Logo">
         </a>
 
-        <!-- Botón tema escritorio -->
-        <button id="themeToggleDesktop"
-                class="theme-toggle desktop-theme-toggle"
-                data-theme-toggle>
-            <img src="{{ asset('images/sol.png') }}" alt="Cambiar tema">
-        </button>
-
-        <!-- Botón hamburguesa -->
-        <button id="menuToggle" class="hamburger">☰</button>
-
         <!-- NAV -->
         <nav id="mainNav" class="header-nav">
 
@@ -26,37 +16,30 @@
             <a href="{{ route('public.forms.contact') }}" class="header-link">Contacto</a>
 
             @guest
-                <a href="{{ route('login') }}" class="header-link">Iniciar sesión</a>
+            <a href="{{ route('login') }}" class="header-link">Iniciar sesión</a>
             @endguest
 
             @auth
-                @if (auth()->user()->role === 'admin')
-                    <a href="{{ route('profile.show') }}" class="header-link">Mi área</a>
-                    <a href="{{ route('admin.dashboard') }}" class="header-link">Administración</a>
-                @else
-                    <a href="{{ route('profile.show') }}" class="header-link">Mi área</a>
-                @endif
+            @if (auth()->user()->role === 'admin')
+            <a href="{{ route('profile.show') }}" class="header-link">Mi área</a>
+            <a href="{{ route('admin.dashboard') }}" class="header-link">Administración</a>
+            @else
+            <a href="{{ route('profile.show') }}" class="header-link">Mi área</a>
+            @endif
 
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="header-link--profile">
-                        <img src="https://res.cloudinary.com/dkfvic2ks/image/upload/v1764920697/download-removebg-preview_bqpge7.png"
-                            alt="Cerrar sesión">
-                    </button>
-                </form>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="header-link--profile">
+                    <img src="https://res.cloudinary.com/dkfvic2ks/image/upload/v1764920697/download-removebg-preview_bqpge7.png"
+                        alt="Cerrar sesión">
+                </button>
+            </form>
             @endauth
 
-            <!-- Botón tema dentro del menú móvil -->
-            <button id="themeToggleMobile"
-                    class="theme-toggle nav-theme-toggle"
-                    data-theme-toggle>
-                <img src="{{ asset('images/sol.png') }}" alt="Cambiar tema">
-            </button>
-
         </nav>
-
-        <!-- Overlay para cerrar menú -->
-        <div id="menuOverlay" class="menu-overlay"></div>
-
+        <!-- Botón tema -->
+        <button class="theme-toggle" data-theme-toggle aria-label="Cambiar tema">
+            <img src="{{ asset('images/sol.png') }}" alt="Cambiar tema">
+        </button>
     </div>
 </header>

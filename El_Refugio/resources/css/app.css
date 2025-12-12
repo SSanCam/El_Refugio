@@ -5,7 +5,7 @@
     @import "forms.css";
     @import "dashboard.css";
     @import "responsive.css";
-
+    
     /* -------------------------
    Variables de tema (CLARO)
    ------------------------- */
@@ -99,6 +99,7 @@ a {
 
 .header-nav {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem; 
 }
@@ -114,6 +115,7 @@ a {
     cursor: pointer;
     text-decoration: none;
 }
+
 /* Contenedor para los botones */
 .header-inner {
     width: 100%;
@@ -125,16 +127,6 @@ a {
     justify-content: space-between;
 
     padding: 0 1.5rem;
-}
-
-.header-link {
-    background-color: var(--color-secondary);
-    color: var(--color-bg);
-    padding: 5px 20px;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    text-decoration: none;
 }
 
 .header-link:hover {
