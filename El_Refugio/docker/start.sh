@@ -9,12 +9,6 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
-echo "Limpiando caches de Laravel"
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
-php artisan cache:clear
-
 echo "Ejecutando migraciones de base de datos"
 php artisan migrate --force
 
