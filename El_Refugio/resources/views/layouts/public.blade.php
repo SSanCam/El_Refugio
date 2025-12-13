@@ -37,6 +37,12 @@
     <x-header />
 
     <main>
+        <nav class="mobile-nav mobile-only">
+            <a href="/">Inicio</a>
+            <a href="/peludos">Peludos</a>
+            <a href="/finales-felices">Finales felices</a>
+            <a href="/contacto">Contacto</a>
+        </nav>
         @yield('content')
     </main>
 

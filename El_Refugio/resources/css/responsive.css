@@ -24,3 +24,24 @@
         padding-top: 1rem;
     }
 }
+
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0.75rem;
+        background: #5f6f2f; /* verde header */
+    }
+
+    .mobile-nav a {
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+}
