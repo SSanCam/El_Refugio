@@ -42,6 +42,7 @@
         <a href="/finales-felices">Finales felices</a>
         <a href="/contacto">Contacto</a>
     </nav>
+
     <main>
         @yield('content')
     </main>
