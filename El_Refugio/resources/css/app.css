@@ -5,10 +5,10 @@
 /* ----------------------------------------
     Importación de módulos CSS
     ---------------------------------------- */
-    @import "animals.css";
-    @import "forms.css";
-    @import "dashboard.css";
-    @import "responsive.css";
+    @import "./animals.css";
+    @import "./forms.css";
+    @import "./dashboard.css";
+    @import "./responsive.css";
     
     /* -------------------------
    Variables de tema (CLARO)
